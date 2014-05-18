@@ -1,0 +1,140 @@
+﻿<Window x:Class="Fidels.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="MainWindow" Height="600" Width="1050" Loaded="Window_Loaded">
+    <Window.Resources>
+        <Style x:Key="GroupHeaderStyle" TargetType="{x:Type GroupItem}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type GroupItem}">
+                        <Expander x:Name="exp" IsExpanded="True"
+            Background="White"
+            Foreground="Black">
+                            <Expander.Header>
+                                <TextBlock Text="{Binding Name}"/>
+                            </Expander.Header>
+                            <ItemsPresenter />
+                        </Expander>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Grid ShowGridLines="False">
+       
+        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+
+        <Button Grid.Row="2" Content="Create" Height="23" HorizontalAlignment="Left" Margin="10,10,0,10" Name="button1" VerticalAlignment="Top" Width="75" />
+        <Button Grid.Row="2" Content="Remove" Height="23" HorizontalAlignment="Left" Margin="100,10,0,10" Name="button2" VerticalAlignment="Top" Width="75" />
+        <ComboBox Height="23" HorizontalAlignment="Left" Margin="163,39,0,0" Name="cmbMonth" VerticalAlignment="Top" Width="120" SelectedIndex="0" SelectionChanged="cmbMonth_SelectionChanged">
+            <ComboBoxItem Tag="1">January</ComboBoxItem>
+            <ComboBoxItem Tag="2">February</ComboBoxItem>
+            <ComboBoxItem Tag="3">March</ComboBoxItem>
+            <ComboBoxItem Tag="4">April</ComboBoxItem>
+            <ComboBoxItem Tag="5">May</ComboBoxItem>
+            <ComboBoxItem Tag="6">June</ComboBoxItem>
+            <ComboBoxItem Tag="7">July</ComboBoxItem>
+            <ComboBoxItem Tag="8">August</ComboBoxItem>
+            <ComboBoxItem Tag="9">September</ComboBoxItem>
+            <ComboBoxItem Tag="10">October</ComboBoxItem>
+            <ComboBoxItem Tag="11">November</ComboBoxItem>
+            <ComboBoxItem Tag="12">December</ComboBoxItem>
+        </ComboBox>
+        <ComboBox SelectedIndex="0" Height="23" HorizontalAlignment="Left" Margin="310,39,0,0" Name="cmbWeek" VerticalAlignment="Top" Width="120" SelectionChanged="cmbWeek_SelectionChanged">
+          
+        </ComboBox>
+        <Label Content="Month" Height="28" HorizontalAlignment="Left" Margin="163,10,0,0" Name="label3" VerticalAlignment="Top" />
+        <Label Content="Week" Height="28" HorizontalAlignment="Left" Margin="310,10,0,0" Name="label4" VerticalAlignment="Top" />
+
+
+        <TabControl Grid.Row="1" Height="Auto" Margin="10,10,10,10" Name="tabControl1" VerticalAlignment="Top" Width="920">
+            <TabItem Header="Stock" Name="Stock">
+
+               
+
+                    <Grid VerticalAlignment="Stretch" Margin="0,0,0,0">
+
+                    <DataGrid CanUserAddRows="False" AutoGenerateColumns="False" Height="350" HorizontalAlignment="Left" Margin="5,40,10,0" Name="dataGrid2" VerticalAlignment="Top">
+                            <DataGrid.GroupStyle>
+                                <GroupStyle ContainerStyle="{StaticResource GroupHeaderStyle}">
+                                    <GroupStyle.Panel>
+                                        <ItemsPanelTemplate>
+                                            <DataGridRowsPresenter/>
+                                        </ItemsPanelTemplate>
+                                    </GroupStyle.Panel>
+                                </GroupStyle>
+                            </DataGrid.GroupStyle>
+
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Name" Binding="{Binding name}"/>
+                                <DataGridTextColumn Header="Price" Binding="{Binding unit_price}"/>
+                                <DataGridTextColumn Header="Office Stock" Binding="{Binding office_stock}"/>
+
+                                <DataGridTextColumn Header="Display" Binding="{Binding display}"/>
+                                <DataGridTextColumn Header="Speed Rail" Binding="{Binding speed_rail}"/>
+                                <DataGridTextColumn Header="Bar Stock" Binding="{Binding stock_bar}"/>
+                                <DataGridTextColumn Header="Delivery" Binding="{Binding delivery}"/>
+                                <DataGridTextColumn Header="Minimum Stock" Binding="{Binding min_stock}"/>                    
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    <Label Content="Total Stock" Height="28" HorizontalAlignment="Left" Margin="529,40,0,0" Name="label1" VerticalAlignment="Top" />
+                    <Label Height="28" HorizontalAlignment="Left" Margin="529,66,0,0" Name="lblTotalStock" VerticalAlignment="Top" />
+                    <Label Content="Stock Value" Height="28" HorizontalAlignment="Left" Margin="529,124,0,0" Name="label6" VerticalAlignment="Top" />
+                    <Label Height="28" HorizontalAlignment="Left" Margin="529,158,0,0" Name="lblStockValue" VerticalAlignment="Top" />
+                    <Label Content="Bottles Sold" Height="28" HorizontalAlignment="Left" Margin="529,226,0,0" Name="label8" VerticalAlignment="Top" />
+                    <Label Height="28" HorizontalAlignment="Left" Margin="529,260,0,0" Name="lblBottlesSold" VerticalAlignment="Top" />
+                    <Label Content="Amount to buy" Height="28" HorizontalAlignment="Left" Margin="706,98,0,0" Name="label10" VerticalAlignment="Top" FontWeight="Bold" FontSize="16" />
+                    <Label Height="28" HorizontalAlignment="Left" Margin="706,150,0,0" Name="lblAmountTobuy" VerticalAlignment="Top" FontWeight="Bold" FontSize="16" />
+                </Grid>
+               
+
+            </TabItem>
+            <TabItem Header="Factura" Name="Factura" >
+
+                <ScrollViewer HorizontalAlignment="Stretch" Margin="0,0,0,0" Name="scrollViewer2" VerticalAlignment="Stretch">
+
+                    <Grid VerticalAlignment="Stretch" Margin="0,0,0,0">
+
+                        <DataGrid AutoGenerateColumns="False" Height="200" HorizontalAlignment="Left" Margin="5,40,0,0" Name="dataGrid3" VerticalAlignment="Top" CanUserAddRows="True" IsReadOnly="False">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Date"/>
+                                <DataGridTextColumn Header="Serial No"/>                              
+                                <DataGridTextColumn Header="Price"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                        <Label Content="Metro" Height="28" HorizontalAlignment="Left" Margin="0,10,0,0" Name="label33" VerticalAlignment="Top" Grid.ColumnSpan="3" />
+                        <Label Content="Erdington" Height="28" HorizontalAlignment="Left" Margin="4,271,0,0" Name="label44" VerticalAlignment="Top" Grid.ColumnSpan="3" Width="56" />
+                        <DataGrid AutoGenerateColumns="False" Height="200" HorizontalAlignment="Left" Margin="5,298,0,0" Name="dataGrid4" VerticalAlignment="Top">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Serial No"/>
+                                <DataGridTextColumn Header="Price"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Grid>
+                </ScrollViewer>
+
+            </TabItem>
+            <TabItem Header="Staff" Name="Staff" >
+                
+            </TabItem>
+            <TabItem Header="Budget" Name="Budget" >
+
+            </TabItem>
+        </TabControl>
+        <ComboBox SelectedIndex="0" Height="23" HorizontalAlignment="Left" Margin="15,39,0,0" Name="cmbYear" VerticalAlignment="Top" Width="120" SelectionChanged="cmbYear_SelectionChanged">
+            <ComboBoxItem>2014</ComboBoxItem>
+        </ComboBox>
+        <Label Content="Year" Height="28" HorizontalAlignment="Left" Margin="15,10,0,0" Name="label5" VerticalAlignment="Top" />
+    </Grid>
+</Window>
+
+

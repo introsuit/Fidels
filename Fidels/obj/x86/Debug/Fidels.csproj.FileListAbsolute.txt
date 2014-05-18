@@ -1,0 +1,11 @@
+D:\Documents\Visual Studio 2010\Projects\Fidels\Fidels\bin\Debug\Fidels.exe
+D:\Documents\Visual Studio 2010\Projects\Fidels\Fidels\bin\Debug\Fidels.pdb
+D:\Documents\Visual Studio 2010\Projects\Fidels\Fidels\obj\x86\Debug\MainWindow.baml
+D:\Documents\Visual Studio 2010\Projects\Fidels\Fidels\obj\x86\Debug\MainWindow.g.cs
+D:\Documents\Visual Studio 2010\Projects\Fidels\Fidels\obj\x86\Debug\App.g.cs
+D:\Documents\Visual Studio 2010\Projects\Fidels\Fidels\obj\x86\Debug\Fidels_MarkupCompile.cache
+D:\Documents\Visual Studio 2010\Projects\Fidels\Fidels\obj\x86\Debug\Fidels.g.resources
+D:\Documents\Visual Studio 2010\Projects\Fidels\Fidels\obj\x86\Debug\Fidels.Properties.Resources.resources
+D:\Documents\Visual Studio 2010\Projects\Fidels\Fidels\obj\x86\Debug\Fidels.csproj.GenerateResource.Cache
+D:\Documents\Visual Studio 2010\Projects\Fidels\Fidels\obj\x86\Debug\Fidels.exe
+D:\Documents\Visual Studio 2010\Projects\Fidels\Fidels\obj\x86\Debug\Fidels.pdb
