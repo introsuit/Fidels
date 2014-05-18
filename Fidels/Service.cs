@@ -38,10 +38,11 @@ namespace Fidels
             WeeksRange weeksR = new WeeksRange();
 
             DateTimeFormatInfo dfi = DateTimeFormatInfo.CurrentInfo;
-            DateTime dateTime = new DateTime(year, month, 1).AddDays(-1);
+            DateTime dateTime = new DateTime(year, month, 1);
             System.Globalization.Calendar cal = dfi.Calendar;
             weeksR.from = cal.GetWeekOfYear(dateTime, dfi.CalendarWeekRule, dfi.FirstDayOfWeek);
 
+            //special case
             if (month == 12)
             {
                 dateTime = new DateTime(year, month, 31);
@@ -51,15 +52,7 @@ namespace Fidels
                 dateTime = new DateTime(year, month + 1, 1).AddDays(-1);
             }
 
-            weeksR.to = cal.GetWeekOfYear(dateTime, dfi.CalendarWeekRule, dfi.FirstDayOfWeek);
-
-
-            //special case
-            if (month == 1)
-            {
-                weeksR.from = 1;
-            }
-
+            weeksR.to = cal.GetWeekOfYear(dateTime, dfi.CalendarWeekRule, dfi.FirstDayOfWeek);      
 
             return weeksR;
         }
