@@ -35,6 +35,7 @@ namespace Fidels
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             updateCmbWeeks(); //updates weeks list and that in turn will also syncTables
+            //test
         }    
 
         private void syncStocks()
