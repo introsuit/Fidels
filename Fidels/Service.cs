@@ -118,6 +118,64 @@ namespace Fidels
                     newTable.Rows[i].Delete();
                 }
             }
+            newTable.AcceptChanges();
+
+            // ask to explain
+            if (newTable.Rows.Count == 0)
+            {
+                if (weekNo > 1)
+                {
+                    stocksAdapter = getStocksAdapter(dao.getConnection(), year, month);
+                    dt = getDataTable(stocksAdapter);
+                    newTable = dt.Copy();
+
+                    for (int i = 0; i < dt.Rows.Count; i++)
+                    {
+                        DateTimeFormatInfo dfi = DateTimeFormatInfo.CurrentInfo;
+
+                        DateTime dateTime = dt.Rows[i].Field<DateTime>("date");
+                        System.Globalization.Calendar cal = dfi.Calendar;
+
+                        int actWeek = cal.GetWeekOfYear(dateTime, dfi.CalendarWeekRule, dfi.FirstDayOfWeek);
+                        //why weekNo - 1
+                        if (actWeek != weekNo - 1)
+                        {
+                            newTable.Rows[i].Delete();
+                        }
+                    }
+                    newTable.AcceptChanges();
+                }
+                else if (weekNo == 1)
+                {
+                    //change
+                    stocksAdapter = getStocksAdapter(dao.getConnection(), year-1, 12);
+                    dt = getDataTable(stocksAdapter);
+                    newTable = dt.Copy();
+
+                    for (int i = 0; i < dt.Rows.Count; i++)
+                    {
+                        DateTimeFormatInfo dfi = DateTimeFormatInfo.CurrentInfo;
+
+                        DateTime dateTime = dt.Rows[i].Field<DateTime>("date");
+                        System.Globalization.Calendar cal = dfi.Calendar;
+
+                        int actWeek = cal.GetWeekOfYear(dateTime, dfi.CalendarWeekRule, dfi.FirstDayOfWeek);
+                        //change
+                        if (actWeek != 53)
+                        {
+                            newTable.Rows[i].Delete();
+                        }
+                    }
+                    newTable.AcceptChanges();
+                }
+
+                // if table is empty, it populates table with default items which date is 2001-01-01
+                if (newTable.Rows.Count == 0)
+                {
+                    stocksAdapter = getDefaultStocksAdapter(dao.getConnection());
+                    newTable = getDataTable(stocksAdapter);
+                }
+            }
 
             return newTable;
         }
@@ -128,6 +186,21 @@ namespace Fidels
             adapter.Fill(dt);
             return dt;
         }
+
+        private SqlDataAdapter getDefaultStocksAdapter(SqlConnection connection)
+        {
+            SqlDataAdapter adapter = new SqlDataAdapter();
+
+            // Create the SelectCommand.
+            SqlCommand command = new SqlCommand("SELECT * FROM stock JOIN product ON stock.product_id = product.product_id JOIN product_group ON product.product_group_id = product_group.product_group_id WHERE date = '2001-01-01'", connection);
+
+            adapter.SelectCommand = command;
+
+            return adapter;
+        }
+
+
+
 
         private SqlDataAdapter getStocksAdapter(SqlConnection connection, int year, int month)
         {
