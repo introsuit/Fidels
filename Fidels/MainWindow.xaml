@@ -63,7 +63,7 @@
 
                     <Grid VerticalAlignment="Stretch" Margin="0,0,0,0">
 
-                    <DataGrid CanUserAddRows="False" AutoGenerateColumns="False" Height="350" HorizontalAlignment="Left" Margin="5,40,10,0" Name="dataGrid2" VerticalAlignment="Top">
+                    <DataGrid CanUserAddRows="False" AutoGenerateColumns="False" Height="350" HorizontalAlignment="Left" Margin="5,40,10,0" Name="dataGrid2" VerticalAlignment="Top" SelectionChanged="dataGrid2_SelectionChanged">
                             <DataGrid.GroupStyle>
                                 <GroupStyle ContainerStyle="{StaticResource GroupHeaderStyle}">
                                     <GroupStyle.Panel>

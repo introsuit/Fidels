@@ -15,6 +15,7 @@ using System.Collections.ObjectModel;
 using System.Data;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 
 namespace Fidels
 {
@@ -30,13 +31,13 @@ namespace Fidels
         public MainWindow()
         {
             InitializeComponent();
+            //service.ensureWeek();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            updateCmbWeeks(); //updates weeks list and that in turn will also syncTables
-            //test
-        }    
+            updateCmbWeeks(); //updates weeks list and that in turn will also syncTables           
+        }
 
         private void syncStocks()
         {
@@ -46,9 +47,9 @@ namespace Fidels
                 int year = Int32.Parse(((ComboBoxItem)cmbYear.SelectedItem).Content.ToString());
                 int month = Int32.Parse(((ComboBoxItem)cmbMonth.SelectedItem).Tag.ToString());
                 int weekNo = Int32.Parse(cmbWeek.SelectedValue.ToString());
-                
-                stocks = service.getStocks(year, month, weekNo);              
-                dataGrid2.ItemsSource = stocks.AsDataView();              
+
+                stocks = service.getStocks(year, month, weekNo);
+                dataGrid2.ItemsSource = stocks.AsDataView();
                 dataGrid2.SelectedValuePath = "stock_id";
 
                 ICollectionView view = CollectionViewSource.GetDefaultView(dataGrid2.ItemsSource);
@@ -65,6 +66,7 @@ namespace Fidels
             Debug.WriteLine("cmbWeek_SelectionChanged");
             if (this.IsLoaded && allowSync)
             {
+                dataGrid2.SelectedIndex = -1;
                 syncStocks();
             }
         }
@@ -73,24 +75,29 @@ namespace Fidels
         {
             if (this.IsLoaded)
             {
+                dataGrid2.SelectedIndex = -1;
                 allowSync = false; //to avoid double sync when cmbWeekSelected event is called
 
                 updateCmbWeeks();
                 syncStocks();
 
-                allowSync = true;        
+                allowSync = true;
             }
         }
 
         private void cmbYear_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+
             if (this.IsLoaded)
+            {
+                dataGrid2.SelectedIndex = -1;
                 syncStocks();
+            }
         }
 
         private void updateCmbWeeks()
         {
-            cmbWeek.Items.Clear();         
+            cmbWeek.Items.Clear();
 
             int year = Int32.Parse(((ComboBoxItem)cmbYear.SelectedItem).Content.ToString());
             int month = Int32.Parse(((ComboBoxItem)cmbMonth.SelectedItem).Tag.ToString());
@@ -105,26 +112,29 @@ namespace Fidels
 
         private void dataGrid2_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            decimal price = stocks.Rows[dataGrid2.SelectedIndex].Field<decimal>("unit_price");
-            int officeStock = stocks.Rows[dataGrid2.SelectedIndex].Field<int>("office_stock");
-            int display = stocks.Rows[dataGrid2.SelectedIndex].Field<int>("display");
-            int speedRail = stocks.Rows[dataGrid2.SelectedIndex].Field<int>("speed_rail");
-            int barStock = stocks.Rows[dataGrid2.SelectedIndex].Field<int>("stock_bar");
-            int minimumStock = stocks.Rows[dataGrid2.SelectedIndex].Field<int>("min_stock");
-            int totalStock = officeStock + display + speedRail + barStock;
-            decimal stockValue = totalStock * price;
-            int ammountToBuy = minimumStock - totalStock;
-            lblTotalStock.Content = totalStock;
-            lblStockValue.Content = stockValue;
-            if (ammountToBuy <= 0)
+            if (dataGrid2.SelectedIndex != -1)
             {
-                lblAmountTobuy.Content = "none";
-                lblAmountTobuy.Foreground = Brushes.Green;
-            }
-            else
-            {
-                lblAmountTobuy.Content = ammountToBuy;
-                lblAmountTobuy.Foreground = Brushes.Red;
+                decimal price = stocks.Rows[dataGrid2.SelectedIndex].Field<decimal>("unit_price");
+                int officeStock = stocks.Rows[dataGrid2.SelectedIndex].Field<int>("office_stock");
+                int display = stocks.Rows[dataGrid2.SelectedIndex].Field<int>("display");
+                int speedRail = stocks.Rows[dataGrid2.SelectedIndex].Field<int>("speed_rail");
+                int barStock = stocks.Rows[dataGrid2.SelectedIndex].Field<int>("stock_bar");
+                int minimumStock = stocks.Rows[dataGrid2.SelectedIndex].Field<int>("min_stock");
+                int totalStock = officeStock + display + speedRail + barStock;
+                decimal stockValue = totalStock * price;
+                int ammountToBuy = minimumStock - totalStock;
+                lblTotalStock.Content = totalStock;
+                lblStockValue.Content = stockValue;
+                if (ammountToBuy <= 0)
+                {
+                    lblAmountTobuy.Content = "none";
+                    lblAmountTobuy.Foreground = Brushes.Green;
+                }
+                else
+                {
+                    lblAmountTobuy.Content = ammountToBuy;
+                    lblAmountTobuy.Foreground = Brushes.Red;
+                }
             }
         }
     }
