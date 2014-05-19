@@ -14,7 +14,6 @@ namespace Fidels
     {
         public int from;
         public int to;
-        public int he;
     }
 
     class Service

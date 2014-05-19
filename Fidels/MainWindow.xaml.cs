@@ -102,5 +102,30 @@ namespace Fidels
             }
             cmbWeek.SelectedIndex = 0;
         }
+
+        private void dataGrid2_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            decimal price = stocks.Rows[dataGrid2.SelectedIndex].Field<decimal>("unit_price");
+            int officeStock = stocks.Rows[dataGrid2.SelectedIndex].Field<int>("office_stock");
+            int display = stocks.Rows[dataGrid2.SelectedIndex].Field<int>("display");
+            int speedRail = stocks.Rows[dataGrid2.SelectedIndex].Field<int>("speed_rail");
+            int barStock = stocks.Rows[dataGrid2.SelectedIndex].Field<int>("stock_bar");
+            int minimumStock = stocks.Rows[dataGrid2.SelectedIndex].Field<int>("min_stock");
+            int totalStock = officeStock + display + speedRail + barStock;
+            decimal stockValue = totalStock * price;
+            int ammountToBuy = minimumStock - totalStock;
+            lblTotalStock.Content = totalStock;
+            lblStockValue.Content = stockValue;
+            if (ammountToBuy <= 0)
+            {
+                lblAmountTobuy.Content = "none";
+                lblAmountTobuy.Foreground = Brushes.Green;
+            }
+            else
+            {
+                lblAmountTobuy.Content = ammountToBuy;
+                lblAmountTobuy.Foreground = Brushes.Red;
+            }
+        }
     }
 }
