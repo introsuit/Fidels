@@ -104,21 +104,24 @@
 
                     <Grid VerticalAlignment="Stretch" Margin="0,0,0,0">
 
-                        <DataGrid AutoGenerateColumns="False" Height="200" HorizontalAlignment="Left" Margin="5,40,0,0" Name="dataGrid3" VerticalAlignment="Top" CanUserAddRows="True" IsReadOnly="False">
+                        <DataGrid CanUserAddRows="False" AutoGenerateColumns="False" Height="200" HorizontalAlignment="Left" Margin="5,40,0,0" Name="dataGrid3" VerticalAlignment="Top" IsReadOnly="False">
+                            <DataGrid.GroupStyle>
+                                <GroupStyle ContainerStyle="{StaticResource GroupHeaderStyle}">
+                                    <GroupStyle.Panel>
+                                        <ItemsPanelTemplate>
+                                            <DataGridRowsPresenter/>
+                                        </ItemsPanelTemplate>
+                                    </GroupStyle.Panel>
+                                </GroupStyle>
+                            </DataGrid.GroupStyle>
+
                             <DataGrid.Columns>
-                                <DataGridTextColumn Header="Date"/>
-                                <DataGridTextColumn Header="Serial No"/>                              
-                                <DataGridTextColumn Header="Price"/>
+                                <DataGridTextColumn Header="Date" Binding="{Binding date}"/>
+                                <DataGridTextColumn Header="Serial No" Binding="{Binding serial_no}"/>
+                                <DataGridTextColumn Header="Price" Binding="{Binding price}"/>
                             </DataGrid.Columns>
                         </DataGrid>
-                        <Label Content="Metro" Height="28" HorizontalAlignment="Left" Margin="0,10,0,0" Name="label33" VerticalAlignment="Top" Grid.ColumnSpan="3" />
-                        <Label Content="Erdington" Height="28" HorizontalAlignment="Left" Margin="4,271,0,0" Name="label44" VerticalAlignment="Top" Grid.ColumnSpan="3" Width="56" />
-                        <DataGrid AutoGenerateColumns="False" Height="200" HorizontalAlignment="Left" Margin="5,298,0,0" Name="dataGrid4" VerticalAlignment="Top">
-                            <DataGrid.Columns>
-                                <DataGridTextColumn Header="Serial No"/>
-                                <DataGridTextColumn Header="Price"/>
-                            </DataGrid.Columns>
-                        </DataGrid>
+                  
                     </Grid>
                 </ScrollViewer>
 

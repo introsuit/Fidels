@@ -61,6 +61,24 @@ namespace Fidels
             }
         }
 
+        private void syncFakturas()
+        {
+            Debug.WriteLine("Syncinc fakturas");
+            try
+            {
+                int year = Int32.Parse(((ComboBoxItem)cmbYear.SelectedItem).Content.ToString());
+                int month = Int32.Parse(((ComboBoxItem)cmbMonth.SelectedItem).Tag.ToString());
+                int weekNo = Int32.Parse(cmbWeek.SelectedValue.ToString());            
+
+                ICollectionView view = CollectionViewSource.GetDefaultView(dataGrid3.ItemsSource);
+                view.GroupDescriptions.Add(new PropertyGroupDescription("name"));
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error while geting stocks table:\n\n" + ex.Message + "\n\n" + ex.StackTrace);
+            }
+        }
+
         private void cmbWeek_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             Debug.WriteLine("cmbWeek_SelectionChanged");

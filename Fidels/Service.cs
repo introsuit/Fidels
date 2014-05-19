@@ -180,6 +180,29 @@ namespace Fidels
             return newTable;
         }
 
+        public DataTable getFakturas(int year, int month, int weekNo)
+        {
+            SqlDataAdapter fakturasAdapter = getFakturasAdapter(dao.getConnection(), year, month);
+            DataTable dt = getDataTable(fakturasAdapter);
+            DataTable newTable = dt.Copy();
+
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+                DateTimeFormatInfo dfi = DateTimeFormatInfo.CurrentInfo;
+
+                DateTime dateTime = dt.Rows[i].Field<DateTime>("date");
+                System.Globalization.Calendar cal = dfi.Calendar;
+
+                int actWeek = cal.GetWeekOfYear(dateTime, dfi.CalendarWeekRule, dfi.FirstDayOfWeek);
+                if (actWeek != weekNo)
+                {
+                    newTable.Rows[i].Delete();
+                }
+            }
+
+            return newTable;
+        }
+
         private DataTable getDataTable(SqlDataAdapter adapter)
         {
             DataTable dt = new DataTable();
@@ -208,6 +231,20 @@ namespace Fidels
 
             // Create the SelectCommand.
             SqlCommand command = new SqlCommand("SELECT * FROM stock JOIN product ON stock.product_id = product.product_id JOIN product_group ON product.product_group_id = product_group.product_group_id WHERE month(date) = @month AND year(date) = @year", connection);
+
+            command.Parameters.Add(new SqlParameter("month", month));
+            command.Parameters.Add(new SqlParameter("year", year));
+            adapter.SelectCommand = command;
+
+            return adapter;
+        }
+
+        private SqlDataAdapter getFakturasAdapter(SqlConnection connection, int year, int month)
+        {
+            SqlDataAdapter adapter = new SqlDataAdapter();
+
+            // Create the SelectCommand.
+            SqlCommand command = new SqlCommand("SELECT * FROM faktura JOIN company ON faktura.company_id = company.company_id WHERE month(date) = @month AND year(date) = @year", connection);
 
             command.Parameters.Add(new SqlParameter("month", month));
             command.Parameters.Add(new SqlParameter("year", year));
