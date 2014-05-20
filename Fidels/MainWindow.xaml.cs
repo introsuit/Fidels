@@ -180,5 +180,10 @@ namespace Fidels
                 }
             }
         }
+
+        private void button3_Click(object sender, RoutedEventArgs e)
+        {
+            service.updateStocks(stocks);
+        }
     }
 }
