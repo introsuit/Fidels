@@ -26,17 +26,42 @@ namespace Fidels
     {
         private Service service = Service.getInstance();
         private DataTable stocks;
-        private bool allowSync = true;
+        private bool allowSync = false;
 
         public MainWindow()
         {
             InitializeComponent();
+            DateTime now = DateTime.Now;
+            for (int i = 0; i < cmbYear.Items.Count; i++)
+            {
+                if (Int32.Parse(((ComboBoxItem)cmbYear.Items[i]).Content.ToString()) == now.Year)
+                {
+                    cmbYear.SelectedIndex = i;
+                }
+            }
+            for (int i = 0; i < cmbMonth.Items.Count; i++)
+            {
+                if (Int32.Parse(((ComboBoxItem)cmbMonth.Items[i]).Tag.ToString()) == now.Month)
+                {
+                    cmbMonth.SelectedIndex = i;
+                }
+            }
+            updateCmbWeeks(); //updates weeks list and that in turn will also syncTables 
+
+            DateTimeFormatInfo dfi = DateTimeFormatInfo.CurrentInfo;
+            System.Globalization.Calendar cal = dfi.Calendar;
+            for (int i = 0; i < cmbWeek.Items.Count; i++)
+            {
+                if (Int32.Parse(cmbWeek.Items[i].ToString()) == cal.GetWeekOfYear(now, dfi.CalendarWeekRule, dfi.FirstDayOfWeek))
+                {
+                    cmbWeek.SelectedIndex = i;
+                }
+            }
             //service.ensureWeek();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            updateCmbWeeks(); //updates weeks list and that in turn will also syncTables           
+        {   
         }
 
         private void syncStocks()
@@ -68,7 +93,7 @@ namespace Fidels
             {
                 int year = Int32.Parse(((ComboBoxItem)cmbYear.SelectedItem).Content.ToString());
                 int month = Int32.Parse(((ComboBoxItem)cmbMonth.SelectedItem).Tag.ToString());
-                int weekNo = Int32.Parse(cmbWeek.SelectedValue.ToString());            
+                int weekNo = Int32.Parse(cmbWeek.SelectedValue.ToString());
 
                 ICollectionView view = CollectionViewSource.GetDefaultView(dataGrid3.ItemsSource);
                 view.GroupDescriptions.Add(new PropertyGroupDescription("name"));
