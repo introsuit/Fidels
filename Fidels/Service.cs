@@ -12,7 +12,7 @@ namespace Fidels
 {
     public struct WeeksRange
     {
-        public int from;
+        public int from { get; set; }
         public int to;
     }
 
@@ -106,71 +106,59 @@ namespace Fidels
 
         public DataTable getStocks(int year, int month, int weekNo)
         {
-            SqlDataAdapter stocksAdapter = getStocksAdapter(dao.getConnection(), year, month);
-            DataTable dt = getDataTable(stocksAdapter);
-            DataTable newTable = dt.Copy();
-
-            for (int i = 0; i < dt.Rows.Count; i++)
+            DataTable newTable = fillDataGrid(year, month, weekNo);
+            if (newTable.Rows.Count == 0)
             {
-                DateTime dateTime = dt.Rows[i].Field<DateTime>("date");
+                if (weekNo > 1)
+                {
+                    if (getWeeksRange(year, month).from == weekNo)
+                    {
+                        newTable = fillDataGrid(year, month - 1, weekNo - 1);
+                    }
+                    else
+                    {
+                        newTable = fillDataGrid(year, month, weekNo - 1);
+                    }
+                }
+                else if (weekNo == 1)
+                {
+                    newTable = fillDataGrid(year - 1, 12, 53);
+                }
 
+                // if table is empty, it populates table with default items which date is 2001-01-01
+                if (newTable.Rows.Count == 0 && getWeek(DateTime.Now) == weekNo)
+                {
+                    SqlDataAdapter stocksAdapter = getDefaultStocksAdapter(dao.getConnection());
+                    newTable = getDataTable(stocksAdapter);
+                    DataTable dataTable = newTable.Copy();
+                    for (int i = 0; i < dataTable.Rows.Count; i++)
+                    {
+                        DataColumn col = dataTable.Columns["date"];
+                        dataTable.Rows[i].SetField(col,DateTime.Now);
+                    }
+                    newTable.AcceptChanges();
+
+                }
+            }
+
+            return newTable;
+        }
+
+        public DataTable fillDataGrid(int year, int month, int week)
+        {
+            SqlDataAdapter stocksAdapter = getStocksAdapter(dao.getConnection(), year, month);
+            DataTable dataTable = getDataTable(stocksAdapter);
+            DataTable newTable = dataTable.Copy();
+            for (int i = 0; i < dataTable.Rows.Count; i++)
+            {
+                DateTime dateTime = dataTable.Rows[i].Field<DateTime>("date");
                 int actWeek = getWeek(dateTime);
-                if (actWeek != weekNo)
+                if (actWeek != week)
                 {
                     newTable.Rows[i].Delete();
                 }
             }
             newTable.AcceptChanges();
-
-            // ask to explain
-            if (newTable.Rows.Count == 0)
-            {
-                if (weekNo > 1)
-                {
-                    stocksAdapter = getStocksAdapter(dao.getConnection(), year, month);
-                    dt = getDataTable(stocksAdapter);
-                    newTable = dt.Copy();
-
-                    for (int i = 0; i < dt.Rows.Count; i++)
-                    {
-                        DateTime dateTime = dt.Rows[i].Field<DateTime>("date");
-                        int actWeek = getWeek(dateTime);
-                        //why weekNo - 1
-                        if (actWeek != weekNo - 1)
-                        {
-                            newTable.Rows[i].Delete();
-                        }
-                    }
-                    newTable.AcceptChanges();
-                }
-                else if (weekNo == 1)
-                {
-                    //change
-                    stocksAdapter = getStocksAdapter(dao.getConnection(), year - 1, 12);
-                    dt = getDataTable(stocksAdapter);
-                    newTable = dt.Copy();
-
-                    for (int i = 0; i < dt.Rows.Count; i++)
-                    {
-                        DateTime dateTime = dt.Rows[i].Field<DateTime>("date");
-                        int actWeek = getWeek(dateTime);
-                        //change
-                        if (actWeek != 53)
-                        {
-                            newTable.Rows[i].Delete();
-                        }
-                    }
-                    newTable.AcceptChanges();
-                }
-
-                // if table is empty, it populates table with default items which date is 2001-01-01
-                if (newTable.Rows.Count == 0)
-                {
-                    stocksAdapter = getDefaultStocksAdapter(dao.getConnection());
-                    newTable = getDataTable(stocksAdapter);
-                }
-            }
-
             return newTable;
         }
 
@@ -190,7 +178,7 @@ namespace Fidels
                     newTable.Rows[i].Delete();
                 }
             }
-
+            newTable.AcceptChanges();
             return newTable;
         }
 
@@ -265,6 +253,27 @@ namespace Fidels
         {
             SqlDataAdapter adapter = getStocksAdapter(connection, 0, 0);
             adapter.Update(dataTable);
+        }
+
+        public static String orderPrint(DataTable data)
+        {
+            string str = "";
+            int i = -1;
+            foreach (DataRow row in data.Rows)
+            {
+                i++;
+                int total = (row.Field<int>("speed_rail") +
+                    row.Field<int>("stock_bar") +
+                    row.Field<int>("display") +
+                    row.Field<int>("office_stock"));
+
+                if (total < row.Field<int>("min_stock"))
+                {
+                    str = str + "Name: " + row.Field<string>("name") + "  | Amount to buy: " + (row.Field<int>("min_stock") - total).ToString() + "\r\n";
+
+                }
+            }
+            return str;
         }
     }
 }
