@@ -10,6 +10,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Windows;
 
 namespace Fidels
 {
@@ -25,7 +26,13 @@ namespace Fidels
 
         public void FillTxtblck(string str)
         {
-            ordTxtBlck.Text = str;
+            richText.AppendText(str);
+        }
+
+        private void btn1_Click(object sender, RoutedEventArgs e)
+        {
+            richText.SelectAll();
+            richText.Copy();
         }
     }
 }
