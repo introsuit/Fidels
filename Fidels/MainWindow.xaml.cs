@@ -58,10 +58,6 @@ namespace Fidels
             //service.ensureWeek();
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {   
-        }
-
         private void syncStocks()
         {
             Debug.WriteLine("Syncinc stocks");
@@ -179,9 +175,23 @@ namespace Fidels
             }
         }
 
-        private void button3_Click(object sender, RoutedEventArgs e)
+        private void dataGrid2_SelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e)
         {
-            service.updateStocks(stocks);
+            Debug.WriteLine("selected cells changed");
+            try
+            {
+                service.updateStocks(stocks);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Failed to update stocks\n\n" + ex.Message + "\n\n" + ex.StackTrace);
+            }
         }
+
+        private void Grid_LostFocus(object sender, RoutedEventArgs e)
+        {
+            //may or may not be useful
+        }
+       
     }
 }

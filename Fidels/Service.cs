@@ -237,9 +237,7 @@ namespace Fidels
             command.Parameters.Add("@min_stock", SqlDbType.Int, 2, "min_stock");
             command.Parameters.Add("@date", SqlDbType.Date, 2, "date");
             command.Parameters.Add("@delivery", SqlDbType.Int, 2, "delivery");
-            //command.Parameters.Add(new SqlParameter("unit_price", "@unit_price"));
-            // command.Parameters.Add("@changeover_day", SqlDbType.VarChar, 50, "changeover_day");
-            //command.Parameters.Add("@flight_price", SqlDbType.Decimal, 2, "flight_price");
+            
             SqlParameter parameter = command.Parameters.Add(
                 "@stock_id", SqlDbType.Int, 5, "stock_id");
             parameter.SourceVersion = DataRowVersion.Original;
@@ -265,6 +263,7 @@ namespace Fidels
 
         public void updateStocks(DataTable dataTable)
         {
+            Debug.WriteLine("i[pdating");
             SqlDataAdapter adapter = getStocksAdapter(connection, 0, 0);
 
             adapter.Update(dataTable);
