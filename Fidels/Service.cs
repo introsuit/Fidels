@@ -246,5 +246,26 @@ namespace Fidels
             SqlDataAdapter adapter = getStocksAdapter(connection, 0, 0);
             adapter.Update(dataTable);
         }
+
+        public static String orderPrint(DataTable data)
+        {
+            string str = "";
+            int i = -1;
+            foreach (DataRow row in data.Rows)
+            {
+                i++;
+                int total = (row.Field<int>("speed_rail") +
+                    row.Field<int>("stock_bar") +
+                    row.Field<int>("display") +
+                    row.Field<int>("office_stock"));
+
+                if (total < row.Field<int>("min_stock"))
+                {
+                    str = str + "Name: " + row.Field<string>("name") + "  | Amount to buy: " + (row.Field<int>("min_stock") - total).ToString() + "\r\n";
+
+                }
+            }
+            return str;
+        }
     }
 }

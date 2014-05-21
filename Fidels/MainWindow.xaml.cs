@@ -200,6 +200,15 @@ namespace Fidels
         {     
             lblStatus.Content = "";
         }
+
+
+        private void btnPrint_Click(object sender, RoutedEventArgs e)
+        {
+            Debug.WriteLine(Service.orderPrint(stocks));
+            PrintOrders window2 = new PrintOrders();
+            window2.FillTxtblck(Service.orderPrint(stocks));
+            window2.Show();
+        }
        
     }
 }
