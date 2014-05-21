@@ -104,18 +104,32 @@ namespace Fidels
             return inserted;
         }
 
+        // returns stocks from database for set date
+        // if stocks is empty, creates new stocks from default values
+        // or creates new stocks from copy of last weeks values
         public DataTable getStocks(int year, int month, int weekNo)
         {
+            
             DataTable dataTable = sortDataTable(year, month, weekNo);
+            //if there is no weeks in database for this date, it checks if returned datatable contains
+            //0 rows and selected week in combobox is exactly the same as DateTime.Now
             if (dataTable.Rows.Count == 0 && getWeek(DateTime.Now) == weekNo)
             {
+                
                 if (weekNo > 1)
                 {
+                    // if its first week of the month
+                    // it takes copy of previous month's last week products from database
+                    // changes its dates to DateTime.Now
+                    // inserts products back to database with new date. (not working)
                     if (getWeeksRange(year, month).from == weekNo)
                     {
                         dataTable = sortDataTable(year, month - 1, weekNo - 1);
                         dataTable = changeDate(dataTable);
                     }
+                    // it takes copy of last week products from database
+                    // changes its dates to DateTime.Now
+                    // inserts products back to database with new date. (not working)
                     else
                     {
                         dataTable = sortDataTable(year, month, weekNo - 1);
@@ -125,9 +139,12 @@ namespace Fidels
                 else if (weekNo == 1)
                 {
                     dataTable = sortDataTable(year - 1, 12, 53);
+                    dataTable = changeDate(dataTable);
                 }
 
-                // if table is empty, it populates table with default items which date is 2001-01-01
+                // if table is still empty, it takes copy of default products from database
+                // changes its dates to DateTime.Now
+                // inserts products back to database with new date. (not working)
                 if (dataTable.Rows.Count == 0)
                 {
                     SqlDataAdapter stocksAdapter = getDefaultStocksAdapter(dao.getConnection());
@@ -140,6 +157,7 @@ namespace Fidels
             return dataTable;
         }
 
+        //changing products in database date to DateTime.Now
         public DataTable changeDate(DataTable dataTable)
         {
             DataTable newTable = dataTable.Copy();
@@ -149,10 +167,11 @@ namespace Fidels
                 newTable.Rows[i].SetField(col, DateTime.Now);
             }
             newTable.AcceptChanges();
-            updateStocks(newTable);
+            updateStocks(newTable); // inserts products datatable back to database with new date. (not working)
             return newTable;
         }
 
+        //taking stocks datatable from database and sorting it on week to return products on selected week
         public DataTable sortDataTable(int year, int month, int week)
         {
             SqlDataAdapter stocksAdapter = getStocksAdapter(dao.getConnection(), year, month);
