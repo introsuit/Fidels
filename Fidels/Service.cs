@@ -37,11 +37,8 @@ namespace Fidels
         public WeeksRange getWeeksRange(int year, int month)
         {
             WeeksRange weeksR = new WeeksRange();
-
-            DateTimeFormatInfo dfi = DateTimeFormatInfo.CurrentInfo;
             DateTime dateTime = new DateTime(year, month, 1);
-            System.Globalization.Calendar cal = dfi.Calendar;
-            weeksR.from = cal.GetWeekOfYear(dateTime, dfi.CalendarWeekRule, dfi.FirstDayOfWeek);
+            weeksR.from = getWeek(dateTime);
 
             //special case
             if (month == 12)
@@ -53,9 +50,16 @@ namespace Fidels
                 dateTime = new DateTime(year, month + 1, 1).AddDays(-1);
             }
 
-            weeksR.to = cal.GetWeekOfYear(dateTime, dfi.CalendarWeekRule, dfi.FirstDayOfWeek);
+            weeksR.to = getWeek(dateTime);
 
             return weeksR;
+        }
+
+        public int getWeek(DateTime date)
+        {
+            DateTimeFormatInfo dfi = DateTimeFormatInfo.CurrentInfo;
+            System.Globalization.Calendar cal = dfi.Calendar;
+            return cal.GetWeekOfYear(date, dfi.CalendarWeekRule, dfi.FirstDayOfWeek);
         }
 
         public bool ensureWeek()
@@ -108,12 +112,9 @@ namespace Fidels
 
             for (int i = 0; i < dt.Rows.Count; i++)
             {
-                DateTimeFormatInfo dfi = DateTimeFormatInfo.CurrentInfo;
-
                 DateTime dateTime = dt.Rows[i].Field<DateTime>("date");
-                System.Globalization.Calendar cal = dfi.Calendar;
 
-                int actWeek = cal.GetWeekOfYear(dateTime, dfi.CalendarWeekRule, dfi.FirstDayOfWeek);
+                int actWeek = getWeek(dateTime);
                 if (actWeek != weekNo)
                 {
                     newTable.Rows[i].Delete();
@@ -132,12 +133,8 @@ namespace Fidels
 
                     for (int i = 0; i < dt.Rows.Count; i++)
                     {
-                        DateTimeFormatInfo dfi = DateTimeFormatInfo.CurrentInfo;
-
                         DateTime dateTime = dt.Rows[i].Field<DateTime>("date");
-                        System.Globalization.Calendar cal = dfi.Calendar;
-
-                        int actWeek = cal.GetWeekOfYear(dateTime, dfi.CalendarWeekRule, dfi.FirstDayOfWeek);
+                        int actWeek = getWeek(dateTime);
                         //why weekNo - 1
                         if (actWeek != weekNo - 1)
                         {
@@ -155,12 +152,8 @@ namespace Fidels
 
                     for (int i = 0; i < dt.Rows.Count; i++)
                     {
-                        DateTimeFormatInfo dfi = DateTimeFormatInfo.CurrentInfo;
-
                         DateTime dateTime = dt.Rows[i].Field<DateTime>("date");
-                        System.Globalization.Calendar cal = dfi.Calendar;
-
-                        int actWeek = cal.GetWeekOfYear(dateTime, dfi.CalendarWeekRule, dfi.FirstDayOfWeek);
+                        int actWeek = getWeek(dateTime);
                         //change
                         if (actWeek != 53)
                         {
@@ -189,12 +182,9 @@ namespace Fidels
 
             for (int i = 0; i < dt.Rows.Count; i++)
             {
-                DateTimeFormatInfo dfi = DateTimeFormatInfo.CurrentInfo;
-
                 DateTime dateTime = dt.Rows[i].Field<DateTime>("date");
-                System.Globalization.Calendar cal = dfi.Calendar;
 
-                int actWeek = cal.GetWeekOfYear(dateTime, dfi.CalendarWeekRule, dfi.FirstDayOfWeek);
+                int actWeek = getWeek(dateTime);
                 if (actWeek != weekNo)
                 {
                     newTable.Rows[i].Delete();

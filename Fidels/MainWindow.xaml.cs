@@ -48,11 +48,9 @@ namespace Fidels
             }
             updateCmbWeeks(); //updates weeks list and that in turn will also syncTables 
 
-            DateTimeFormatInfo dfi = DateTimeFormatInfo.CurrentInfo;
-            System.Globalization.Calendar cal = dfi.Calendar;
             for (int i = 0; i < cmbWeek.Items.Count; i++)
             {
-                if (Int32.Parse(cmbWeek.Items[i].ToString()) == cal.GetWeekOfYear(now, dfi.CalendarWeekRule, dfi.FirstDayOfWeek))
+                if (Int32.Parse(cmbWeek.Items[i].ToString()) == service.getWeek(now))
                 {
                     cmbWeek.SelectedIndex = i;
                 }
