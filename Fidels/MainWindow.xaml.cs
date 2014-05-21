@@ -177,6 +177,7 @@ namespace Fidels
 
         private void dataGrid2_SelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e)
         {
+            Debug.WriteLine("sel cell changed");
             try
             {
                 service.updateStocks(stocks);
