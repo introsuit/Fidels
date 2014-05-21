@@ -27,6 +27,7 @@ namespace Fidels
         private Service service = Service.getInstance();
         private DataTable stocks;
         private bool allowSync = false;
+        private bool stocksNeedUpdate = false;
 
         public MainWindow()
         {
@@ -56,6 +57,7 @@ namespace Fidels
                 }
             }
             //service.ensureWeek();
+            syncStocks();
         }
 
         private void syncStocks()
@@ -177,18 +179,21 @@ namespace Fidels
 
         private void dataGrid2_SelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e)
         {
-            Debug.WriteLine("sel cell changed");
-            try
+            if (stocksNeedUpdate)
             {
-                service.updateStocks(stocks);
-                lblStatus.Content = "Updated";
-                lblStatus.Foreground = Brushes.Green;
-            }
-            catch (Exception ex)
-            {
-                lblStatus.Content = "Failed";
-                lblStatus.Foreground = Brushes.Red;
-                MessageBox.Show("Failed to update stocks\n\n" + ex.Message + "\n\n" + ex.StackTrace);
+                try
+                {
+                    service.updateStocks(stocks);
+                    lblStatus.Content = "Updated";
+                    lblStatus.Foreground = Brushes.Green;
+                }
+                catch (Exception ex)
+                {
+                    lblStatus.Content = "Failed";
+                    lblStatus.Foreground = Brushes.Red;
+                    MessageBox.Show("Failed to update stocks\n\n" + ex.Message + "\n\n" + ex.StackTrace);
+                }
+                stocksNeedUpdate = false;
             }
         }
 
@@ -198,7 +203,7 @@ namespace Fidels
         }
 
         private void dataGrid2_PreparingCellForEdit(object sender, DataGridPreparingCellForEditEventArgs e)
-        {     
+        {
             lblStatus.Content = "";
         }
 
@@ -210,6 +215,11 @@ namespace Fidels
             window2.FillTxtblck(Service.orderPrint(stocks));
             window2.Show();
         }
-       
+
+        private void dataGrid2_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
+        {
+            stocksNeedUpdate = true;
+        }
+
     }
 }

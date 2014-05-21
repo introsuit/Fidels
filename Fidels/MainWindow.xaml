@@ -65,7 +65,7 @@
 
                     <Grid VerticalAlignment="Stretch" Margin="0,0,0,0" LostFocus="Grid_LostFocus">
 
-                    <DataGrid CanUserAddRows="False" AutoGenerateColumns="False" Height="350" HorizontalAlignment="Left" Margin="5,40,10,0" Name="dataGrid2" VerticalAlignment="Top" SelectionChanged="dataGrid2_SelectionChanged" SelectedCellsChanged="dataGrid2_SelectedCellsChanged" PreparingCellForEdit="dataGrid2_PreparingCellForEdit">
+                    <DataGrid CanUserAddRows="False" AutoGenerateColumns="False" Height="350" HorizontalAlignment="Left" Margin="5,40,10,0" Name="dataGrid2" VerticalAlignment="Top" SelectionChanged="dataGrid2_SelectionChanged" SelectedCellsChanged="dataGrid2_SelectedCellsChanged" PreparingCellForEdit="dataGrid2_PreparingCellForEdit" CellEditEnding="dataGrid2_CellEditEnding">
                             <DataGrid.GroupStyle>
                                 <GroupStyle ContainerStyle="{StaticResource GroupHeaderStyle}">
                                     <GroupStyle.Panel>
