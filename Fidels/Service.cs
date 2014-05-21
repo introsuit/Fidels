@@ -263,9 +263,7 @@ namespace Fidels
 
         public void updateStocks(DataTable dataTable)
         {
-            Debug.WriteLine("i[pdating");
             SqlDataAdapter adapter = getStocksAdapter(connection, 0, 0);
-
             adapter.Update(dataTable);
         }
     }

@@ -177,13 +177,16 @@ namespace Fidels
 
         private void dataGrid2_SelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e)
         {
-            Debug.WriteLine("selected cells changed");
             try
             {
                 service.updateStocks(stocks);
+                lblStatus.Content = "Updated";
+                lblStatus.Foreground = Brushes.Green;
             }
             catch (Exception ex)
             {
+                lblStatus.Content = "Failed";
+                lblStatus.Foreground = Brushes.Red;
                 MessageBox.Show("Failed to update stocks\n\n" + ex.Message + "\n\n" + ex.StackTrace);
             }
         }
@@ -191,6 +194,11 @@ namespace Fidels
         private void Grid_LostFocus(object sender, RoutedEventArgs e)
         {
             //may or may not be useful
+        }
+
+        private void dataGrid2_PreparingCellForEdit(object sender, DataGridPreparingCellForEditEventArgs e)
+        {     
+            lblStatus.Content = "";
         }
        
     }

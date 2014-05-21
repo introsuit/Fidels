@@ -64,7 +64,7 @@
 
                     <Grid VerticalAlignment="Stretch" Margin="0,0,0,0" LostFocus="Grid_LostFocus">
 
-                    <DataGrid CanUserAddRows="False" AutoGenerateColumns="False" Height="350" HorizontalAlignment="Left" Margin="5,40,10,0" Name="dataGrid2" VerticalAlignment="Top" SelectionChanged="dataGrid2_SelectionChanged" SelectedCellsChanged="dataGrid2_SelectedCellsChanged">
+                    <DataGrid CanUserAddRows="False" AutoGenerateColumns="False" Height="350" HorizontalAlignment="Left" Margin="5,40,10,0" Name="dataGrid2" VerticalAlignment="Top" SelectionChanged="dataGrid2_SelectionChanged" SelectedCellsChanged="dataGrid2_SelectedCellsChanged" PreparingCellForEdit="dataGrid2_PreparingCellForEdit">
                             <DataGrid.GroupStyle>
                                 <GroupStyle ContainerStyle="{StaticResource GroupHeaderStyle}">
                                     <GroupStyle.Panel>
@@ -95,6 +95,7 @@
                     <Label Height="28" HorizontalAlignment="Left" Margin="529,260,0,0" Name="lblBottlesSold" VerticalAlignment="Top" />
                     <Label Content="Amount to buy" Height="28" HorizontalAlignment="Left" Margin="706,98,0,0" Name="label10" VerticalAlignment="Top" FontWeight="Bold" FontSize="16" />
                     <Label Height="28" HorizontalAlignment="Left" Margin="706,150,0,0" Name="lblAmountTobuy" VerticalAlignment="Top" FontWeight="Bold" FontSize="16" />
+                    <Label Content="" Height="28" HorizontalAlignment="Left" Margin="529,362,0,0" Name="lblStatus" VerticalAlignment="Top" Foreground="Green" />
                 </Grid>
                
 
