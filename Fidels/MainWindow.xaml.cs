@@ -16,6 +16,7 @@ using System.Data;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
+using System.Collections.Specialized;
 
 namespace Fidels
 {
@@ -56,8 +57,56 @@ namespace Fidels
                     cmbWeek.SelectedIndex = i;
                 }
             }
-            //service.ensureWeek();
+            
             syncStocks();
+
+            //TODO highlighting doesn't work when app is started
+            highlightRowsToBuy(); 
+        }
+
+        private struct StockValues
+        {
+            public int totalStock, amountToBuy;
+            public decimal stockValue;
+        }
+
+        //retrieves stock values from stocks dataTable of given row index
+        private StockValues getStockValues(int rowIndex)
+        {
+            decimal price = stocks.Rows[rowIndex].Field<decimal>("unit_price");
+            int officeStock = stocks.Rows[rowIndex].Field<int>("office_stock");
+            int display = stocks.Rows[rowIndex].Field<int>("display");
+            int speedRail = stocks.Rows[rowIndex].Field<int>("speed_rail");
+            int barStock = stocks.Rows[rowIndex].Field<int>("stock_bar");
+            int minimumStock = stocks.Rows[rowIndex].Field<int>("min_stock");
+
+            int totalStock = officeStock + display + speedRail + barStock;
+            decimal stockValue = totalStock * price;
+            int ammountToBuy = minimumStock - totalStock;
+
+            StockValues sValues = new StockValues();
+            sValues.totalStock = totalStock;
+            sValues.stockValue = stockValue;
+            sValues.amountToBuy = ammountToBuy;
+            return sValues;
+        }
+
+        private void highlightRowsToBuy()
+        {
+            Debug.WriteLine("Highlighting");
+            dataGrid2.UpdateLayout();
+            for (int i = 0; i < stocks.Rows.Count; i++)
+            {
+                StockValues sValues = getStockValues(i);
+                if (sValues.amountToBuy > 0)
+                {
+                    DataGridRow dataGridRow = dataGrid2.ItemContainerGenerator.ContainerFromIndex(i) as DataGridRow;
+                    if (dataGridRow != null)
+                    {
+                        dataGridRow.Background = Brushes.Red;
+                    }
+                }              
+            }
         }
 
         private void syncStocks()
@@ -72,7 +121,7 @@ namespace Fidels
                 stocks = service.getStocks(year, month, weekNo);
                 dataGrid2.ItemsSource = stocks.AsDataView();
                 dataGrid2.SelectedValuePath = "stock_id";
-
+                
                 ICollectionView view = CollectionViewSource.GetDefaultView(dataGrid2.ItemsSource);
                 view.GroupDescriptions.Add(new PropertyGroupDescription("product_name"));
             }
@@ -92,7 +141,7 @@ namespace Fidels
                 int weekNo = Int32.Parse(cmbWeek.SelectedValue.ToString());
 
                 ICollectionView view = CollectionViewSource.GetDefaultView(dataGrid3.ItemsSource);
-                view.GroupDescriptions.Add(new PropertyGroupDescription("name"));
+                view.GroupDescriptions.Add(new PropertyGroupDescription("name"));         
             }
             catch (Exception ex)
             {
@@ -100,13 +149,28 @@ namespace Fidels
             }
         }
 
+        private void updateCmbWeeks()
+        {
+            cmbWeek.Items.Clear();
+            
+            int year = Int32.Parse(((ComboBoxItem)cmbYear.SelectedItem).Content.ToString());
+            int month = Int32.Parse(((ComboBoxItem)cmbMonth.SelectedItem).Tag.ToString());
+
+            WeeksRange weekR = service.getWeeksRange(year, month);
+            for (int i = weekR.from; i <= weekR.to; i++)
+            {
+                cmbWeek.Items.Add(i);
+            }
+            cmbWeek.SelectedIndex = 0;     
+        }
+
         private void cmbWeek_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            Debug.WriteLine("cmbWeek_SelectionChanged");
             if (this.IsLoaded && allowSync)
             {
                 dataGrid2.SelectedIndex = -1;
-                syncStocks();
+                syncStocks();               
+                highlightRowsToBuy();
             }
         }
 
@@ -119,14 +183,13 @@ namespace Fidels
 
                 updateCmbWeeks();
                 syncStocks();
-
+                highlightRowsToBuy();
                 allowSync = true;
             }
         }
 
         private void cmbYear_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-
             if (this.IsLoaded)
             {
                 dataGrid2.SelectedIndex = -1;
@@ -134,72 +197,28 @@ namespace Fidels
             }
         }
 
-        private void updateCmbWeeks()
-        {
-            cmbWeek.Items.Clear();
-
-            int year = Int32.Parse(((ComboBoxItem)cmbYear.SelectedItem).Content.ToString());
-            int month = Int32.Parse(((ComboBoxItem)cmbMonth.SelectedItem).Tag.ToString());
-
-            WeeksRange weekR = service.getWeeksRange(year, month);
-            for (int i = weekR.from; i <= weekR.to; i++)
-            {
-                cmbWeek.Items.Add(i);
-            }
-            cmbWeek.SelectedIndex = 0;
-        }
-
         private void dataGrid2_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (dataGrid2.SelectedIndex != -1)
+            int selectedIndex = dataGrid2.SelectedIndex;
+            if (selectedIndex != -1)
             {
-                decimal price = stocks.Rows[dataGrid2.SelectedIndex].Field<decimal>("unit_price");
-                int officeStock = stocks.Rows[dataGrid2.SelectedIndex].Field<int>("office_stock");
-                int display = stocks.Rows[dataGrid2.SelectedIndex].Field<int>("display");
-                int speedRail = stocks.Rows[dataGrid2.SelectedIndex].Field<int>("speed_rail");
-                int barStock = stocks.Rows[dataGrid2.SelectedIndex].Field<int>("stock_bar");
-                int minimumStock = stocks.Rows[dataGrid2.SelectedIndex].Field<int>("min_stock");
-                int totalStock = officeStock + display + speedRail + barStock;
-                decimal stockValue = totalStock * price;
-                int ammountToBuy = minimumStock - totalStock;
-                lblTotalStock.Content = totalStock;
-                lblStockValue.Content = stockValue;
-                if (ammountToBuy <= 0)
+                lblStatus.Content = "";
+                StockValues sValues = getStockValues(selectedIndex);
+
+                lblTotalStock.Content = sValues.totalStock;
+                lblStockValue.Content = sValues.stockValue;
+
+                if (sValues.amountToBuy <= 0)
                 {
                     lblAmountTobuy.Content = "none";
                     lblAmountTobuy.Foreground = Brushes.Green;
                 }
                 else
                 {
-                    lblAmountTobuy.Content = ammountToBuy;
+                    lblAmountTobuy.Content = sValues.amountToBuy;
                     lblAmountTobuy.Foreground = Brushes.Red;
                 }
             }
-        }
-
-        private void dataGrid2_SelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e)
-        {
-            if (stocksNeedUpdate)
-            {
-                try
-                {
-                    service.updateStocks(stocks);
-                    lblStatus.Content = "Updated";
-                    lblStatus.Foreground = Brushes.Green;
-                }
-                catch (Exception ex)
-                {
-                    lblStatus.Content = "Failed";
-                    lblStatus.Foreground = Brushes.Red;
-                    MessageBox.Show("Failed to update stocks\n\n" + ex.Message + "\n\n" + ex.StackTrace);
-                }
-                stocksNeedUpdate = false;
-            }
-        }
-
-        private void Grid_LostFocus(object sender, RoutedEventArgs e)
-        {
-            //may or may not be useful
         }
 
         private void dataGrid2_PreparingCellForEdit(object sender, DataGridPreparingCellForEditEventArgs e)
@@ -219,6 +238,29 @@ namespace Fidels
         private void dataGrid2_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
         {
             stocksNeedUpdate = true;
+        }
+
+        private void dataGrid2_CurrentCellChanged(object sender, EventArgs e)
+        {
+            if (stocksNeedUpdate)
+            {
+                try
+                {
+                    service.updateStocks(stocks);
+                    lblStatus.Content = "Updated";
+                    lblStatus.Foreground = Brushes.Green;
+
+                    highlightRowsToBuy();
+                }
+                catch (Exception ex)
+                {
+                    lblStatus.Content = "Failed";
+                    lblStatus.Foreground = Brushes.Red;
+                    MessageBox.Show("Failed to update stocks\n\n" + ex.Message + "\n\n" + ex.StackTrace);
+                }
+                stocksNeedUpdate = false;
+            }
+            
         }
 
     }

@@ -63,9 +63,9 @@
 
                
 
-                    <Grid VerticalAlignment="Stretch" Margin="0,0,0,0" LostFocus="Grid_LostFocus">
+                    <Grid VerticalAlignment="Stretch" Margin="0,0,0,0">
 
-                    <DataGrid CanUserAddRows="False" AutoGenerateColumns="False" Height="350" HorizontalAlignment="Left" Margin="5,40,10,0" Name="dataGrid2" VerticalAlignment="Top" SelectionChanged="dataGrid2_SelectionChanged" SelectedCellsChanged="dataGrid2_SelectedCellsChanged" PreparingCellForEdit="dataGrid2_PreparingCellForEdit" CellEditEnding="dataGrid2_CellEditEnding">
+                    <DataGrid CanUserAddRows="False" AutoGenerateColumns="False" Height="350" HorizontalAlignment="Left" Margin="5,40,10,0" Name="dataGrid2" VerticalAlignment="Top" SelectionChanged="dataGrid2_SelectionChanged" PreparingCellForEdit="dataGrid2_PreparingCellForEdit" CellEditEnding="dataGrid2_CellEditEnding" CurrentCellChanged="dataGrid2_CurrentCellChanged">
                             <DataGrid.GroupStyle>
                                 <GroupStyle ContainerStyle="{StaticResource GroupHeaderStyle}">
                                     <GroupStyle.Panel>
@@ -85,7 +85,7 @@
                                 <DataGridTextColumn Header="Speed Rail" Binding="{Binding speed_rail}"/>
                                 <DataGridTextColumn Header="Bar Stock" Binding="{Binding stock_bar}"/>
                                 <DataGridTextColumn Header="Delivery" Binding="{Binding delivery}"/>
-                                <DataGridTextColumn Header="Minimum Stock" Binding="{Binding min_stock}"/>                    
+                            <DataGridTextColumn Header="Minimum Stock" Binding="{Binding min_stock}"/>                    
                             </DataGrid.Columns>
                         </DataGrid>
                     <Label Content="Total Stock" Height="28" HorizontalAlignment="Left" Margin="529,40,0,0" Name="label1" VerticalAlignment="Top" />
