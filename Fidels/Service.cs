@@ -137,7 +137,7 @@ namespace Fidels
                         dataTable.Rows[i].SetField(col,DateTime.Now);
                     }
                     newTable.AcceptChanges();
-
+                    updateStocks(dataTable);
                 }
             }
 
@@ -231,6 +231,21 @@ namespace Fidels
             parameter.SourceVersion = DataRowVersion.Original;
 
             adapter.UpdateCommand = command;
+
+            command = new SqlCommand(
+               "INSERT stock SET unit_price = @unit_price, speed_rail = @speed_rail, stock_bar = @stock_bar, display = @display, office_stock = @office_stock, min_stock = @min_stock, date = @date, delivery = @delivery ", connection);
+
+            // Add the parameters for the InsertCommand.
+            command.Parameters.Add("@unit_price", SqlDbType.Decimal, 2, "unit_price");
+            command.Parameters.Add("@speed_rail", SqlDbType.Int, 2, "speed_rail");
+            command.Parameters.Add("@stock_bar", SqlDbType.Int, 2, "stock_bar");
+            command.Parameters.Add("@display", SqlDbType.Int, 2, "display");
+            command.Parameters.Add("@office_stock", SqlDbType.Int, 2, "office_stock");
+            command.Parameters.Add("@min_stock", SqlDbType.Int, 2, "min_stock");
+            command.Parameters.Add("@date", SqlDbType.Date, 2, "date");
+            command.Parameters.Add("@delivery", SqlDbType.Int, 2, "delivery");
+
+            adapter.InsertCommand = command;
 
             return adapter;
         }

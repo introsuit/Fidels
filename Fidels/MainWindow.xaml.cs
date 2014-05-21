@@ -26,7 +26,7 @@ namespace Fidels
     {
         private Service service = Service.getInstance();
         private DataTable stocks;
-        private bool allowSync = false;
+        private bool allowSync = true;
         private bool stocksNeedUpdate = false;
 
         public MainWindow()
