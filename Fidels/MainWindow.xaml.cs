@@ -56,6 +56,13 @@ namespace Fidels
                 }
             }
             //service.ensureWeek();
+
+            //Update company list combobox for creating faktura
+            combobox1.DataContext = service.getCompanyNames(
+                Int32.Parse(((ComboBoxItem)cmbYear.SelectedItem).Content.ToString()),
+                Int32.Parse(((ComboBoxItem)cmbMonth.SelectedItem).Tag.ToString()));
+            combobox1.DisplayMemberPath = "name";
+            combobox1.SelectedValuePath = "company_id";
         }
 
         private void syncStocks()

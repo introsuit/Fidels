@@ -241,6 +241,18 @@ namespace Fidels
             return adapter;
         }
 
+        public DataTable getCompanyNames(int year, int month)
+        {
+            SqlDataAdapter adapter = new SqlDataAdapter();
+            SqlCommand command = new SqlCommand("SELECT * FROM company", connection);
+            adapter.SelectCommand = command;
+            DataTable dtFakturaCompanyList = new DataTable();
+            adapter.Fill(dtFakturaCompanyList);
+            Debug.WriteLine(dtFakturaCompanyList.Rows.Count);
+            return dtFakturaCompanyList;
+        }
+
+
         public void updateStocks(DataTable dataTable)
         {
             SqlDataAdapter adapter = getStocksAdapter(connection, 0, 0);

@@ -22,8 +22,8 @@
     </Window.Resources>
 
     <Grid ShowGridLines="False">
-       
-        
+
+
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -52,7 +52,7 @@
             <ComboBoxItem Tag="12">December</ComboBoxItem>
         </ComboBox>
         <ComboBox Height="23" HorizontalAlignment="Left" Margin="310,39,0,0" Name="cmbWeek" VerticalAlignment="Top" Width="120" SelectionChanged="cmbWeek_SelectionChanged">
-          
+
         </ComboBox>
         <Label Content="Month" Height="28" HorizontalAlignment="Left" Margin="163,10,0,0" Name="label3" VerticalAlignment="Top" />
         <Label Content="Week" Height="28" HorizontalAlignment="Left" Margin="310,10,0,0" Name="label4" VerticalAlignment="Top" />
@@ -61,33 +61,33 @@
         <TabControl Grid.Row="1" Height="Auto" Margin="10,10,10,10" Name="tabControl1" VerticalAlignment="Top" Width="920">
             <TabItem Header="Stock" Name="Stock">
 
-               
 
-                    <Grid VerticalAlignment="Stretch" Margin="0,0,0,0" LostFocus="Grid_LostFocus">
+
+                <Grid VerticalAlignment="Stretch" Margin="0,0,0,0" LostFocus="Grid_LostFocus">
 
                     <DataGrid CanUserAddRows="False" AutoGenerateColumns="False" Height="350" HorizontalAlignment="Left" Margin="5,40,10,0" Name="dataGrid2" VerticalAlignment="Top" SelectionChanged="dataGrid2_SelectionChanged" SelectedCellsChanged="dataGrid2_SelectedCellsChanged" PreparingCellForEdit="dataGrid2_PreparingCellForEdit">
-                            <DataGrid.GroupStyle>
-                                <GroupStyle ContainerStyle="{StaticResource GroupHeaderStyle}">
-                                    <GroupStyle.Panel>
-                                        <ItemsPanelTemplate>
-                                            <DataGridRowsPresenter/>
-                                        </ItemsPanelTemplate>
-                                    </GroupStyle.Panel>
-                                </GroupStyle>
-                            </DataGrid.GroupStyle>
+                        <DataGrid.GroupStyle>
+                            <GroupStyle ContainerStyle="{StaticResource GroupHeaderStyle}">
+                                <GroupStyle.Panel>
+                                    <ItemsPanelTemplate>
+                                        <DataGridRowsPresenter/>
+                                    </ItemsPanelTemplate>
+                                </GroupStyle.Panel>
+                            </GroupStyle>
+                        </DataGrid.GroupStyle>
 
-                            <DataGrid.Columns>
-                                <DataGridTextColumn Header="Name" Binding="{Binding name}"/>
-                                <DataGridTextColumn Header="Price" Binding="{Binding unit_price}"/>
-                                <DataGridTextColumn Header="Office Stock" Binding="{Binding office_stock}"/>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Name" Binding="{Binding name}"/>
+                            <DataGridTextColumn Header="Price" Binding="{Binding unit_price}"/>
+                            <DataGridTextColumn Header="Office Stock" Binding="{Binding office_stock}"/>
 
-                                <DataGridTextColumn Header="Display" Binding="{Binding display}"/>
-                                <DataGridTextColumn Header="Speed Rail" Binding="{Binding speed_rail}"/>
-                                <DataGridTextColumn Header="Bar Stock" Binding="{Binding stock_bar}"/>
-                                <DataGridTextColumn Header="Delivery" Binding="{Binding delivery}"/>
-                                <DataGridTextColumn Header="Minimum Stock" Binding="{Binding min_stock}"/>                    
-                            </DataGrid.Columns>
-                        </DataGrid>
+                            <DataGridTextColumn Header="Display" Binding="{Binding display}"/>
+                            <DataGridTextColumn Header="Speed Rail" Binding="{Binding speed_rail}"/>
+                            <DataGridTextColumn Header="Bar Stock" Binding="{Binding stock_bar}"/>
+                            <DataGridTextColumn Header="Delivery" Binding="{Binding delivery}"/>
+                            <DataGridTextColumn Header="Minimum Stock" Binding="{Binding min_stock}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
                     <Label Content="Total Stock" Height="28" HorizontalAlignment="Left" Margin="529,40,0,0" Name="label1" VerticalAlignment="Top" />
                     <Label Height="28" HorizontalAlignment="Left" Margin="529,66,0,0" Name="lblTotalStock" VerticalAlignment="Top" />
                     <Label Content="Stock Value" Height="28" HorizontalAlignment="Left" Margin="529,124,0,0" Name="label6" VerticalAlignment="Top" />
@@ -98,43 +98,51 @@
                     <Label Height="28" HorizontalAlignment="Left" Margin="706,150,0,0" Name="lblAmountTobuy" VerticalAlignment="Top" FontWeight="Bold" FontSize="16" />
                     <Label Content="" Height="28" HorizontalAlignment="Left" Margin="529,362,0,0" Name="lblStatus" VerticalAlignment="Top" Foreground="Green" />
                 </Grid>
-               
+
 
             </TabItem>
             <TabItem Header="Factura" Name="Factura" >
 
-                <ScrollViewer HorizontalAlignment="Stretch" Margin="0,0,0,0" Name="scrollViewer2" VerticalAlignment="Stretch">
 
-                    <Grid VerticalAlignment="Stretch" Margin="0,0,0,0">
 
-                        <DataGrid CanUserAddRows="False" AutoGenerateColumns="False" Height="200" HorizontalAlignment="Left" Margin="5,40,0,0" Name="dataGrid3" VerticalAlignment="Top" IsReadOnly="False">
-                            <DataGrid.GroupStyle>
-                                <GroupStyle ContainerStyle="{StaticResource GroupHeaderStyle}">
-                                    <GroupStyle.Panel>
-                                        <ItemsPanelTemplate>
-                                            <DataGridRowsPresenter/>
-                                        </ItemsPanelTemplate>
-                                    </GroupStyle.Panel>
-                                </GroupStyle>
-                            </DataGrid.GroupStyle>
+                <Grid VerticalAlignment="Stretch" Margin="0,0,0,0">
+                    <Button x:Name="addBtn" Margin="841,202,10,10" Content="Add"/>
+                    <Button x:Name="deleteBtn" Margin="773,202,78,10" Content="Delete"/>
+                    <DataGrid CanUserAddRows="False" AutoGenerateColumns="False" Height="200" HorizontalAlignment="Left" Margin="5,40,0,0" Name="dataGrid3" VerticalAlignment="Top" IsReadOnly="False">
+                        <DataGrid.GroupStyle>
+                            <GroupStyle ContainerStyle="{StaticResource GroupHeaderStyle}">
+                                <GroupStyle.Panel>
+                                    <ItemsPanelTemplate>
+                                        <DataGridRowsPresenter/>
+                                    </ItemsPanelTemplate>
+                                </GroupStyle.Panel>
+                            </GroupStyle>
+                        </DataGrid.GroupStyle>
 
-                            <DataGrid.Columns>
-                                <DataGridTextColumn Header="Date" Binding="{Binding date}"/>
-                                <DataGridTextColumn Header="Serial No" Binding="{Binding serial_no}"/>
-                                <DataGridTextColumn Header="Price" Binding="{Binding price}"/>
-                            </DataGrid.Columns>
-                        </DataGrid>
-                  
-                    </Grid>
-                </ScrollViewer>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Date" Binding="{Binding date}"/>
+                            <DataGridTextColumn Header="Serial No" Binding="{Binding serial_no}"/>
+                            <DataGridTextColumn Header="Price" Binding="{Binding price}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <TextBox TextWrapping="Wrap" Margin="553,70,129,151"/>
+                    <TextBox TextWrapping="Wrap" Margin="552,99,130,122"/>
+                    <Label Content="Company:" HorizontalAlignment="Left" Margin="478,40,0,0" VerticalAlignment="Top"/>
+                    <Label Content="Serial number:&#xD;&#xA;" HorizontalAlignment="Left" Margin="455,66,0,0" VerticalAlignment="Top"/>
+                    <Label Content="Amount (DKK):" HorizontalAlignment="Left" Margin="453,90,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.598,0.015"/>
+                    <ComboBox x:Name="combobox1" HorizontalAlignment="Left" VerticalAlignment="Top" Width="120" Margin="553,40,0,0"/>
+
+                </Grid>
+
 
             </TabItem>
             <TabItem Header="Staff" Name="Staff" >
-                
+
             </TabItem>
             <TabItem Header="Budget" Name="Budget" >
 
             </TabItem>
+
         </TabControl>
         <ComboBox Height="23" HorizontalAlignment="Left" Margin="15,39,0,0" Name="cmbYear" VerticalAlignment="Top" Width="120" SelectionChanged="cmbYear_SelectionChanged">
             <ComboBoxItem>2014</ComboBoxItem>
