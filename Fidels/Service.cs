@@ -125,7 +125,7 @@ namespace Fidels
                 newTable.Rows[i].SetField(col, DateTime.Now);
             }
             newTable.AcceptChanges();
-            updateStocks(newTable); // inserts products datatable back to database with new date. (not working)
+            createStocks(newTable); // inserts products datatable back to database with new date. (not working)
             return newTable;
         }
 
@@ -218,22 +218,27 @@ namespace Fidels
 
             adapter.UpdateCommand = command;
 
-            command = new SqlCommand("INSERT INTO stock VALUES (@product_id, @unit_price, @speed_rail, @stock_bar, @display, @office_stock, @min_stock, @date, @delivery)", connection);
-
-            // Add the parameters for the InsertCommand.
-            command.Parameters.Add("@product_id", SqlDbType.Int, 2, "product_id");
-            command.Parameters.Add("@unit_price", SqlDbType.Decimal, 2, "unit_price");
-            command.Parameters.Add("@speed_rail", SqlDbType.Int, 2, "speed_rail");
-            command.Parameters.Add("@stock_bar", SqlDbType.Int, 2, "stock_bar");
-            command.Parameters.Add("@display", SqlDbType.Int, 2, "display");
-            command.Parameters.Add("@office_stock", SqlDbType.Int, 2, "office_stock");
-            command.Parameters.Add("@min_stock", SqlDbType.Int, 2, "min_stock");
-            command.Parameters.Add("@date", SqlDbType.Date, 2, "date");
-            command.Parameters.Add("@delivery", SqlDbType.Int, 2, "delivery");
-
-            adapter.InsertCommand = command;
-
             return adapter;
+        }
+
+        public void createStocks(DataTable dataTable)
+        {
+            connection.Open();
+            for (int i = 0; i < dataTable.Rows.Count; i++)
+            {
+                SqlCommand command = new SqlCommand("INSERT INTO stock VALUES (@product_id, @unit_price, @speed_rail, @stock_bar, @display, @office_stock, @min_stock, @date, @delivery)", connection);
+                command.Parameters.Add("product_id", dataTable.Rows[i].Field<int>("product_id"));
+                command.Parameters.Add("unit_price", dataTable.Rows[i].Field<decimal>("unit_price"));
+                command.Parameters.Add("speed_rail", dataTable.Rows[i].Field<int>("speed_rail"));
+                command.Parameters.Add("stock_bar", dataTable.Rows[i].Field<int>("stock_bar"));
+                command.Parameters.Add("display", dataTable.Rows[i].Field<int>("display"));
+                command.Parameters.Add("office_stock", dataTable.Rows[i].Field<int>("office_stock"));
+                command.Parameters.Add("min_stock", dataTable.Rows[i].Field<int>("min_stock"));
+                command.Parameters.Add("date", dataTable.Rows[i].Field<DateTime>("date"));
+                command.Parameters.Add("delivery", dataTable.Rows[i].Field<int>("delivery"));
+                command.ExecuteNonQuery();
+            }
+            connection.Close();
         }
 
         private SqlDataAdapter getFakturasAdapter(SqlConnection connection, int year, int month)
