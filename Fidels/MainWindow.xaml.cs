@@ -100,11 +100,25 @@ namespace Fidels
                 StockValues sValues = getStockValues(i);
                 if (sValues.amountToBuy > 0)
                 {
-                    DataGridRow dataGridRow = dataGrid2.ItemContainerGenerator.ContainerFromIndex(i) as DataGridRow;
-                    if (dataGridRow != null)
-                    {
-                        dataGridRow.Background = Brushes.Red;
-                    }
+                    
+                    
+                        //DataRow dr = stocks.Rows[i];
+                        //DataRow newRow = stocks.NewRow();
+                        //// We "clone" the row
+                        //newRow.ItemArray = dr.ItemArray;
+                        //// We remove the old and insert the new
+                        //stocks.Rows.Remove(dr);
+                        //stocks.Rows.InsertAt(newRow, 0);
+
+                        //dataGrid2.UpdateLayout();
+
+                        DataGridRow dataGridRow = dataGrid2.ItemContainerGenerator.ContainerFromIndex(0) as DataGridRow;
+                        Debug.WriteLine(dataGridRow);
+                        if (dataGridRow != null)
+                        {
+                            dataGridRow.Background = Brushes.Red;
+                        }
+
                 }              
             }
         }

@@ -62,48 +62,6 @@ namespace Fidels
             return cal.GetWeekOfYear(date, dfi.CalendarWeekRule, dfi.FirstDayOfWeek);
         }
 
-        public bool ensureWeek()
-        {
-            bool inserted = false;
-            DateTime now = DateTime.Now;
-            DateTimeFormatInfo dfi = DateTimeFormatInfo.CurrentInfo;
-            System.Globalization.Calendar cal = dfi.Calendar;
-            int week = cal.GetWeekOfYear(now, dfi.CalendarWeekRule, dfi.FirstDayOfWeek);
-
-            SqlConnection con = dao.getConnection();
-
-            SqlDataReader reader = null;
-            try
-            {
-                SqlCommand cmd = new SqlCommand("SELECT * FROM stock " + "WHERE username = @username AND password = @password", con);
-                //cmd.CommandText = "SELECT * FROM customer";
-                //cmd.Parameters.Add(new SqlParameter("username", username));
-                //cmd.Parameters.Add(new SqlParameter("password", password));
-                con.Open();
-                reader = cmd.ExecuteReader();
-                while (reader.Read())
-                {
-
-                }
-            }
-            finally
-            {
-                // 3. close the reader
-                if (reader != null)
-                {
-                    reader.Close();
-                }
-
-                // close the connection
-                if (con != null)
-                {
-                    con.Close();
-                }
-            }
-
-            return inserted;
-        }
-
         // returns stocks from database for set date
         // if stocks is empty, creates new stocks from default values
         // or creates new stocks from copy of last weeks values
