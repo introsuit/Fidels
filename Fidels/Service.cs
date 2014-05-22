@@ -109,13 +109,13 @@ namespace Fidels
         // or creates new stocks from copy of last weeks values
         public DataTable getStocks(int year, int month, int weekNo)
         {
-            
+
             DataTable dataTable = sortDataTable(year, month, weekNo);
             //if there is no weeks in database for this date, it checks if returned datatable contains
             //0 rows and selected week in combobox is exactly the same as DateTime.Now
             if (dataTable.Rows.Count == 0 && getWeek(DateTime.Now) == weekNo)
             {
-                
+
                 if (weekNo > 1)
                 {
                     // if its first week of the month
@@ -260,10 +260,10 @@ namespace Fidels
 
             adapter.UpdateCommand = command;
 
-            command = new SqlCommand(
-               "INSERT stock SET unit_price = @unit_price, speed_rail = @speed_rail, stock_bar = @stock_bar, display = @display, office_stock = @office_stock, min_stock = @min_stock, date = @date, delivery = @delivery ", connection);
+            command = new SqlCommand("INSERT INTO stock VALUES (@product_id, @unit_price, @speed_rail, @stock_bar, @display, @office_stock, @min_stock, @date, @delivery)", connection);
 
             // Add the parameters for the InsertCommand.
+            command.Parameters.Add("@product_id", SqlDbType.Int, 2, "product_id");
             command.Parameters.Add("@unit_price", SqlDbType.Decimal, 2, "unit_price");
             command.Parameters.Add("@speed_rail", SqlDbType.Int, 2, "speed_rail");
             command.Parameters.Add("@stock_bar", SqlDbType.Int, 2, "stock_bar");
