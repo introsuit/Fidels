@@ -17,6 +17,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Collections.Specialized;
+using System.Collections;
 
 namespace Fidels
 {
@@ -58,10 +59,7 @@ namespace Fidels
                 }
             }
             
-            syncStocks();
-
-            //TODO highlighting doesn't work when app is started
-            highlightRowsToBuy(); 
+            syncStocks();         
         }
 
         private struct StockValues
@@ -95,31 +93,45 @@ namespace Fidels
         {
             Debug.WriteLine("Highlighting");
             dataGrid2.UpdateLayout();
+
             for (int i = 0; i < stocks.Rows.Count; i++)
             {
                 StockValues sValues = getStockValues(i);
-                if (sValues.amountToBuy > 0)
+
+                DataGridRow dataGridRow = dataGrid2.ItemContainerGenerator.ContainerFromIndex(i) as DataGridRow;
+                if (dataGridRow == null)
                 {
-                    
-                    
-                        //DataRow dr = stocks.Rows[i];
-                        //DataRow newRow = stocks.NewRow();
-                        //// We "clone" the row
-                        //newRow.ItemArray = dr.ItemArray;
-                        //// We remove the old and insert the new
-                        //stocks.Rows.Remove(dr);
-                        //stocks.Rows.InsertAt(newRow, 0);
+                    return;
+                }
+                DataRowView dataRowView = dataGridRow.Item as DataRowView;
 
-                        //dataGrid2.UpdateLayout();
+                if (sValues.amountToBuy > 0)
+                {                   
+                    dataRowView["rowBackground"] = Brushes.Red;
 
-                        DataGridRow dataGridRow = dataGrid2.ItemContainerGenerator.ContainerFromIndex(0) as DataGridRow;
-                        Debug.WriteLine(dataGridRow);
-                        if (dataGridRow != null)
-                        {
-                            dataGridRow.Background = Brushes.Red;
-                        }
+                   // //sorting code. buggy: creates duplicate rows
+                   // DataRow dr = stocks.Rows[i];
+                   // DataRow newRow = stocks.NewRow();
+                   // // We "clone" the row
+                   // newRow.ItemArray = dr.ItemArray;
+                   // // We remove the old and insert the new
+                   // stocks.Rows.Remove(dr);
+                   // stocks.Rows.InsertAt(newRow, 0);
+                   //// dataGrid2.UpdateLayout();
+                   // updateModelIndexes();
+                }
+                else
+                {
+                    dataRowView["rowBackground"] = Brushes.White;
+                }
+            }
+        }
 
-                }              
+        private void updateModelIndexes()
+        {
+            for (int i = 0; i < stocks.Rows.Count; i++)
+            {
+                stocks.Rows[i].SetField<int>(stocks.Columns["modelIndex"], i);
             }
         }
 
@@ -133,6 +145,12 @@ namespace Fidels
                 int weekNo = Int32.Parse(cmbWeek.SelectedValue.ToString());
 
                 stocks = service.getStocks(year, month, weekNo);
+                stocks.Columns.Add("rowBackground", typeof(Brush));
+                stocks.Columns.Add("modelIndex", typeof(int));
+                stocks.AcceptChanges();
+
+                updateModelIndexes();
+
                 dataGrid2.ItemsSource = stocks.AsDataView();
                 dataGrid2.SelectedValuePath = "stock_id";
                 
@@ -213,12 +231,14 @@ namespace Fidels
 
         private void dataGrid2_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            int selectedIndex = dataGrid2.SelectedIndex;
-            if (selectedIndex != -1)
+            if (dataGrid2.SelectedItem != null)
             {
                 lblStatus.Content = "";
-                StockValues sValues = getStockValues(selectedIndex);
 
+                DataRowView dataRowView = ((DataRowView)dataGrid2.SelectedItem);
+                int selectedIndex = (int)(dataRowView["modelIndex"]);
+                
+                StockValues sValues = getStockValues(selectedIndex);
                 lblTotalStock.Content = sValues.totalStock;
                 lblStockValue.Content = sValues.stockValue;
 
@@ -261,6 +281,7 @@ namespace Fidels
                 try
                 {
                     service.updateStocks(stocks);
+                    syncStocks();
                     lblStatus.Content = "Updated";
                     lblStatus.Foreground = Brushes.Green;
 
@@ -275,6 +296,11 @@ namespace Fidels
                 stocksNeedUpdate = false;
             }
             
+        }
+
+        private void dataGrid2_Loaded(object sender, RoutedEventArgs e)
+        {
+            highlightRowsToBuy();
         }
 
     }
