@@ -58,8 +58,8 @@ namespace Fidels
                     cmbWeek.SelectedIndex = i;
                 }
             }
-            
-            syncStocks();         
+
+            syncStocks();
         }
 
         private struct StockValues
@@ -116,7 +116,7 @@ namespace Fidels
 
                 dataGrid2.ItemsSource = stocks.AsDataView();
                 dataGrid2.SelectedValuePath = "stock_id";
-                
+
                 ICollectionView view = CollectionViewSource.GetDefaultView(dataGrid2.ItemsSource);
                 view.GroupDescriptions.Add(new PropertyGroupDescription("product_name"));
             }
@@ -136,7 +136,7 @@ namespace Fidels
                 int weekNo = Int32.Parse(cmbWeek.SelectedValue.ToString());
 
                 ICollectionView view = CollectionViewSource.GetDefaultView(dataGrid3.ItemsSource);
-                view.GroupDescriptions.Add(new PropertyGroupDescription("name"));         
+                view.GroupDescriptions.Add(new PropertyGroupDescription("name"));
             }
             catch (Exception ex)
             {
@@ -147,7 +147,7 @@ namespace Fidels
         private void updateCmbWeeks()
         {
             cmbWeek.Items.Clear();
-            
+
             int year = Int32.Parse(((ComboBoxItem)cmbYear.SelectedItem).Content.ToString());
             int month = Int32.Parse(((ComboBoxItem)cmbMonth.SelectedItem).Tag.ToString());
 
@@ -156,7 +156,7 @@ namespace Fidels
             {
                 cmbWeek.Items.Add(i);
             }
-            cmbWeek.SelectedIndex = 0;     
+            cmbWeek.SelectedIndex = 0;
         }
 
         private void cmbWeek_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -164,7 +164,7 @@ namespace Fidels
             if (this.IsLoaded && allowSync)
             {
                 dataGrid2.SelectedIndex = -1;
-                syncStocks();               
+                syncStocks();
             }
         }
 
@@ -198,7 +198,7 @@ namespace Fidels
 
                 DataRowView dataRowView = ((DataRowView)dataGrid2.SelectedItem);
                 int selectedIndex = (int)(dataRowView["modelIndex"]);
-                
+
                 StockValues sValues = getStockValues(selectedIndex);
                 lblTotalStock.Content = sValues.totalStock;
                 lblStockValue.Content = sValues.stockValue;
@@ -220,7 +220,6 @@ namespace Fidels
         {
             lblStatus.Content = "";
         }
-
 
         private void btnPrint_Click(object sender, RoutedEventArgs e)
         {
@@ -254,7 +253,6 @@ namespace Fidels
                 }
                 stocksNeedUpdate = false;
             }
-            
         }
 
         private void dataGrid2_LoadingRow(object sender, DataGridRowEventArgs e)
@@ -263,7 +261,7 @@ namespace Fidels
             DataRowView dataRowView = ((DataRowView)row.Item);
 
             int selectedIndex = (int)(dataRowView["modelIndex"]);
-            StockValues sValues = getStockValues(selectedIndex);           
+            StockValues sValues = getStockValues(selectedIndex);
 
             if (sValues.amountToBuy > 0)
             {
@@ -275,6 +273,36 @@ namespace Fidels
         {
             CreateProduct window = new CreateProduct();
             window.ShowDialog();
+        }
+        private void button2_Click(object sender, RoutedEventArgs e)
+        {
+            object selItem = dataGrid2.SelectedItem;
+            if (selItem == null)
+            {
+                MessageBox.Show("Select a product first.");
+                return;
+            }
+
+            if (MessageBox.Show("Are you sure you want to delete this product?", "Question", MessageBoxButton.YesNo) == MessageBoxResult.No)
+            {
+                return;
+            }
+
+            DataRowView dataRowView = ((DataRowView)selItem);
+            int selectedIndex = (int)(dataRowView["modelIndex"]);
+            int product_id = stocks.Rows[selectedIndex].Field<int>("product_id");
+
+            bool deleted = service.deleteProduct(product_id);
+            if (!deleted)
+            {
+                lblStatus.Content = "Failed to delete";
+                lblStatus.Foreground = Brushes.Red;
+                return;
+            }
+
+            lblStatus.Content = "Deleted";
+            lblStatus.Foreground = Brushes.Red;
+            syncStocks();
         }
     }
 }

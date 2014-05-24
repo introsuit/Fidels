@@ -221,6 +221,43 @@ namespace Fidels
             return adapter;
         }
 
+        private DateTime firstDateOfWeek(int year, int weekOfYear, System.Globalization.CultureInfo ci)
+        {
+            DateTime jan1 = new DateTime(year, 1, 1);
+            int daysOffset = (int)ci.DateTimeFormat.FirstDayOfWeek - (int)jan1.DayOfWeek;
+            DateTime firstWeekDay = jan1.AddDays(daysOffset);
+            int firstWeek = ci.Calendar.GetWeekOfYear(jan1, ci.DateTimeFormat.CalendarWeekRule, ci.DateTimeFormat.FirstDayOfWeek);
+            if (firstWeek <= 1 || firstWeek > 50)
+            {
+                weekOfYear -= 1;
+            }
+            return firstWeekDay.AddDays(weekOfYear * 7);
+        }
+        
+        public bool deleteProduct(int product_id)
+        {
+            connection.Open();
+            int result = 0;
+
+            //deleting from defaults
+            SqlCommand command = new SqlCommand("DELETE FROM stock WHERE product_id = @product_id AND date = '2001-01-01'", connection);
+            command.Parameters.AddWithValue("product_id", product_id);
+            result += command.ExecuteNonQuery();
+
+            //deleting from today
+            DateTime now = DateTime.Now;
+            DateTime firstDayOfWeek = firstDateOfWeek(now.Year, getWeek(now), CultureInfo.CurrentCulture);
+
+            command = new SqlCommand("DELETE FROM stock WHERE product_id = @product_id AND (date >= @first AND date <= @last)", connection);
+            command.Parameters.AddWithValue("product_id", product_id);
+            command.Parameters.AddWithValue("first", firstDayOfWeek);
+            command.Parameters.AddWithValue("last", firstDayOfWeek.AddDays(6));
+            result += command.ExecuteNonQuery();
+
+            connection.Close();
+            return result > 0;
+        }
+
         public void createStocks(DataTable dataTable)
         {
             connection.Open();
