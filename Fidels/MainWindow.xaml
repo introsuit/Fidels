@@ -64,9 +64,8 @@
 
 
                 <Grid VerticalAlignment="Stretch" Margin="0,0,0,0">
-
-                    <DataGrid CanUserAddRows="False" AutoGenerateColumns="False" Height="373" HorizontalAlignment="Left" Margin="10,10,10,0" Name="dataGrid2" VerticalAlignment="Top" SelectionChanged="dataGrid2_SelectionChanged" PreparingCellForEdit="dataGrid2_PreparingCellForEdit" CellEditEnding="dataGrid2_CellEditEnding" CurrentCellChanged="dataGrid2_CurrentCellChanged" Loaded="dataGrid2_Loaded">
-                        <DataGrid.RowStyle>
+                    <DataGrid CanUserAddRows="False" AutoGenerateColumns="False" Height="373" HorizontalAlignment="Left" Margin="10,10,10,0" Name="dataGrid2" VerticalAlignment="Top" SelectionChanged="dataGrid2_SelectionChanged" PreparingCellForEdit="dataGrid2_PreparingCellForEdit" CellEditEnding="dataGrid2_CellEditEnding" CurrentCellChanged="dataGrid2_CurrentCellChanged" LoadingRow="dataGrid2_LoadedRow">
+                            <DataGrid.RowStyle>
                             <Style TargetType="{x:Type DataGridRow}">
                                 <Setter Property="Background" Value="{Binding rowBackground}"/>
                             </Style>
