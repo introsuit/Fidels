@@ -68,13 +68,13 @@ namespace Fidels
         public DataTable getStocks(int year, int month, int weekNo)
         {
             DataTable dataTable = filterDataTable(year, month, weekNo);
-            
+
             //if there is no weeks in database for this date, it checks if returned datatable contains
             //0 rows and selected week in combobox is exactly the same as DateTime.Now
             if (dataTable.Rows.Count == 0 && getWeek(DateTime.Now) == weekNo)
             {
                 if (weekNo > 1)
-                {                  
+                {
                     // if its first week of the month
                     // it takes copy of previous month's last week products from database
                     // changes its dates to DateTime.Now
@@ -83,14 +83,14 @@ namespace Fidels
                     {
                         dataTable = filterDataTable(year, month - 1, weekNo - 1);
                         dataTable = changeDate(dataTable);
-                        
+
                     }
                     // it takes copy of last week products from database
                     // changes its dates to DateTime.Now
                     // inserts products back to database with new date. (not working)
                     else
                     {
-                        dataTable = filterDataTable(year, month, weekNo - 1);                       
+                        dataTable = filterDataTable(year, month, weekNo - 1);
                         dataTable = changeDate(dataTable);
                     }
                 }
@@ -226,15 +226,15 @@ namespace Fidels
             for (int i = 0; i < dataTable.Rows.Count; i++)
             {
                 SqlCommand command = new SqlCommand("INSERT INTO stock VALUES (@product_id, @unit_price, @speed_rail, @stock_bar, @display, @office_stock, @min_stock, @date, @delivery)", connection);
-                command.Parameters.Add("product_id", dataTable.Rows[i].Field<int>("product_id"));
-                command.Parameters.Add("unit_price", dataTable.Rows[i].Field<decimal>("unit_price"));
-                command.Parameters.Add("speed_rail", dataTable.Rows[i].Field<int>("speed_rail"));
-                command.Parameters.Add("stock_bar", dataTable.Rows[i].Field<int>("stock_bar"));
-                command.Parameters.Add("display", dataTable.Rows[i].Field<int>("display"));
-                command.Parameters.Add("office_stock", dataTable.Rows[i].Field<int>("office_stock"));
-                command.Parameters.Add("min_stock", dataTable.Rows[i].Field<int>("min_stock"));
-                command.Parameters.Add("date", dataTable.Rows[i].Field<DateTime>("date"));
-                command.Parameters.Add("delivery", dataTable.Rows[i].Field<int>("delivery"));
+                command.Parameters.AddWithValue("product_id", dataTable.Rows[i].Field<int>("product_id"));
+                command.Parameters.AddWithValue("unit_price", dataTable.Rows[i].Field<decimal>("unit_price"));
+                command.Parameters.AddWithValue("speed_rail", dataTable.Rows[i].Field<int>("speed_rail"));
+                command.Parameters.AddWithValue("stock_bar", dataTable.Rows[i].Field<int>("stock_bar"));
+                command.Parameters.AddWithValue("display", dataTable.Rows[i].Field<int>("display"));
+                command.Parameters.AddWithValue("office_stock", dataTable.Rows[i].Field<int>("office_stock"));
+                command.Parameters.AddWithValue("min_stock", dataTable.Rows[i].Field<int>("min_stock"));
+                command.Parameters.AddWithValue("date", dataTable.Rows[i].Field<DateTime>("date"));
+                command.Parameters.AddWithValue("delivery", dataTable.Rows[i].Field<int>("delivery"));
                 command.ExecuteNonQuery();
             }
             connection.Close();
