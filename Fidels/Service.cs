@@ -7,6 +7,7 @@ using System.Data;
 using System.Globalization;
 using System.Windows;
 using System.Diagnostics;
+using System.Windows.Controls;
 
 namespace Fidels
 {
@@ -237,6 +238,30 @@ namespace Fidels
                 command.Parameters.AddWithValue("delivery", dataTable.Rows[i].Field<int>("delivery"));
                 command.ExecuteNonQuery();
             }
+            connection.Close();
+        }
+
+        public void updateComboBox(ComboBox comboBox)
+        {
+            connection.Open();
+            SqlCommand sqlCmd = new SqlCommand("SELECT * FROM product_group", connection);
+            SqlDataReader sqlReader = sqlCmd.ExecuteReader();
+            while (sqlReader.Read())
+            {
+                comboBox.Items.Add(sqlReader["product_name"].ToString());
+            }
+            comboBox.SelectedIndex = 0;
+            sqlReader.Close();
+            connection.Close();
+        }
+
+        public void createProduct(string name, int productGroupId)
+        {
+            connection.Open();
+            SqlCommand command = new SqlCommand("INSERT INTO product VALUES (@name, @product_group_id)", connection);
+            command.Parameters.AddWithValue("name", name);
+            command.Parameters.AddWithValue("product_group_id", productGroupId);
+            command.ExecuteNonQuery();
             connection.Close();
         }
 

@@ -270,5 +270,11 @@ namespace Fidels
                 row.Background = Brushes.Red;
             }
         }
+
+        private void button1_Click_1(object sender, RoutedEventArgs e)
+        {
+            CreateProduct window = new CreateProduct();
+            window.ShowDialog();
+        }
     }
 }

@@ -34,7 +34,7 @@
             <ColumnDefinition Width="88*" />
         </Grid.ColumnDefinitions>
 
-        <Button Grid.Row="1" Content="Create" Height="23" HorizontalAlignment="Left" Margin="28,437,0,0" Name="button1" VerticalAlignment="Top" Width="75" />
+        <Button Grid.Row="1" Content="Create" Height="23" HorizontalAlignment="Left" Margin="28,437,0,0" Name="button1" VerticalAlignment="Top" Width="75" Click="button1_Click_1" />
         <Button Grid.Row="1" Content="Remove" Height="23" HorizontalAlignment="Left" Margin="108,437,0,0" Name="button2" VerticalAlignment="Top" Width="75" RenderTransformOrigin="0.413,-0.957" />
         <Button x:Name="btnPrint" Content="Print order" HorizontalAlignment="Left" Margin="855,437,0,0" Grid.Row="1" VerticalAlignment="Top" Width="75" Click="btnPrint_Click"/>
         <ComboBox Height="23" HorizontalAlignment="Left" Margin="188,39,0,0" Name="cmbMonth" VerticalAlignment="Top" Width="120" SelectionChanged="cmbMonth_SelectionChanged">
@@ -64,7 +64,7 @@
 
 
                 <Grid VerticalAlignment="Stretch" Margin="0,0,0,0">
-                    <DataGrid CanUserAddRows="False" AutoGenerateColumns="False" Height="373" HorizontalAlignment="Left" Margin="10,10,10,0" Name="dataGrid2" VerticalAlignment="Top" SelectionChanged="dataGrid2_SelectionChanged" PreparingCellForEdit="dataGrid2_PreparingCellForEdit" CellEditEnding="dataGrid2_CellEditEnding" CurrentCellChanged="dataGrid2_CurrentCellChanged" LoadingRow="dataGrid2_LoadedRow">
+                    <DataGrid CanUserAddRows="False" AutoGenerateColumns="False" Height="373" HorizontalAlignment="Left" Margin="10,10,10,0" Name="dataGrid2" VerticalAlignment="Top" SelectionChanged="dataGrid2_SelectionChanged" PreparingCellForEdit="dataGrid2_PreparingCellForEdit" CellEditEnding="dataGrid2_CellEditEnding" CurrentCellChanged="dataGrid2_CurrentCellChanged" LoadingRow="dataGrid2_LoadingRow">
                             <DataGrid.RowStyle>
                             <Style TargetType="{x:Type DataGridRow}">
                                 <Setter Property="Background" Value="{Binding rowBackground}"/>
