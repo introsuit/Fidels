@@ -89,49 +89,12 @@ namespace Fidels
             return sValues;
         }
 
-        private void highlightRowsToBuy()
-        {
-            Debug.WriteLine("Highlighting");
-            dataGrid2.UpdateLayout();
-
-            for (int i = 0; i < stocks.Rows.Count; i++)
-            {
-                StockValues sValues = getStockValues(i);
-
-                DataGridRow dataGridRow = dataGrid2.ItemContainerGenerator.ContainerFromIndex(i) as DataGridRow;
-                if (dataGridRow == null)
-                {
-                    return;
-                }
-                DataRowView dataRowView = dataGridRow.Item as DataRowView;
-
-                if (sValues.amountToBuy > 0)
-                {                   
-                    dataRowView["rowBackground"] = Brushes.Red;
-
-                   // //sorting code. buggy: creates duplicate rows
-                   // DataRow dr = stocks.Rows[i];
-                   // DataRow newRow = stocks.NewRow();
-                   // // We "clone" the row
-                   // newRow.ItemArray = dr.ItemArray;
-                   // // We remove the old and insert the new
-                   // stocks.Rows.Remove(dr);
-                   // stocks.Rows.InsertAt(newRow, 0);
-                   //// dataGrid2.UpdateLayout();
-                   // updateModelIndexes();
-                }
-                else
-                {
-                    dataRowView["rowBackground"] = Brushes.White;
-                }
-            }
-        }
-
         private void updateModelIndexes()
         {
             for (int i = 0; i < stocks.Rows.Count; i++)
             {
                 stocks.Rows[i].SetField<int>(stocks.Columns["modelIndex"], i);
+                Debug.WriteLine("set stock field " + i + " " + stocks.Rows[i].Field<string>("name"));
             }
         }
 
@@ -202,7 +165,6 @@ namespace Fidels
             {
                 dataGrid2.SelectedIndex = -1;
                 syncStocks();               
-                highlightRowsToBuy();
             }
         }
 
@@ -215,7 +177,6 @@ namespace Fidels
 
                 updateCmbWeeks();
                 syncStocks();
-                highlightRowsToBuy();
                 allowSync = true;
             }
         }
@@ -284,8 +245,6 @@ namespace Fidels
                     syncStocks();
                     lblStatus.Content = "Updated";
                     lblStatus.Foreground = Brushes.Green;
-
-                    highlightRowsToBuy();
                 }
                 catch (Exception ex)
                 {
@@ -298,10 +257,18 @@ namespace Fidels
             
         }
 
-        private void dataGrid2_Loaded(object sender, RoutedEventArgs e)
+        private void dataGrid2_LoadingRow(object sender, DataGridRowEventArgs e)
         {
-            highlightRowsToBuy();
-        }
+            DataGridRow row = e.Row;
+            DataRowView dataRowView = ((DataRowView)row.Item);
 
+            int selectedIndex = (int)(dataRowView["modelIndex"]);
+            StockValues sValues = getStockValues(selectedIndex);           
+
+            if (sValues.amountToBuy > 0)
+            {
+                row.Background = Brushes.Red;
+            }
+        }
     }
 }
