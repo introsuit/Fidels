@@ -8,17 +8,17 @@
         <Label Content="Product group" HorizontalAlignment="Left" Margin="10,42,0,0" VerticalAlignment="Top"/>
         <ComboBox x:Name="cmbProductGroup" HorizontalAlignment="Left" Margin="102,45,0,0" VerticalAlignment="Top" Width="120"/>
         <Label Content="Price" HorizontalAlignment="Left" Margin="61,74,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="txbPrice" HorizontalAlignment="Left" Height="23" Margin="102,74,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="120" TextChanged="txbPrice_TextChanged"/>
+        <TextBox x:Name="txbPrice" HorizontalAlignment="Left" Height="23" Margin="102,74,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="120" TextChanged="textBox_TextChanged"/>
         <Label Content="Office stock" HorizontalAlignment="Left" Margin="25,105,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.542,0.923"/>
-        <TextBox x:Name="txbOfficeStock" HorizontalAlignment="Left" Height="23" Margin="102,105,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="120" TextChanged="txbOfficeStock_TextChanged"/>
+        <TextBox x:Name="txbOfficeStock" HorizontalAlignment="Left" Height="23" Margin="102,105,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="120" TextChanged="textBox_TextChanged"/>
         <Label Content="Display" HorizontalAlignment="Left" Margin="49,134,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="txbDisplay" HorizontalAlignment="Left" Height="23" Margin="102,136,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="120" TextChanged="txbDisplay_TextChanged"/>
+        <TextBox x:Name="txbDisplay" HorizontalAlignment="Left" Height="23" Margin="102,136,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="120" TextChanged="textBox_TextChanged"/>
         <Label Content="Speed Rail" HorizontalAlignment="Left" Margin="32,167,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="txbSpeedRail" HorizontalAlignment="Left" Height="23" Margin="102,167,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="120" TextChanged="txbSpeedRail_TextChanged"/>
+        <TextBox x:Name="txbSpeedRail" HorizontalAlignment="Left" Height="23" Margin="102,167,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="120" TextChanged="textBox_TextChanged"/>
         <Label Content="Bar Stock" HorizontalAlignment="Left" Margin="38,195,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="txbBarStock" HorizontalAlignment="Left" Height="23" Margin="102,198,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="120" TextChanged="txbBarStock_TextChanged"/>
+        <TextBox x:Name="txbBarStock" HorizontalAlignment="Left" Height="23" Margin="102,198,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="120" TextChanged="textBox_TextChanged"/>
         <Label Content="Minimum Stock" HorizontalAlignment="Left" Margin="4,226,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="txbMinimumStock" HorizontalAlignment="Left" Height="23" Margin="102,228,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="120" TextChanged="txbMinimumStock_TextChanged"/>
+        <TextBox x:Name="txbMinimumStock" HorizontalAlignment="Left" Height="23" Margin="102,228,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="120" TextChanged="textBox_TextChanged"/>
         <Button x:Name="Ok" Content="Ok" HorizontalAlignment="Left" Margin="22,266,0,0" VerticalAlignment="Top" Width="75" Click="Ok_Click"/>
         <Button x:Name="Cancel" Content="Cancel" HorizontalAlignment="Left" Margin="102,266,0,0" VerticalAlignment="Top" Width="75" Click="Cancel_Click"/>
 

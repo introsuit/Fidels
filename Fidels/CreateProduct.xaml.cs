@@ -67,34 +67,9 @@ namespace Fidels
             }
         }
 
-        private void txbPrice_TextChanged(object sender, TextChangedEventArgs e)
+        private void textBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            validTextBox(txbPrice);
-        }
-
-        private void txbOfficeStock_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            validTextBox(txbOfficeStock);
-        }
-
-        private void txbDisplay_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            validTextBox(txbDisplay);
-        }
-
-        private void txbSpeedRail_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            validTextBox(txbSpeedRail);
-        }
-
-        private void txbBarStock_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            validTextBox(txbBarStock);
-        }
-
-        private void txbMinimumStock_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            validTextBox(txbMinimumStock);
+            validTextBox((TextBox)sender);
         }
     }
 }
