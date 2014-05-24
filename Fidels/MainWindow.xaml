@@ -64,12 +64,8 @@
 
 
                 <Grid VerticalAlignment="Stretch" Margin="0,0,0,0">
-                    <<<<<<< HEAD
-                    <DataGrid CanUserAddRows="False" AutoGenerateColumns="False" Height="373" HorizontalAlignment="Left" Margin="10,10,10,0" Name="dataGrid2" VerticalAlignment="Top" SelectionChanged="dataGrid2_SelectionChanged" PreparingCellForEdit="dataGrid2_PreparingCellForEdit" CellEditEnding="dataGrid2_CellEditEnding" CurrentCellChanged="dataGrid2_CurrentCellChanged" LoadingRow="dataGrid2_LoadingRow">
-                        =======
-                        <DataGrid SelectionMode="Single" CanUserAddRows="False" AutoGenerateColumns="False" Height="373" HorizontalAlignment="Left" Margin="10,10,10,0" Name="dataGrid2" VerticalAlignment="Top" SelectionChanged="dataGrid2_SelectionChanged" PreparingCellForEdit="dataGrid2_PreparingCellForEdit" CellEditEnding="dataGrid2_CellEditEnding" CurrentCellChanged="dataGrid2_CurrentCellChanged" LoadingRow="dataGrid2_LoadingRow">
-                            >>>>>>> 9b7b92b36370f82b09a4ea727d42a8301cb71f27
-                            <DataGrid.RowStyle>
+                    <DataGrid SelectionMode="Single" CanUserAddRows="False" AutoGenerateColumns="False" Height="373" HorizontalAlignment="Left" Margin="10,10,10,0" Name="dataGrid2" VerticalAlignment="Top" SelectionChanged="dataGrid2_SelectionChanged" PreparingCellForEdit="dataGrid2_PreparingCellForEdit" CellEditEnding="dataGrid2_CellEditEnding" CurrentCellChanged="dataGrid2_CurrentCellChanged" LoadingRow="dataGrid2_LoadingRow">
+                        <DataGrid.RowStyle>
 
                                 <Style TargetType="{x:Type DataGridRow}">
                                     <Setter Property="Background" Value="{Binding rowBackground}"/>
