@@ -21,7 +21,8 @@ namespace Fidels
         public CreateProduct()
         {
             InitializeComponent();
-            service.updateComboBox(cmbProductGroup);
+            cmbProductGroup.ItemsSource = service.updateComboBox();
+            cmbProductGroup.SelectedIndex = 0;
         }
 
         private void Ok_Click(object sender, RoutedEventArgs e)

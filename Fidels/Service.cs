@@ -7,7 +7,6 @@ using System.Data;
 using System.Globalization;
 using System.Windows;
 using System.Diagnostics;
-using System.Windows.Controls;
 
 namespace Fidels
 {
@@ -70,48 +69,28 @@ namespace Fidels
         {
             DataTable dataTable = filterDataTable(year, month, weekNo);
 
-            //if there is no weeks in database for this date, it checks if returned datatable contains
-            //0 rows and selected week in combobox is exactly the same as DateTime.Now
+            if (dataTable.Rows.Count == 0 && getWeeksRange(year, month).from == weekNo)
+                dataTable = filterDataTable(year, month - 1, weekNo);
+
             if (dataTable.Rows.Count == 0 && getWeek(DateTime.Now) == weekNo)
             {
                 if (weekNo > 1)
-                {
-                    // if its first week of the month
-                    // it takes copy of previous month's last week products from database
-                    // changes its dates to DateTime.Now
-                    // inserts products back to database with new date. (not working)
                     if (getWeeksRange(year, month).from == weekNo)
-                    {
                         dataTable = filterDataTable(year, month - 1, weekNo - 1);
-                        dataTable = changeDate(dataTable);
 
-                    }
-                    // it takes copy of last week products from database
-                    // changes its dates to DateTime.Now
-                    // inserts products back to database with new date. (not working)
                     else
-                    {
                         dataTable = filterDataTable(year, month, weekNo - 1);
-                        dataTable = changeDate(dataTable);
-                    }
-                }
-                else if (weekNo == 1)
-                {
-                    dataTable = filterDataTable(year - 1, 12, 53);
-                    dataTable = changeDate(dataTable);
-                }
 
-                // if table is still empty, it takes copy of default products from database
-                // changes its dates to DateTime.Now
-                // inserts products back to database with new date. (not working)
+                else if (weekNo == 1)
+                    dataTable = filterDataTable(year - 1, 12, 53);
+
                 if (dataTable.Rows.Count == 0)
                 {
                     SqlDataAdapter stocksAdapter = getDefaultStocksAdapter(dao.getConnection());
                     dataTable = getDataTable(stocksAdapter);
-                    dataTable = changeDate(dataTable);
                 }
+                dataTable = changeDate(dataTable);
             }
-
             return dataTable;
         }
 
@@ -233,7 +212,7 @@ namespace Fidels
             }
             return firstWeekDay.AddDays(weekOfYear * 7);
         }
-        
+
         public bool deleteProduct(int product_id)
         {
             connection.Open();
@@ -278,18 +257,19 @@ namespace Fidels
             connection.Close();
         }
 
-        public void updateComboBox(ComboBox comboBox)
+        public List<string> updateComboBox()
         {
+            List<string> list = new List<string>();
             connection.Open();
             SqlCommand sqlCmd = new SqlCommand("SELECT * FROM product_group", connection);
             SqlDataReader sqlReader = sqlCmd.ExecuteReader();
             while (sqlReader.Read())
             {
-                comboBox.Items.Add(sqlReader["product_name"].ToString());
+                list.Add(sqlReader["product_name"].ToString());
             }
-            comboBox.SelectedIndex = 0;
             sqlReader.Close();
             connection.Close();
+            return list;
         }
 
         public void createProduct(string name, int productGroupId)
