@@ -179,7 +179,9 @@ namespace Fidels
             adapter.SelectCommand = command;
 
             command = new SqlCommand(
-               "UPDATE employee_hours SET employee_id = @employee_id, worked_hours = @worked_hours, date = @date, " + "WHERE employee_hours_id = @employee_hours_id", connection);
+               "UPDATE employee_hours SET employee_id = @employee_id, worked_hours = @worked_hours, date = @date " + "WHERE employee_hours_id = @employee_hours_id", connection);
+
+            //command.Parameters.AddWithValue("worked_hours", new TimeSpan());
 
             // Add the parameters for the UpdateCommand.
             command.Parameters.Add("@employee_id", SqlDbType.Int, 2, "employee_id");
@@ -463,7 +465,7 @@ namespace Fidels
 
         public void updateStaff(DataTable dataTable)
         {
-            SqlDataAdapter adapter = getEmployeesHoursAdapter(0, 0);
+            SqlDataAdapter adapter = getEmployeesHoursAdapter(2014, 1);
             adapter.Update(dataTable);
         }
 
