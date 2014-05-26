@@ -30,6 +30,7 @@ namespace Fidels
         private DataTable stocks;
         private bool allowSync = true;
         private bool stocksNeedUpdate = false;
+        private Dictionary<int, int> bottlesSoldDct = new Dictionary<int, int>();
 
         public MainWindow()
         {
@@ -94,13 +95,31 @@ namespace Fidels
             for (int i = 0; i < stocks.Rows.Count; i++)
             {
                 stocks.Rows[i].SetField<int>(stocks.Columns["modelIndex"], i);
-                Debug.WriteLine("set stock field " + i + " " + stocks.Rows[i].Field<string>("name"));
             }
+        }
+
+        private void getBottlesSold(int year, int weekNo)
+        {
+            DataTable dtPrev = service.bottlesSold(year, weekNo);
+            bottlesSoldDct.Clear();
+            int product_id, office_stock = 0, speed_rail = 0, stock_bar= 0, display=0, delivery=0;
+            
+            for (int i = 0; i < dtPrev.Rows.Count; i++)
+            {
+                product_id = dtPrev.Rows[i].Field<int>("product_id");
+                office_stock = dtPrev.Rows[i].Field<int>("office_stock");
+                speed_rail = dtPrev.Rows[i].Field<int>("speed_rail");
+                stock_bar = dtPrev.Rows[i].Field<int>("stock_bar");
+                display = dtPrev.Rows[i].Field<int>("display");
+                delivery = dtPrev.Rows[i].Field<int>("delivery");
+
+                int sum = office_stock + speed_rail + stock_bar + display + delivery;
+                bottlesSoldDct.Add(product_id, sum);
+            }      
         }
 
         private void syncStocks()
         {
-            Debug.WriteLine("Syncinc stocks");
             try
             {
                 int year = Int32.Parse(((ComboBoxItem)cmbYear.SelectedItem).Content.ToString());
@@ -110,6 +129,7 @@ namespace Fidels
                 stocks = service.getStocks(year, month, weekNo);
                 stocks.Columns.Add("rowBackground", typeof(Brush));
                 stocks.Columns.Add("modelIndex", typeof(int));
+                stocks.Columns.Add("totalPrevious", typeof(int));
                 stocks.AcceptChanges();
 
                 updateModelIndexes();
@@ -119,6 +139,8 @@ namespace Fidels
 
                 ICollectionView view = CollectionViewSource.GetDefaultView(dataGrid2.ItemsSource);
                 view.GroupDescriptions.Add(new PropertyGroupDescription("product_name"));
+
+                getBottlesSold(year, weekNo);
             }
             catch (Exception ex)
             {
@@ -213,6 +235,21 @@ namespace Fidels
                     lblAmountTobuy.Content = sValues.amountToBuy;
                     lblAmountTobuy.Foreground = Brushes.Red;
                 }
+
+                int product_id = stocks.Rows[selectedIndex].Field<int>("product_id");
+                int bttlSold = 0;
+                try
+                {
+                    bttlSold = bottlesSoldDct[product_id] - sValues.totalStock;
+                }
+                catch (KeyNotFoundException ex)
+                {
+                    lblBottlesSold.Content = "No previous week data found...";
+                    lblBottlesSold.Foreground = Brushes.Red;
+                    return;
+                }
+                lblBottlesSold.Content = bttlSold;
+                lblBottlesSold.Foreground = Brushes.Black;
             }
         }
 

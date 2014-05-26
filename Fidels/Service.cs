@@ -233,7 +233,23 @@ namespace Fidels
             }
             return firstWeekDay.AddDays(weekOfYear * 7);
         }
-        
+
+        //enter current week. will return how many bottles
+        //sold from previous week
+        public DataTable bottlesSold(int year, int weekNo)
+        {
+            DateTime firstDayOfWeek = firstDateOfWeek(year, weekNo, CultureInfo.CurrentCulture);
+            firstDayOfWeek = firstDayOfWeek.AddDays(-7); //-1 week
+
+            SqlDataAdapter adapter = new SqlDataAdapter();
+            SqlCommand command = new SqlCommand("SELECT * FROM stock WHERE date >= @first AND date <= @last", connection);
+            command.Parameters.AddWithValue("first", firstDayOfWeek);
+            command.Parameters.AddWithValue("last", firstDayOfWeek.AddDays(6));
+            adapter.SelectCommand = command;
+            
+            return getDataTable(adapter);
+        }
+
         public bool deleteProduct(int product_id)
         {
             connection.Open();
