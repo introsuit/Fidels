@@ -44,7 +44,14 @@ namespace Fidels
                 if (txbMinimumStock.Text.Trim().Length == 0)
                     txbMinimumStock.Text = "0";
                 DialogResult = true;
-                service.createProduct(txbName.Text, cmbProductGroup.SelectedIndex + 1);
+                string name = txbName.Text;
+                decimal price = Int32.Parse(txbPrice.Text);
+                int speedRail = Int32.Parse(txbSpeedRail.Text);
+                int stockBar = Int32.Parse(txbBarStock.Text);
+                int display = Int32.Parse(txbDisplay.Text);
+                int officeStock = Int32.Parse(txbOfficeStock.Text);
+                int minimumStock = Int32.Parse(txbMinimumStock.Text);
+                service.createProduct(name, cmbProductGroup.SelectedIndex +1,price,speedRail,stockBar,display,officeStock,minimumStock);
             }
         }
 

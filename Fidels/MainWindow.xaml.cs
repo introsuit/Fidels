@@ -310,7 +310,12 @@ namespace Fidels
         {
             CreateProduct window = new CreateProduct();
             window.ShowDialog();
+            if (window.DialogResult.HasValue && window.DialogResult.Value)
+            {
+                syncStocks();
+            }     
         }
+
         private void button2_Click(object sender, RoutedEventArgs e)
         {
             object selItem = dataGrid2.SelectedItem;
