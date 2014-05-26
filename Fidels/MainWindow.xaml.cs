@@ -78,8 +78,9 @@ namespace Fidels
             int speedRail = stocks.Rows[rowIndex].Field<int>("speed_rail");
             int barStock = stocks.Rows[rowIndex].Field<int>("stock_bar");
             int minimumStock = stocks.Rows[rowIndex].Field<int>("min_stock");
+            int delivery = stocks.Rows[rowIndex].Field<int>("delivery");
 
-            int totalStock = officeStock + display + speedRail + barStock;
+            int totalStock = officeStock + display + speedRail + barStock + delivery;
             decimal stockValue = totalStock * price;
             int ammountToBuy = minimumStock - totalStock;
 
