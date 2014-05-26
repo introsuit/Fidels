@@ -220,7 +220,7 @@ namespace Fidels
             command.Parameters.AddWithValue("first", firstDayOfWeek);
             command.Parameters.AddWithValue("last", firstDayOfWeek.AddDays(6));
             adapter.SelectCommand = command;
-            
+
             return getDataTable(adapter);
         }
 
@@ -290,17 +290,28 @@ namespace Fidels
             command.Parameters.AddWithValue("name", name);
             command.Parameters.AddWithValue("product_group_id", productGroupId);
             int productId = (int)command.ExecuteScalar();
-            command = new SqlCommand("INSERT INTO stock VALUES (@product_id, @unit_price, @speed_rail, @stock_bar, @display, @office_stock, @min_stock, @date, @delivery)", connection);
-            command.Parameters.AddWithValue("product_id", productId);
-            command.Parameters.AddWithValue("unit_price", unitPrice);
-            command.Parameters.AddWithValue("speed_rail", speedRail);
-            command.Parameters.AddWithValue("stock_bar", stockBar);
-            command.Parameters.AddWithValue("display", display);
-            command.Parameters.AddWithValue("office_stock", officeStock);
-            command.Parameters.AddWithValue("min_stock", minimumStock);
-            command.Parameters.AddWithValue("date", DateTime.Now);
-            command.Parameters.AddWithValue("delivery", 0);
-            command.ExecuteNonQuery();
+            DateTime dateTime = DateTime.Now;
+            for (int i = 0; i < 2; i++)
+            {
+                command = new SqlCommand("INSERT INTO stock VALUES (@product_id, @unit_price, @speed_rail, @stock_bar, @display, @office_stock, @min_stock, @date, @delivery)", connection);
+                command.Parameters.AddWithValue("product_id", productId);
+                command.Parameters.AddWithValue("unit_price", unitPrice);
+                command.Parameters.AddWithValue("speed_rail", speedRail);
+                command.Parameters.AddWithValue("stock_bar", stockBar);
+                command.Parameters.AddWithValue("display", display);
+                command.Parameters.AddWithValue("office_stock", officeStock);
+                command.Parameters.AddWithValue("min_stock", minimumStock);
+                command.Parameters.AddWithValue("date", dateTime);
+                command.Parameters.AddWithValue("delivery", 0);
+                command.ExecuteNonQuery();
+                unitPrice = 0;
+                speedRail = 0;
+                stockBar = 0;
+                display = 0;
+                officeStock = 0;
+                minimumStock = 0;
+                dateTime = new DateTime(2001, 1, 1);
+            }
             connection.Close();
         }
 
