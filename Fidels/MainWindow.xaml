@@ -158,7 +158,7 @@
             </TabItem>
             <TabItem Header="Staff" Name="Staff" >
                 <Grid VerticalAlignment="Stretch" Margin="0,0,0,0">
-                    <DataGrid Name="dataGridStaff" SelectionMode="Single" CanUserAddRows="False" AutoGenerateColumns="False" Height="373" HorizontalAlignment="Left" Margin="10,10,10,0" VerticalAlignment="Top" CellEditEnding="lol_CellEditEnding" CurrentCellChanged="lol_CurrentCellChanged">
+                    <DataGrid Name="dataGridStaff" SelectionMode="Single" CanUserAddRows="False" AutoGenerateColumns="False" Height="373" HorizontalAlignment="Left" Margin="10,10,10,0" VerticalAlignment="Top" CellEditEnding="lol_CellEditEnding" CurrentCellChanged="lol_CurrentCellChanged" SelectionChanged="dataGridStaff_SelectionChanged">
                         <DataGrid.Columns>
                             <DataGridTextColumn  MaxWidth="190" Header="Name" Binding="{Binding name}"/>
                             <DataGridTextColumn Header="Hours" Binding="{Binding worked_hours}">
@@ -168,10 +168,26 @@
                                     </Style>
                                 </DataGridTextColumn.ElementStyle>
                             </DataGridTextColumn>
+                            <DataGridTextColumn Header="Hourly wage" Binding="{Binding hourly_wage}">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Right" />
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
                         </DataGrid.Columns>
                     </DataGrid>
-                    <Label Content="Amount to buy" Height="28" HorizontalAlignment="Left" Margin="101,10,0,0" VerticalAlignment="Top" FontWeight="Bold" FontSize="16" />
-                    <Label HorizontalAlignment="Left" Margin="116,43,0,0" VerticalAlignment="Top"/>
+                    <Label Content="Total cost" Height="28" HorizontalAlignment="Left" Margin="245,10,0,0" VerticalAlignment="Top" FontWeight="Bold" FontSize="16" />
+                    <Label x:Name="lblTotalCost" Height="28" HorizontalAlignment="Left" Margin="269,43,0,0" VerticalAlignment="Top" FontWeight="Bold" FontSize="16" />
+                    <Button Content="Add" HorizontalAlignment="Left" Margin="331,210,0,0" VerticalAlignment="Top" Click="Button_Click"/>
+                    <Button Content="Delete" HorizontalAlignment="Left" Margin="414,210,0,0" VerticalAlignment="Top"/>
+                    <Label Content="Name" HorizontalAlignment="Left" Margin="287,125,0,0" VerticalAlignment="Top" RenderTransformOrigin="1.5,0.692"/>
+                    <Label Content="Hours" HorizontalAlignment="Left" Margin="287,153,0,0" VerticalAlignment="Top"/>
+                    <Label Content="Hourly wage" HorizontalAlignment="Left" Margin="252,182,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.416,0.385"/>
+                    <TextBox x:Name="txbName" HorizontalAlignment="Left" Height="23" Margin="334,125,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+                    <TextBox x:Name="txbHours" HorizontalAlignment="Left" Height="23" Margin="334,153,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+                    <TextBox x:Name="txbHourlyWage" HorizontalAlignment="Left" Height="23" Margin="334,182,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+                    <Button Content="Update" HorizontalAlignment="Left" Margin="364,210,0,0" VerticalAlignment="Top"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Budget" Name="Budget" >

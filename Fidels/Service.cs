@@ -121,10 +121,10 @@ namespace Fidels
             return newTable;
         }
 
-        public DataTable getFakturas(int year,int month, int weekNo)
+        public DataTable getFakturas(int year, int month, int weekNo)
         {
 
-           
+
 
             //SqlDataAdapter fakturasAdapter = getFakturasAdapter(dao.getConnection(), year, month);
             //DataTable dt = getDataTable(fakturasAdapter);
@@ -169,7 +169,7 @@ namespace Fidels
 
         private SqlDataAdapter getEmployeesHoursAdapter(int year, int weekNo)
         {
-            DateTime firstDayOfWeek = firstDateOfWeek(year, weekNo, CultureInfo.CurrentCulture);           
+            DateTime firstDayOfWeek = firstDateOfWeek(year, weekNo, CultureInfo.CurrentCulture);
             SqlDataAdapter adapter = new SqlDataAdapter();
 
             // Create the SelectCommand.
@@ -247,7 +247,7 @@ namespace Fidels
         public DataTable getEmployeesHours(int year, int weekNo)
         {
             SqlDataAdapter emplAdapter = getEmployeesHoursAdapter(year, weekNo);
-            DataTable dataTable = getDataTable(emplAdapter);         
+            DataTable dataTable = getDataTable(emplAdapter);
 
             if (dataTable.Rows.Count == 0 && getWeek(DateTime.Now) == weekNo)
             {
@@ -276,7 +276,7 @@ namespace Fidels
             {
                 command = new SqlCommand("INSERT INTO employee_hours VALUES (@employee_id, @worked_hours, @date)", connection);
                 command.Parameters.AddWithValue("employee_id", employee_id);
-                
+
                 command.Parameters.AddWithValue("worked_hours", new TimeSpan());
                 command.Parameters.AddWithValue("date", now);
                 command.ExecuteNonQuery();
@@ -403,7 +403,8 @@ namespace Fidels
             return adapter;
         }
 
-        public DataTable getFakturas() {
+        public DataTable getFakturas()
+        {
             SqlDataAdapter adapter = new SqlDataAdapter();
             SqlCommand command = new SqlCommand("SELECT * FROM faktura", connection);
             adapter.SelectCommand = command;
@@ -436,7 +437,8 @@ namespace Fidels
             return list;
         }
 
-        public void AddFaktura(int company_id, string serial_no, decimal price) {
+        public void AddFaktura(int company_id, string serial_no, decimal price)
+        {
             DateTime now = DateTime.Now;
             SqlCommand command = new SqlCommand("INSERT INTO faktura VALUES (@company_id, @serial_no, @date, @price)", connection);
             command.Parameters.Add(new SqlParameter("company_id", company_id));
@@ -448,7 +450,8 @@ namespace Fidels
             connection.Close();
         }
 
-        public void deleteFaktura(int faktura_id) {
+        public void deleteFaktura(int faktura_id)
+        {
             SqlCommand command = new SqlCommand("DELETE FROM faktura WHERE faktura_id=@faktura_id", connection);
             command.Parameters.Add(new SqlParameter("faktura_id", faktura_id));
             connection.Open();
@@ -489,6 +492,21 @@ namespace Fidels
                 }
             }
             return str;
+        }
+
+        public void createEmployee(string name, TimeSpan time, decimal hourlyWage)
+        {
+            connection.Open();
+            SqlCommand command = new SqlCommand("INSERT INTO employee VALUES (@name, @hourly_wage);SELECT CAST(scope_identity() AS int)", connection);
+            command.Parameters.AddWithValue("name", name);
+            command.Parameters.AddWithValue("hourly_wage", hourlyWage);
+            int employeeId = (int)command.ExecuteScalar();
+            command = new SqlCommand("INSERT INTO employee_hours VALUES (@employee_id, @worked_hours, @date)", connection);
+            command.Parameters.AddWithValue("employee_id", employeeId);
+            command.Parameters.AddWithValue("worked_hours", time);
+            command.Parameters.AddWithValue("date", DateTime.Now);
+            command.ExecuteNonQuery();
+            connection.Close();
         }
     }
 }

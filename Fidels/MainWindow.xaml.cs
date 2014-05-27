@@ -422,5 +422,39 @@ namespace Fidels
                 service.AddFaktura(combobox1.SelectedIndex + 1, txtbx_serial.Text, Convert.ToDecimal(txtbx_amount.Text));
             updateFakturaGrid();
         }
+
+        private void dataGridStaff_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (dataGridStaff.SelectedItem != null)
+            {
+                DataRowView dataRowView = ((DataRowView)dataGridStaff.SelectedItem);
+                int selectedIndex = dataGridStaff.SelectedIndex;
+                string name = staffs.Rows[dataGridStaff.SelectedIndex].Field<string>("name");
+                TimeSpan workedHours = staffs.Rows[dataGridStaff.SelectedIndex].Field<TimeSpan>("worked_hours");
+                decimal hourlyWage = staffs.Rows[dataGridStaff.SelectedIndex].Field<decimal>("hourly_wage");
+                txbName.Text = name;
+                txbHours.Text = workedHours.ToString("c");
+                txbHourlyWage.Text = hourlyWage.ToString("0.##");
+                lblTotalCost.Content = (Decimal.Divide(hourlyWage, 3600) * (decimal)workedHours.TotalSeconds).ToString("0.##") + " kr";
+            }
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            if (txbName.Text.Trim().Length == 0)
+                MessageBox.Show("Please enter name.");
+            else
+            {
+                if (txbHours.Text.Trim().Length == 0)
+                    txbHours.Text = "0";
+                if (txbHourlyWage.Text.Trim().Length == 0)
+                    txbHourlyWage.Text = "0";
+                string name = txbName.Text;
+                TimeSpan hours = TimeSpan.Parse(txbHours.Text);
+                decimal hourlyWage = Decimal.Parse(txbHourlyWage.Text);
+                service.createEmployee(name, hours, hourlyWage);
+                syncStaff();
+            }
+        }
     }
 }
