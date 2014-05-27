@@ -272,18 +272,22 @@ namespace Fidels
                 }
                 int product_id = stocks.Rows[selectedIndex].Field<int>("product_id");
                 int bttlSold = 0;
+                decimal supposeTurnover = 0;
                 try
                 {
                     bttlSold = bottlesSoldDct[product_id] - sValues.totalStock;
+                    supposeTurnover = ((decimal.Divide(bttlSold, 5) * 4 * 16) + (decimal.Divide(bttlSold, 5) * 8)) * stocks.Rows[selectedIndex].Field<decimal>("unit_price");
                 }
                 catch (KeyNotFoundException)
                 {
                     lblBottlesSold.Content = "No previous week data found...";
+                    lblSupposeTurnover.Content = "";
                     lblBottlesSold.Foreground = Brushes.Red;
                     return;
                 }
                 lblBottlesSold.Content = bttlSold;
                 lblBottlesSold.Foreground = Brushes.Black;
+                lblSupposeTurnover.Content = supposeTurnover;
             }
         }
 
@@ -414,9 +418,9 @@ namespace Fidels
 
         private void addBtn_Click(object sender, RoutedEventArgs e)
         {
-             if (combobox1.SelectedIndex != -1)
-                     service.AddFaktura(combobox1.SelectedIndex+1, txtbx_serial.Text, Convert.ToDecimal(txtbx_amount.Text));
-             updateFakturaGrid();
+            if (combobox1.SelectedIndex != -1)
+                service.AddFaktura(combobox1.SelectedIndex + 1, txtbx_serial.Text, Convert.ToDecimal(txtbx_amount.Text));
+            updateFakturaGrid();
         }
     }
 }

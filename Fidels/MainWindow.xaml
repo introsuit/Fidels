@@ -126,11 +126,13 @@
                     <Label Height="28" HorizontalAlignment="Left" Margin="605,47,0,0" Name="lblTotalStock" VerticalAlignment="Top" />
                     <Label Content="Stock Value" Height="28" HorizontalAlignment="Left" Margin="605,80,0,0" Name="label6" VerticalAlignment="Top" />
                     <Label Height="28" HorizontalAlignment="Left" Margin="605,113,0,0" Name="lblStockValue" VerticalAlignment="Top" />
-                    <Label Content="Bottles Sold" Height="28" HorizontalAlignment="Left" Margin="604,146,0,0" Name="label8" VerticalAlignment="Top" />
+                    <Label Content="Previous week bottles Sold" Height="28" HorizontalAlignment="Left" Margin="604,146,0,0" Name="label8" VerticalAlignment="Top" />
                     <Label Height="28" HorizontalAlignment="Left" Margin="605,179,0,0" Name="lblBottlesSold" VerticalAlignment="Top" />
                     <Label Content="Amount to buy" Height="28" HorizontalAlignment="Left" Margin="776,10,0,0" Name="label10" VerticalAlignment="Top" FontWeight="Bold" FontSize="16" />
                     <Label Height="28" HorizontalAlignment="Left" Margin="800,43,0,0" Name="lblAmountTobuy" VerticalAlignment="Top" FontWeight="Bold" FontSize="16" />
                     <Label Content="" Height="28" HorizontalAlignment="Left" Margin="529,362,0,0" Name="lblStatus" VerticalAlignment="Top" Foreground="Green" />
+                    <Label Content="Suppose turnover" HorizontalAlignment="Left" Margin="776,146,0,0" VerticalAlignment="Top"/>
+                    <Label x:Name="lblSupposeTurnover" HorizontalAlignment="Left" Margin="800,181,0,0" VerticalAlignment="Top"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Factura" Name="Factura" >
@@ -168,6 +170,8 @@
                             </DataGridTextColumn>
                         </DataGrid.Columns>
                     </DataGrid>
+                    <Label Content="Amount to buy" Height="28" HorizontalAlignment="Left" Margin="101,10,0,0" VerticalAlignment="Top" FontWeight="Bold" FontSize="16" />
+                    <Label HorizontalAlignment="Left" Margin="116,43,0,0" VerticalAlignment="Top"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Budget" Name="Budget" >
