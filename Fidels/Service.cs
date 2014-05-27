@@ -62,85 +62,35 @@ namespace Fidels
             return cal.GetWeekOfYear(date, dfi.CalendarWeekRule, dfi.FirstDayOfWeek);
         }
 
-        public bool ensureWeek()
-        {
-            bool inserted = false;
-            DateTime now = DateTime.Now;
-            DateTimeFormatInfo dfi = DateTimeFormatInfo.CurrentInfo;
-            System.Globalization.Calendar cal = dfi.Calendar;
-            int week = cal.GetWeekOfYear(now, dfi.CalendarWeekRule, dfi.FirstDayOfWeek);
-
-            SqlConnection con = dao.getConnection();
-
-            SqlDataReader reader = null;
-            try
-            {
-                SqlCommand cmd = new SqlCommand("SELECT * FROM stock " + "WHERE username = @username AND password = @password", con);
-                //cmd.CommandText = "SELECT * FROM customer";
-                //cmd.Parameters.Add(new SqlParameter("username", username));
-                //cmd.Parameters.Add(new SqlParameter("password", password));
-                con.Open();
-                reader = cmd.ExecuteReader();
-                while (reader.Read())
-                {
-
-                }
-            }
-            finally
-            {
-                // 3. close the reader
-                if (reader != null)
-                {
-                    reader.Close();
-                }
-
-                // close the connection
-                if (con != null)
-                {
-                    con.Close();
-                }
-            }
-
-            return inserted;
-        }
-
         public DataTable getStocks(int year, int month, int weekNo)
-        {
-            DataTable dataTable = sortDataTable(year, month, weekNo);
+        {           
+            DataTable dataTable = filterDataTable(year, month, weekNo);
+
+            if (dataTable.Rows.Count == 0 && getWeeksRange(year, month).from == weekNo)
+                dataTable = filterDataTable(year, month - 1, weekNo);
+
             if (dataTable.Rows.Count == 0 && getWeek(DateTime.Now) == weekNo)
             {
                 if (weekNo > 1)
-                {
                     if (getWeeksRange(year, month).from == weekNo)
-                    {
-                        dataTable = sortDataTable(year, month - 1, weekNo - 1);
-                        dataTable = changeDate(dataTable);
-                    }
+                        dataTable = filterDataTable(year, month - 1, weekNo - 1);
                     else
-                    {
-                        dataTable = sortDataTable(year, month, weekNo - 1);
-                        dataTable = changeDate(dataTable);
-                    }
-                }
+                        dataTable = filterDataTable(year, month, weekNo - 1);
                 else if (weekNo == 1)
-                {
-                    dataTable = sortDataTable(year - 1, 12, 53);
-                }
-
-                // if table is empty, it populates table with default items which date is 2001-01-01
+                    dataTable = filterDataTable(year - 1, 12, 53);
                 if (dataTable.Rows.Count == 0)
                 {
                     SqlDataAdapter stocksAdapter = getDefaultStocksAdapter(dao.getConnection());
                     dataTable = getDataTable(stocksAdapter);
-                    dataTable = changeDate(dataTable);
-
                 }
+                changeDate(dataTable);
+                dataTable = filterDataTable(year, month, weekNo);
             }
-
             return dataTable;
         }
 
-        public DataTable changeDate(DataTable dataTable)
+        //changing products in database date to DateTime.Now
+        public void changeDate(DataTable dataTable)
         {
             DataTable newTable = dataTable.Copy();
             for (int i = 0; i < newTable.Rows.Count; i++)
@@ -149,11 +99,11 @@ namespace Fidels
                 newTable.Rows[i].SetField(col, DateTime.Now);
             }
             newTable.AcceptChanges();
-            updateStocks(newTable);
-            return newTable;
+            createStocks(newTable);
+            dataTable = newTable;
         }
 
-        public DataTable sortDataTable(int year, int month, int week)
+        public DataTable filterDataTable(int year, int month, int week)
         {
             SqlDataAdapter stocksAdapter = getStocksAdapter(dao.getConnection(), year, month);
             DataTable dataTable = getDataTable(stocksAdapter);
@@ -210,6 +160,39 @@ namespace Fidels
             return adapter;
         }
 
+        private SqlDataAdapter getEmployeesHoursAdapter(SqlConnection connection, int year, int week)
+        {
+            SqlDataAdapter adapter = new SqlDataAdapter();
+
+            // Create the SelectCommand.
+            SqlCommand command = new SqlCommand("SELECT * FROM employee_hours JOIN employee ON employee_hours.employee_id = employee.employee_id WHERE date >= @first AND date <= @last", connection);
+            //command.Parameters.AddWithValue("first", firstDayOfWeek);
+            //command.Parameters.AddWithValue("last", firstDayOfWeek.AddDays(6));
+            adapter.SelectCommand = command;
+
+            command = new SqlCommand(
+               "UPDATE employee_hours SET unit_price = @unit_price, speed_rail = @speed_rail, stock_bar = @stock_bar, " + "display = @display, office_stock = @office_stock, min_stock = @min_stock, date = @date, delivery = @delivery " +
+               "WHERE stock_id = @stock_id", connection);
+
+            // Add the parameters for the UpdateCommand.
+            command.Parameters.Add("@unit_price", SqlDbType.Decimal, 2, "unit_price");
+            command.Parameters.Add("@speed_rail", SqlDbType.Int, 2, "speed_rail");
+            command.Parameters.Add("@stock_bar", SqlDbType.Int, 2, "stock_bar");
+            command.Parameters.Add("@display", SqlDbType.Int, 2, "display");
+            command.Parameters.Add("@office_stock", SqlDbType.Int, 2, "office_stock");
+            command.Parameters.Add("@min_stock", SqlDbType.Int, 2, "min_stock");
+            command.Parameters.Add("@date", SqlDbType.Date, 2, "date");
+            command.Parameters.Add("@delivery", SqlDbType.Int, 2, "delivery");
+
+            SqlParameter parameter = command.Parameters.Add(
+                "@stock_id", SqlDbType.Int, 5, "stock_id");
+            parameter.SourceVersion = DataRowVersion.Original;
+
+            adapter.UpdateCommand = command;
+
+            return adapter;
+        }
+
         private SqlDataAdapter getStocksAdapter(SqlConnection connection, int year, int month)
         {
             SqlDataAdapter adapter = new SqlDataAdapter();
@@ -241,22 +224,179 @@ namespace Fidels
 
             adapter.UpdateCommand = command;
 
-            command = new SqlCommand(
-               "INSERT stock SET unit_price = @unit_price, speed_rail = @speed_rail, stock_bar = @stock_bar, display = @display, office_stock = @office_stock, min_stock = @min_stock, date = @date, delivery = @delivery ", connection);
-
-            // Add the parameters for the InsertCommand.
-            command.Parameters.Add("@unit_price", SqlDbType.Decimal, 2, "unit_price");
-            command.Parameters.Add("@speed_rail", SqlDbType.Int, 2, "speed_rail");
-            command.Parameters.Add("@stock_bar", SqlDbType.Int, 2, "stock_bar");
-            command.Parameters.Add("@display", SqlDbType.Int, 2, "display");
-            command.Parameters.Add("@office_stock", SqlDbType.Int, 2, "office_stock");
-            command.Parameters.Add("@min_stock", SqlDbType.Int, 2, "min_stock");
-            command.Parameters.Add("@date", SqlDbType.Date, 2, "date");
-            command.Parameters.Add("@delivery", SqlDbType.Int, 2, "delivery");
-
-            adapter.InsertCommand = command;
-
             return adapter;
+        }
+
+        private DateTime firstDateOfWeek(int year, int weekOfYear, System.Globalization.CultureInfo ci)
+        {
+            DateTime jan1 = new DateTime(year, 1, 1);
+            int daysOffset = (int)ci.DateTimeFormat.FirstDayOfWeek - (int)jan1.DayOfWeek;
+            DateTime firstWeekDay = jan1.AddDays(daysOffset);
+            int firstWeek = ci.Calendar.GetWeekOfYear(jan1, ci.DateTimeFormat.CalendarWeekRule, ci.DateTimeFormat.FirstDayOfWeek);
+            if (firstWeek <= 1 || firstWeek > 50)
+            {
+                weekOfYear -= 1;
+            }
+            return firstWeekDay.AddDays(weekOfYear * 7);
+        }
+
+        public DataTable getEmployeesHours(int year, int weekNo)
+        {
+            DataTable dataTable = selectEmployeeHours(year, weekNo);
+
+            if (dataTable.Rows.Count == 0 && getWeek(DateTime.Now) == weekNo)
+            {
+                insertEmployeeHours(year, weekNo);
+            }
+            return selectEmployeeHours(year, weekNo);
+        }
+
+        private DataTable selectEmployeeHours(int year, int weekNo)
+        {
+            DateTime firstDayOfWeek = firstDateOfWeek(year, weekNo, CultureInfo.CurrentCulture);
+            firstDayOfWeek = firstDayOfWeek.AddDays(-7); //-1 week
+
+            SqlDataAdapter adapter = new SqlDataAdapter();
+            SqlCommand command = new SqlCommand("SELECT * FROM employee_hours JOIN employee ON employee_hours.employee_id = employee.employee_id WHERE date >= @first AND date <= @last", connection);
+            command.Parameters.AddWithValue("first", firstDayOfWeek);
+            command.Parameters.AddWithValue("last", firstDayOfWeek.AddDays(6));
+            adapter.SelectCommand = command;
+
+            return getDataTable(adapter);
+        }
+
+        private DataTable insertEmployeeHours(int year, int weekNo)
+        {
+            connection.Open();
+            SqlCommand command = new SqlCommand("SELECT employee_id FROM employee", connection);
+            SqlDataReader sqlReader = command.ExecuteReader();
+            List<int> employees = new List<int>();
+            while (sqlReader.Read())
+            {
+                int employee_id = Convert.ToInt32(sqlReader["employee_id"]);
+                employees.Add(employee_id);
+            }
+
+            DateTime now = DateTime.Now;
+
+            foreach (int employee_id in employees)
+            {
+                command = new SqlCommand("INSERT INTO employee_hours VALUES (@employee_id, @worked_hours, @date)", connection);
+                command.Parameters.AddWithValue("employee_id", employee_id);
+                command.Parameters.AddWithValue("worked_hours", null);
+                command.Parameters.AddWithValue("date", now);
+                command.ExecuteNonQuery();
+            }
+            connection.Close();
+
+            return null;
+        }
+
+        //enter current week. will return how many bottles
+        //sold from previous week
+        public DataTable bottlesSold(int year, int weekNo)
+        {
+            DateTime firstDayOfWeek = firstDateOfWeek(year, weekNo, CultureInfo.CurrentCulture);
+            firstDayOfWeek = firstDayOfWeek.AddDays(-7); //-1 week
+
+            SqlDataAdapter adapter = new SqlDataAdapter();
+            SqlCommand command = new SqlCommand("SELECT * FROM stock WHERE date >= @first AND date <= @last", connection);
+            command.Parameters.AddWithValue("first", firstDayOfWeek);
+            command.Parameters.AddWithValue("last", firstDayOfWeek.AddDays(6));
+            adapter.SelectCommand = command;
+
+            return getDataTable(adapter);
+        }
+
+        public bool deleteProduct(int product_id)
+        {
+            connection.Open();
+            int result = 0;
+
+            //deleting from defaults
+            SqlCommand command = new SqlCommand("DELETE FROM stock WHERE product_id = @product_id AND date = '2001-01-01'", connection);
+            command.Parameters.AddWithValue("product_id", product_id);
+            result += command.ExecuteNonQuery();
+
+            //deleting from today
+            DateTime now = DateTime.Now;
+            DateTime firstDayOfWeek = firstDateOfWeek(now.Year, getWeek(now), CultureInfo.CurrentCulture);
+
+            command = new SqlCommand("DELETE FROM stock WHERE product_id = @product_id AND (date >= @first AND date <= @last)", connection);
+            command.Parameters.AddWithValue("product_id", product_id);
+            command.Parameters.AddWithValue("first", firstDayOfWeek);
+            command.Parameters.AddWithValue("last", firstDayOfWeek.AddDays(6));
+            result += command.ExecuteNonQuery();
+
+            connection.Close();
+            return result > 0;
+        }
+
+        public void createStocks(DataTable dataTable)
+        {
+            connection.Open();
+            for (int i = 0; i < dataTable.Rows.Count; i++)
+            {
+                SqlCommand command = new SqlCommand("INSERT INTO stock VALUES (@product_id, @unit_price, @speed_rail, @stock_bar, @display, @office_stock, @min_stock, @date, @delivery)", connection);
+                command.Parameters.AddWithValue("product_id", dataTable.Rows[i].Field<int>("product_id"));
+                command.Parameters.AddWithValue("unit_price", dataTable.Rows[i].Field<decimal>("unit_price"));
+                command.Parameters.AddWithValue("speed_rail", dataTable.Rows[i].Field<int>("speed_rail"));
+                command.Parameters.AddWithValue("stock_bar", dataTable.Rows[i].Field<int>("stock_bar"));
+                command.Parameters.AddWithValue("display", dataTable.Rows[i].Field<int>("display"));
+                command.Parameters.AddWithValue("office_stock", dataTable.Rows[i].Field<int>("office_stock"));
+                command.Parameters.AddWithValue("min_stock", dataTable.Rows[i].Field<int>("min_stock"));
+                command.Parameters.AddWithValue("date", dataTable.Rows[i].Field<DateTime>("date"));
+                command.Parameters.AddWithValue("delivery", dataTable.Rows[i].Field<int>("delivery"));
+                command.ExecuteNonQuery();
+            }
+            connection.Close();
+        }
+
+        public List<string> updateComboBox()
+        {
+            List<string> list = new List<string>();
+            connection.Open();
+            SqlCommand sqlCmd = new SqlCommand("SELECT * FROM product_group", connection);
+            SqlDataReader sqlReader = sqlCmd.ExecuteReader();
+            while (sqlReader.Read())
+            {
+                list.Add(sqlReader["product_name"].ToString());
+            }
+            sqlReader.Close();
+            connection.Close();
+            return list;
+        }
+
+        public void createProduct(string name, int productGroupId, decimal unitPrice, int speedRail, int stockBar, int display, int officeStock, int minimumStock)
+        {
+            connection.Open();
+            SqlCommand command = new SqlCommand("INSERT INTO product VALUES (@name, @product_group_id);SELECT CAST(scope_identity() AS int)", connection);
+            command.Parameters.AddWithValue("name", name);
+            command.Parameters.AddWithValue("product_group_id", productGroupId);
+            int productId = (int)command.ExecuteScalar();
+            DateTime dateTime = DateTime.Now;
+            for (int i = 0; i < 2; i++)
+            {
+                command = new SqlCommand("INSERT INTO stock VALUES (@product_id, @unit_price, @speed_rail, @stock_bar, @display, @office_stock, @min_stock, @date, @delivery)", connection);
+                command.Parameters.AddWithValue("product_id", productId);
+                command.Parameters.AddWithValue("unit_price", unitPrice);
+                command.Parameters.AddWithValue("speed_rail", speedRail);
+                command.Parameters.AddWithValue("stock_bar", stockBar);
+                command.Parameters.AddWithValue("display", display);
+                command.Parameters.AddWithValue("office_stock", officeStock);
+                command.Parameters.AddWithValue("min_stock", minimumStock);
+                command.Parameters.AddWithValue("date", dateTime);
+                command.Parameters.AddWithValue("delivery", 0);
+                command.ExecuteNonQuery();
+                unitPrice = 0;
+                speedRail = 0;
+                stockBar = 0;
+                display = 0;
+                officeStock = 0;
+                minimumStock = 0;
+                dateTime = new DateTime(2001, 1, 1);
+            }
+            connection.Close();
         }
 
         private SqlDataAdapter getFakturasAdapter(SqlConnection connection, int year, int month)
