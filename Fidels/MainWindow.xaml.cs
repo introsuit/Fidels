@@ -59,8 +59,18 @@ namespace Fidels
                     cmbWeek.SelectedIndex = i;
                 }
             }
+            combobox1.DataContext = service.getCompanyNames();
+
+            updateFakturaGrid();
             syncStocks();
         }
+
+        public void updateFakturaGrid()
+        {
+            dataGrid3.ItemsSource = service.getFakturas().AsDataView();
+            dataGrid3.SelectedValuePath = "faktura_id";
+        }
+
 
         private struct StockValues
         {
@@ -338,5 +348,19 @@ namespace Fidels
             lblStatus.Foreground = Brushes.Red;
             syncStocks();
         }
+
+        private void deleteBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (dataGrid3.SelectedIndex != -1)
+                service.deleteFaktura(Convert.ToInt32(dataGrid3.SelectedValue.ToString()));
+            updateFakturaGrid();
+        }
+
+        private void addBtn_Click(object sender, RoutedEventArgs e)
+        {
+                     service.AddFaktura(Convert.ToInt32(combobox1.SelectedValue.ToString()), txtbx_serial.ToString(), Convert.ToDecimal(txtbx_amount.ToString()));
+        }
+
+
     }
 }

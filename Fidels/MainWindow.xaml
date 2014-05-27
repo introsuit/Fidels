@@ -136,22 +136,21 @@
             <TabItem Header="Factura" Name="Factura" >
                 <ScrollViewer HorizontalAlignment="Stretch" Margin="0,0,0,0" Name="scrollViewer2" VerticalAlignment="Stretch">
                     <Grid VerticalAlignment="Stretch" Margin="0,0,0,0">
+                        <Button x:Name="addBtn" Margin="841,202,10,10" Content="Add" Click="addBtn_Click"/>
+                        <Button x:Name="deleteBtn" Margin="773,202,78,10" Content="Delete" Click="deleteBtn_Click"/>
                         <DataGrid CanUserAddRows="False" AutoGenerateColumns="False" Height="200" HorizontalAlignment="Left" Margin="5,40,0,0" Name="dataGrid3" VerticalAlignment="Top" IsReadOnly="False">
-                            <DataGrid.GroupStyle>
-                                <GroupStyle ContainerStyle="{StaticResource GroupHeaderStyle}">
-                                    <GroupStyle.Panel>
-                                        <ItemsPanelTemplate>
-                                            <DataGridRowsPresenter/>
-                                        </ItemsPanelTemplate>
-                                    </GroupStyle.Panel>
-                                </GroupStyle>
-                            </DataGrid.GroupStyle>
                             <DataGrid.Columns>
                                 <DataGridTextColumn Header="Date" Binding="{Binding date}"/>
                                 <DataGridTextColumn Header="Serial No" Binding="{Binding serial_no}"/>
                                 <DataGridTextColumn Header="Price" Binding="{Binding price}"/>
                             </DataGrid.Columns>
                         </DataGrid>
+                        <TextBox x:Name="txtbx_serial" TextWrapping="Wrap" Margin="553,70,129,151"/>
+                            <TextBox x:Name="txtbx_amount" TextWrapping="Wrap" Margin="552,99,130,122"/>
+                            <Label Content="Company:" HorizontalAlignment="Left" Margin="478,40,0,0" VerticalAlignment="Top"/>
+                            <Label Content="Serial number:&#xD;&#xA;" HorizontalAlignment="Left" Margin="455,66,0,0" VerticalAlignment="Top"/>
+                            <Label Content="Amount (DKK):" HorizontalAlignment="Left" Margin="453,90,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.598,0.015"/>
+                        <ComboBox x:Name="combobox1" HorizontalAlignment="Left" VerticalAlignment="Top" Width="120" Margin="553,40,0,0"/>
                     </Grid>
                 </ScrollViewer>
             </TabItem>
