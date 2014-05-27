@@ -64,8 +64,7 @@
 
 
                 <Grid VerticalAlignment="Stretch" Margin="0,0,0,0" LostFocus="Grid_LostFocus">
-
-                    <DataGrid CanUserAddRows="False" AutoGenerateColumns="False" Height="350" HorizontalAlignment="Left" Margin="5,40,10,0" Name="dataGrid2" VerticalAlignment="Top" SelectionChanged="dataGrid2_SelectionChanged" SelectedCellsChanged="dataGrid2_SelectedCellsChanged" PreparingCellForEdit="dataGrid2_PreparingCellForEdit">
+                    <DataGrid CanUserAddRows="False" AutoGenerateColumns="False" Height="350" HorizontalAlignment="Left" Margin="5,40,10,0" Name="dataGrid2" VerticalAlignment="Top" SelectionChanged="dataGrid2_SelectionChanged" SelectedCellsChanged="dataGrid2_SelectedCellsChanged" PreparingCellForEdit="dataGrid2_PreparingCellForEdit" CellEditEnding="dataGrid2_CellEditEnding">
                         <DataGrid.GroupStyle>
                             <GroupStyle ContainerStyle="{StaticResource GroupHeaderStyle}">
                                 <GroupStyle.Panel>
@@ -106,8 +105,8 @@
 
 
                 <Grid VerticalAlignment="Stretch" Margin="0,0,0,0">
-                    <Button x:Name="addBtn" Margin="841,202,10,10" Content="Add"/>
-                    <Button x:Name="deleteBtn" Margin="773,202,78,10" Content="Delete"/>
+                    <Button x:Name="addBtn" Margin="841,202,10,10" Content="Add" Click="addBtn_Click"/>
+                    <Button x:Name="deleteBtn" Margin="773,202,78,10" Content="Delete" Click="deleteBtn_Click"/>
                     <DataGrid CanUserAddRows="False" AutoGenerateColumns="False" Height="200" HorizontalAlignment="Left" Margin="5,40,0,0" Name="dataGrid3" VerticalAlignment="Top" IsReadOnly="False">
                         <DataGrid.GroupStyle>
                             <GroupStyle ContainerStyle="{StaticResource GroupHeaderStyle}">
@@ -125,8 +124,8 @@
                             <DataGridTextColumn Header="Price" Binding="{Binding price}"/>
                         </DataGrid.Columns>
                     </DataGrid>
-                    <TextBox TextWrapping="Wrap" Margin="553,70,129,151"/>
-                    <TextBox TextWrapping="Wrap" Margin="552,99,130,122"/>
+                    <TextBox x:Name="txtbx_serial" TextWrapping="Wrap" Margin="553,70,129,151"/>
+                    <TextBox x:Name="txtbx_amount" TextWrapping="Wrap" Margin="552,99,130,122"/>
                     <Label Content="Company:" HorizontalAlignment="Left" Margin="478,40,0,0" VerticalAlignment="Top"/>
                     <Label Content="Serial number:&#xD;&#xA;" HorizontalAlignment="Left" Margin="455,66,0,0" VerticalAlignment="Top"/>
                     <Label Content="Amount (DKK):" HorizontalAlignment="Left" Margin="453,90,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.598,0.015"/>
@@ -150,5 +149,3 @@
         <Label Content="Year" Height="28" HorizontalAlignment="Left" Margin="15,10,0,0" Name="label5" VerticalAlignment="Top" />
     </Grid>
 </Window>
-
-

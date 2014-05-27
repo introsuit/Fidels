@@ -26,7 +26,8 @@ namespace Fidels
     {
         private Service service = Service.getInstance();
         private DataTable stocks;
-        private bool allowSync = false;
+        private bool allowSync = true;
+        private bool stocksNeedUpdate = false;
 
         public MainWindow()
         {
@@ -58,11 +59,22 @@ namespace Fidels
             //service.ensureWeek();
 
             //Update company list combobox for creating faktura
-            combobox1.DataContext = service.getCompanyNames(
-                Int32.Parse(((ComboBoxItem)cmbYear.SelectedItem).Content.ToString()),
-                Int32.Parse(((ComboBoxItem)cmbMonth.SelectedItem).Tag.ToString()));
+            combobox1.DataContext = service.getCompanyNames();
             combobox1.DisplayMemberPath = "name";
             combobox1.SelectedValuePath = "company_id";
+
+            //update datagrid3 for displaying fakturas
+            updateFakturaGrid();
+            
+
+            //sync stocks
+            syncStocks();
+        }
+
+        public void updateFakturaGrid()
+        {
+            dataGrid3.ItemsSource = service.getFakturas().AsDataView();
+            dataGrid3.SelectedValuePath = "faktura_id";
         }
 
         private void syncStocks()
@@ -184,18 +196,21 @@ namespace Fidels
 
         private void dataGrid2_SelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e)
         {
-            Debug.WriteLine("sel cell changed");
-            try
+            if (stocksNeedUpdate)
             {
-                service.updateStocks(stocks);
-                lblStatus.Content = "Updated";
-                lblStatus.Foreground = Brushes.Green;
-            }
-            catch (Exception ex)
-            {
-                lblStatus.Content = "Failed";
-                lblStatus.Foreground = Brushes.Red;
-                MessageBox.Show("Failed to update stocks\n\n" + ex.Message + "\n\n" + ex.StackTrace);
+                try
+                {
+                    service.updateStocks(stocks);
+                    lblStatus.Content = "Updated";
+                    lblStatus.Foreground = Brushes.Green;
+                }
+                catch (Exception ex)
+                {
+                    lblStatus.Content = "Failed";
+                    lblStatus.Foreground = Brushes.Red;
+                    MessageBox.Show("Failed to update stocks\n\n" + ex.Message + "\n\n" + ex.StackTrace);
+                }
+                stocksNeedUpdate = false;
             }
         }
 
@@ -205,18 +220,36 @@ namespace Fidels
         }
 
         private void dataGrid2_PreparingCellForEdit(object sender, DataGridPreparingCellForEditEventArgs e)
-        {     
+        {
             lblStatus.Content = "";
         }
 
 
         private void btnPrint_Click(object sender, RoutedEventArgs e)
         {
-            Debug.WriteLine(Service.orderPrint(stocks));
+            Debug.WriteLine(service.orderPrint(stocks));
             PrintOrders window2 = new PrintOrders();
-            window2.FillTxtblck(Service.orderPrint(stocks));
+            window2.FillTxtblck(service.orderPrint(stocks));
             window2.Show();
         }
-       
+
+        private void dataGrid2_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
+        {
+            stocksNeedUpdate = true;
+        }
+
+        private void addBtn_Click(object sender, RoutedEventArgs e)
+        {
+            service.AddFaktura(Convert.ToInt32(combobox1.SelectedValue.ToString()), txtbx_serial.ToString(), Convert.ToDecimal(txtbx_amount.ToString()));
+        }
+
+        private void deleteBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (dataGrid3.SelectedIndex != -1)
+                service.deleteFaktura(Convert.ToInt32(dataGrid3.SelectedValue.ToString()));
+            updateFakturaGrid();
+                
+        }
+
     }
 }
