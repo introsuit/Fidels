@@ -30,9 +30,6 @@
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="88*" />
         </Grid.ColumnDefinitions>
-        <Button Grid.Row="1" Content="Create" Height="23" HorizontalAlignment="Left" Margin="28,437,0,0" Name="button1" VerticalAlignment="Top" Width="75" Click="button1_Click_1" />
-        <Button Grid.Row="1" Content="Remove" Height="23" HorizontalAlignment="Left" Margin="108,437,0,0" Name="button2" VerticalAlignment="Top" Width="75" RenderTransformOrigin="0.413,-0.957" Click="button2_Click"/>
-        <Button x:Name="btnPrint" Content="Print order" HorizontalAlignment="Left" Margin="855,437,0,0" Grid.Row="1" VerticalAlignment="Top" Width="75" Click="btnPrint_Click"/>
         <ComboBox Height="23" HorizontalAlignment="Left" Margin="188,39,0,0" Name="cmbMonth" VerticalAlignment="Top" Width="120" SelectionChanged="cmbMonth_SelectionChanged">
             <ComboBoxItem Tag="1">January</ComboBoxItem>
             <ComboBoxItem Tag="2">February</ComboBoxItem>
@@ -54,7 +51,10 @@
         <TabControl Grid.Row="1" Height="Auto" Margin="10,10,10,10" Name="tabControl1" VerticalAlignment="Top" Width="920">
             <TabItem Header="Stock" Name="Stock">
                 <Grid VerticalAlignment="Stretch" Margin="0,0,0,0">
-                    <DataGrid SelectionMode="Single" CanUserAddRows="False" AutoGenerateColumns="False" Height="373" HorizontalAlignment="Left" Margin="10,10,10,0" Name="dataGrid2" VerticalAlignment="Top" SelectionChanged="dataGrid2_SelectionChanged" PreparingCellForEdit="dataGrid2_PreparingCellForEdit" CellEditEnding="dataGrid2_CellEditEnding" CurrentCellChanged="dataGrid2_CurrentCellChanged" LoadingRow="dataGrid2_LoadingRow">
+                    <Button Content="Create" Height="23" HorizontalAlignment="Left" Margin="10,339,0,0" Name="button1" VerticalAlignment="Top" Width="75" Click="button1_Click_1" />
+                    <Button Content="Remove" Height="23" HorizontalAlignment="Left" Margin="90,339,0,0" Name="button2" VerticalAlignment="Top" Width="75" RenderTransformOrigin="0.413,-0.957" Click="button2_Click"/>
+                    <Button x:Name="btnPrint" Content="Print order" HorizontalAlignment="Left" Margin="825,339,0,0" VerticalAlignment="Top" Width="75" Click="btnPrint_Click"/>
+                    <DataGrid SelectionMode="Single" CanUserAddRows="False" AutoGenerateColumns="False" Height="324" HorizontalAlignment="Left" Margin="10,10,0,0" Name="dataGrid2" VerticalAlignment="Top" SelectionChanged="dataGrid2_SelectionChanged" PreparingCellForEdit="dataGrid2_PreparingCellForEdit" CellEditEnding="dataGrid2_CellEditEnding" CurrentCellChanged="dataGrid2_CurrentCellChanged" LoadingRow="dataGrid2_LoadingRow">
                         <DataGrid.RowStyle>
                             <Style TargetType="{x:Type DataGridRow}">
                                 <Setter Property="Background" Value="{Binding rowBackground}"/>
@@ -146,17 +146,17 @@
                             </DataGrid.Columns>
                         </DataGrid>
                         <TextBox x:Name="txtbx_serial" TextWrapping="Wrap" Margin="553,70,129,151"/>
-                            <TextBox x:Name="txtbx_amount" TextWrapping="Wrap" Margin="552,99,130,122"/>
-                            <Label Content="Company:" HorizontalAlignment="Left" Margin="478,40,0,0" VerticalAlignment="Top"/>
-                            <Label Content="Serial number:&#xD;&#xA;" HorizontalAlignment="Left" Margin="455,66,0,0" VerticalAlignment="Top"/>
-                            <Label Content="Amount (DKK):" HorizontalAlignment="Left" Margin="453,90,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.598,0.015"/>
+                        <TextBox x:Name="txtbx_amount" TextWrapping="Wrap" Margin="552,99,130,122"/>
+                        <Label Content="Company:" HorizontalAlignment="Left" Margin="478,40,0,0" VerticalAlignment="Top"/>
+                        <Label Content="Serial number:&#xD;&#xA;" HorizontalAlignment="Left" Margin="455,66,0,0" VerticalAlignment="Top"/>
+                        <Label Content="Amount (DKK):" HorizontalAlignment="Left" Margin="453,90,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.598,0.015"/>
                         <ComboBox x:Name="combobox1" HorizontalAlignment="Left" VerticalAlignment="Top" Width="120" Margin="553,40,0,0"/>
                     </Grid>
                 </ScrollViewer>
             </TabItem>
             <TabItem Header="Staff" Name="Staff" >
-                <Grid VerticalAlignment="Stretch" Margin="0,0,0,0" Width="500" Height="500">
-                    <DataGrid Name="lol" SelectionMode="Single" CanUserAddRows="False" AutoGenerateColumns="False" Height="373" HorizontalAlignment="Left" Margin="10,10,10,0" VerticalAlignment="Top" CellEditEnding="lol_CellEditEnding" CurrentCellChanged="lol_CurrentCellChanged">
+                <Grid VerticalAlignment="Stretch" Margin="0,0,0,0">
+                    <DataGrid Name="dataGridStaff" SelectionMode="Single" CanUserAddRows="False" AutoGenerateColumns="False" Height="373" HorizontalAlignment="Left" Margin="10,10,10,0" VerticalAlignment="Top" CellEditEnding="lol_CellEditEnding" CurrentCellChanged="lol_CurrentCellChanged">
                         <DataGrid.Columns>
                             <DataGridTextColumn  MaxWidth="190" Header="Name" Binding="{Binding name}"/>
                             <DataGridTextColumn Header="Hours" Binding="{Binding worked_hours}">
@@ -165,7 +165,7 @@
                                         <Setter Property="HorizontalAlignment" Value="Right" />
                                     </Style>
                                 </DataGridTextColumn.ElementStyle>
-                            </DataGridTextColumn>  
+                            </DataGridTextColumn>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Grid>

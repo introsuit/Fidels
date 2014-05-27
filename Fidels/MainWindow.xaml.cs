@@ -148,8 +148,8 @@ namespace Fidels
                 staffs = service.getEmployeesHours(year, weekNo);
                 staffs.AcceptChanges();
 
-                lol.ItemsSource = staffs.AsDataView();
-                lol.SelectedValuePath = "employee_hours_id";
+                dataGridStaff.ItemsSource = staffs.AsDataView();
+                dataGridStaff.SelectedValuePath = "employee_hours_id";
             }
             catch (Exception ex)
             {
