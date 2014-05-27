@@ -63,7 +63,7 @@ namespace Fidels
         }
 
         public DataTable getStocks(int year, int month, int weekNo)
-        {           
+        {
             DataTable dataTable = filterDataTable(year, month, weekNo);
 
             if (dataTable.Rows.Count == 0 && getWeeksRange(year, month).from == weekNo)
