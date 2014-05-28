@@ -188,7 +188,7 @@ namespace Fidels
             command.Parameters.AddWithValue("name", name);
             command.Parameters.AddWithValue("hourly_wage", hourlyWage);
             command.Parameters.AddWithValue("employee_id", employeeId);
-            result +=command.ExecuteNonQuery();
+            result += command.ExecuteNonQuery();
             command = new SqlCommand("UPDATE employee_hours SET worked_hours = @worked_hours WHERE employee_hours_id = @employee_hours_id", connection);
             command.Parameters.AddWithValue("worked_hours", time);
             command.Parameters.AddWithValue("employee_hours_id", employeeHoursId);
@@ -493,10 +493,8 @@ namespace Fidels
         public String orderPrint(DataTable data)
         {
             string str = "";
-            int i = -1;
             foreach (DataRow row in data.Rows)
             {
-                i++;
                 int total = (row.Field<int>("speed_rail") +
                     row.Field<int>("stock_bar") +
                     row.Field<int>("display") +
@@ -524,6 +522,60 @@ namespace Fidels
             command.Parameters.AddWithValue("date", DateTime.Now);
             command.ExecuteNonQuery();
             connection.Close();
+        }
+
+        private int getTotalStock(DataRow dataRow)
+        {
+            int totalStock = (dataRow.Field<int>("speed_rail") +
+                        dataRow.Field<int>("stock_bar") +
+                        dataRow.Field<int>("display") +
+                        dataRow.Field<int>("office_stock") +
+                        dataRow.Field<int>("delivery"));
+            return totalStock;
+        }
+
+        // for budget calculations
+        private void getStockTotals(int year, int month, int week, out decimal totalSupposeTurnOver, out decimal totalWeekStockValue)
+        {
+            DataTable thisWeekDataTable = filterDataTable(year, month, week);
+            DataTable previousWeekDataTable = service.bottlesSold(year, week);
+            totalSupposeTurnOver = 0;
+            totalWeekStockValue = 0;
+            foreach (DataRow thisWeekRow in thisWeekDataTable.Rows)
+            {
+                int bottlesSold = 0;
+                decimal supposeTurnover = 0;
+                decimal totalStockValue = 0;
+                int thisWeekProductId = thisWeekRow.Field<int>("product_id");
+                foreach (DataRow previousWeekRow in previousWeekDataTable.Rows)
+                {
+                    int previousWeekProductId = previousWeekRow.Field<int>("product_id");
+                    if (thisWeekProductId == previousWeekProductId)
+                    {
+                        int thisWeekTotalStock = getTotalStock(thisWeekRow);
+                        int previousWeekTotalStock = getTotalStock(previousWeekRow);
+                        bottlesSold = previousWeekTotalStock - thisWeekTotalStock;
+                        supposeTurnover = ((decimal.Divide(bottlesSold, 5) * 4 * 16) + (decimal.Divide(bottlesSold, 5) * 8)) * thisWeekRow.Field<decimal>("unit_price");
+                        totalStockValue = thisWeekTotalStock * thisWeekRow.Field<decimal>("unit_price");
+                    }
+                }
+                totalSupposeTurnOver += supposeTurnover;
+                totalWeekStockValue += totalStockValue;
+            }
+        }
+
+        // for budget calculations
+        public decimal getTotalWagesCost(int year, int week)
+        {
+            decimal totalWagesCost = 0;
+            DataTable employees = getEmployeesHours(year, week);
+            foreach (DataRow row in employees.Rows)
+            {
+                TimeSpan workedHours = row.Field<TimeSpan>("worked_hours");
+                decimal hourlyWage = row.Field<decimal>("hourly_wage");
+                totalWagesCost += Decimal.Divide(hourlyWage, 3600) * (decimal)workedHours.TotalSeconds;
+            }
+            return totalWagesCost;
         }
     }
 }
