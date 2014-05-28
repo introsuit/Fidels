@@ -131,7 +131,7 @@
                     <Label Content="Amount to buy" Height="28" HorizontalAlignment="Left" Margin="776,10,0,0" Name="label10" VerticalAlignment="Top" FontWeight="Bold" FontSize="16" />
                     <Label Height="28" HorizontalAlignment="Left" Margin="800,43,0,0" Name="lblAmountTobuy" VerticalAlignment="Top" FontWeight="Bold" FontSize="16" />
                     <Label Content="" Height="28" HorizontalAlignment="Left" Margin="529,362,0,0" Name="lblStatus" VerticalAlignment="Top" Foreground="Green" />
-                    <Label Content="Suppose turnover" HorizontalAlignment="Left" Margin="776,146,0,0" VerticalAlignment="Top"/>
+                    <Label Content="Supposed turnover" HorizontalAlignment="Left" Margin="776,146,0,0" VerticalAlignment="Top"/>
                     <Label x:Name="lblSupposeTurnover" HorizontalAlignment="Left" Margin="800,181,0,0" VerticalAlignment="Top"/>
                 </Grid>
             </TabItem>
@@ -169,10 +169,9 @@
             <TabItem Header="Staff" Name="Staff" >
                 <Grid VerticalAlignment="Stretch" Margin="0,0,0,0">
                     <DataGrid IsReadOnly="True" Name="dataGridStaff" SelectionMode="Single" CanUserAddRows="False" AutoGenerateColumns="False" Height="373" HorizontalAlignment="Left" Margin="10,10,10,0" VerticalAlignment="Top" SelectionChanged="dataGridStaff_SelectionChanged">
-
                         <DataGrid.Columns>
-                            <DataGridTextColumn  MaxWidth="190" Header="Name"/>
-                            <DataGridTextColumn Header="Hours">
+                            <DataGridTextColumn  MaxWidth="190" Header="Name" Binding="{Binding name}"/>
+                            <DataGridTextColumn Header="Hours" Binding="{Binding worked_hours}">
                                 <DataGridTextColumn.ElementStyle>
                                     <Style TargetType="TextBlock">
                                         <Setter Property="HorizontalAlignment" Value="Right" />

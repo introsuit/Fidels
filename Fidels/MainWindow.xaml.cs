@@ -31,7 +31,6 @@ namespace Fidels
         private DataTable staffs;
         private bool allowSync = true;
         private bool stocksNeedUpdate = false;
-        private bool staffNeedUpdate = false;
         private Dictionary<int, int> bottlesSoldDct = new Dictionary<int, int>();
 
         public MainWindow()
