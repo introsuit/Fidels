@@ -177,24 +177,24 @@ namespace Fidels
             command.Parameters.AddWithValue("first", firstDayOfWeek);
             command.Parameters.AddWithValue("last", firstDayOfWeek.AddDays(6));
             adapter.SelectCommand = command;
-
-            command = new SqlCommand(
-               "UPDATE t1 SET t1.worked_hours = @worked_hours, t1.date = @date, t2.name = @name " + "FROM employee_hours AS t1 INNER JOIN employee AS t2 ON t1.employee_id = t2.employee_id WHERE t1.employee_hours_id = @employee_hours_id", connection);
-
-            //command.Parameters.AddWithValue("worked_hours", new TimeSpan());
-
-            // Add the parameters for the UpdateCommand.
-            command.Parameters.Add("@worked_hours", SqlDbType.Time, 2, "worked_hours");
-            command.Parameters.Add("@date", SqlDbType.Date, 2, "date");
-            command.Parameters.Add("@name", SqlDbType.NVarChar, 50, "name");
-
-            SqlParameter parameter = command.Parameters.Add(
-                "@employee_hours_id", SqlDbType.Int, 5, "employee_hours_id");
-            parameter.SourceVersion = DataRowVersion.Original;
-
-            adapter.UpdateCommand = command;
-
             return adapter;
+        }
+
+        public bool updateEmployee(string name, decimal hourlyWage, TimeSpan time, int employeeId, int employeeHoursId)
+        {
+            int result = 0;
+            connection.Open();
+            SqlCommand command = new SqlCommand("UPDATE employee SET name = @name, hourly_wage = @hourly_wage WHERE employee_id = @employee_id", connection);
+            command.Parameters.AddWithValue("name", name);
+            command.Parameters.AddWithValue("hourly_wage", hourlyWage);
+            command.Parameters.AddWithValue("employee_id", employeeId);
+            result +=command.ExecuteNonQuery();
+            command = new SqlCommand("UPDATE employee_hours SET worked_hours = @worked_hours WHERE employee_hours_id = @employee_hours_id", connection);
+            command.Parameters.AddWithValue("worked_hours", time);
+            command.Parameters.AddWithValue("employee_hours_id", employeeHoursId);
+            result += command.ExecuteNonQuery();
+            connection.Close();
+            return result > 0;
         }
 
         private SqlDataAdapter getStocksAdapter(SqlConnection connection, int year, int month)
@@ -490,13 +490,6 @@ namespace Fidels
             adapter.Update(dataTable);
         }
 
-        public void updateStaff(DataTable dataTable)
-        {
-            SqlDataAdapter adapter = getEmployeesHoursAdapter(2014, 1);
-            adapter.Update(dataTable);
-        }
-
-
         public String orderPrint(DataTable data)
         {
             string str = "";
@@ -521,7 +514,7 @@ namespace Fidels
         public void createEmployee(string name, TimeSpan time, decimal hourlyWage)
         {
             connection.Open();
-            SqlCommand command = new SqlCommand("INSERT INTO employee VALUES (@name, @hourly_wage);SELECT CAST(scope_identity() AS int)", connection);
+            SqlCommand command = new SqlCommand("INSERT INTO employee VALUES (@name, @hourly_wage, 1);SELECT CAST(scope_identity() AS int)", connection);
             command.Parameters.AddWithValue("name", name);
             command.Parameters.AddWithValue("hourly_wage", hourlyWage);
             int employeeId = (int)command.ExecuteScalar();

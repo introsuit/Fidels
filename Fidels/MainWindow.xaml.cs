@@ -383,32 +383,6 @@ namespace Fidels
             syncStocks();
         }
 
-        private void lol_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
-        {
-            staffNeedUpdate = true;
-        }
-
-        private void lol_CurrentCellChanged(object sender, EventArgs e)
-        {
-            if (staffNeedUpdate)
-            {
-                try
-                {
-                    service.updateStaff(staffs);
-                    syncStaff();
-                    lblStatus.Content = "Updated";
-                    lblStatus.Foreground = Brushes.Green;
-                }
-                catch (Exception ex)
-                {
-                    lblStatus.Content = "Failed";
-                    lblStatus.Foreground = Brushes.Red;
-                    MessageBox.Show("Failed to update staff\n\n" + ex.Message + "\n\n" + ex.StackTrace);
-                }
-                staffNeedUpdate = false;
-            }
-        }
-
         private void deleteBtn_Click(object sender, RoutedEventArgs e)
         {
             if (dataGrid3.SelectedIndex != -1)
@@ -477,11 +451,7 @@ namespace Fidels
                 string name = txbName.Text;
                 TimeSpan hours = TimeSpan.Parse(txbHours.Text);
                 decimal hourlyWage = Decimal.Parse(txbHourlyWage.Text);
-
-                staffs.Rows[selectedIndex]["name"] = name;
-                staffs.Rows[selectedIndex]["worked_hours"] = hours;
-                staffs.Rows[selectedIndex]["hourly_wage"] = hourlyWage;
-                service.updateStaff(staffs);
+                service.updateEmployee(name, hourlyWage, hours, staffs.Rows[dataGridStaff.SelectedIndex].Field<int>("employee_id"), (int)dataGridStaff.SelectedValue);
 
                 syncStaff();
             }
