@@ -180,14 +180,14 @@
                     <Label Content="Total cost" Height="28" HorizontalAlignment="Left" Margin="245,10,0,0" VerticalAlignment="Top" FontWeight="Bold" FontSize="16" />
                     <Label x:Name="lblTotalCost" Height="28" HorizontalAlignment="Left" Margin="269,43,0,0" VerticalAlignment="Top" FontWeight="Bold" FontSize="16" />
                     <Button Content="Add" HorizontalAlignment="Left" Margin="331,210,0,0" VerticalAlignment="Top" Click="Button_Click"/>
-                    <Button Content="Delete" HorizontalAlignment="Left" Margin="414,210,0,0" VerticalAlignment="Top"/>
+                    <Button Content="Delete" HorizontalAlignment="Left" Margin="414,210,0,0" VerticalAlignment="Top" Click="Button_Click_2" />
                     <Label Content="Name" HorizontalAlignment="Left" Margin="287,125,0,0" VerticalAlignment="Top" RenderTransformOrigin="1.5,0.692"/>
                     <Label Content="Hours" HorizontalAlignment="Left" Margin="287,153,0,0" VerticalAlignment="Top"/>
                     <Label Content="Hourly wage" HorizontalAlignment="Left" Margin="252,182,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.416,0.385"/>
                     <TextBox x:Name="txbName" HorizontalAlignment="Left" Height="23" Margin="334,125,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
                     <TextBox x:Name="txbHours" HorizontalAlignment="Left" Height="23" Margin="334,153,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
                     <TextBox x:Name="txbHourlyWage" HorizontalAlignment="Left" Height="23" Margin="334,182,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-                    <Button Content="Update" HorizontalAlignment="Left" Margin="364,210,0,0" VerticalAlignment="Top"/>
+                    <Button Content="Update" HorizontalAlignment="Left" Margin="364,210,0,0" VerticalAlignment="Top" Click="Button_Click_1" />
                 </Grid>
             </TabItem>
             <TabItem Header="Budget" Name="Budget" >

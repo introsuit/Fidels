@@ -173,7 +173,7 @@ namespace Fidels
             SqlDataAdapter adapter = new SqlDataAdapter();
 
             // Create the SelectCommand.
-            SqlCommand command = new SqlCommand("SELECT * FROM employee_hours JOIN employee ON employee_hours.employee_id = employee.employee_id WHERE date >= @first AND date <= @last", connection);
+            SqlCommand command = new SqlCommand("SELECT * FROM employee_hours JOIN employee ON employee_hours.employee_id = employee.employee_id WHERE active = 1 AND date >= @first AND date <= @last", connection);
             command.Parameters.AddWithValue("first", firstDayOfWeek);
             command.Parameters.AddWithValue("last", firstDayOfWeek.AddDays(6));
             adapter.SelectCommand = command;
@@ -316,6 +316,30 @@ namespace Fidels
 
             command = new SqlCommand("DELETE FROM stock WHERE product_id = @product_id AND (date >= @first AND date <= @last)", connection);
             command.Parameters.AddWithValue("product_id", product_id);
+            command.Parameters.AddWithValue("first", firstDayOfWeek);
+            command.Parameters.AddWithValue("last", firstDayOfWeek.AddDays(6));
+            result += command.ExecuteNonQuery();
+
+            connection.Close();
+            return result > 0;
+        }
+
+        public bool deleteEmployee(int employee_id)
+        {
+            connection.Open();
+            int result = 0;
+
+            //deleting from defaults
+            SqlCommand command = new SqlCommand("UPDATE employee SET active = 0 WHERE employee_id = @employee_id", connection);
+            command.Parameters.AddWithValue("employee_id", employee_id);
+            command.ExecuteNonQuery();
+
+            //deleting from today
+            DateTime now = DateTime.Now;
+            DateTime firstDayOfWeek = firstDateOfWeek(now.Year, getWeek(now), CultureInfo.CurrentCulture);
+
+            command = new SqlCommand("DELETE FROM employee_hours WHERE employee_id = @employee_id AND (date >= @first AND date <= @last)", connection);
+            command.Parameters.AddWithValue("employee_id", employee_id);
             command.Parameters.AddWithValue("first", firstDayOfWeek);
             command.Parameters.AddWithValue("last", firstDayOfWeek.AddDays(6));
             result += command.ExecuteNonQuery();

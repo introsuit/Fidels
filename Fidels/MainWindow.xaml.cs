@@ -456,5 +456,37 @@ namespace Fidels
                 syncStaff();
             }
         }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Button_Click_2(object sender, RoutedEventArgs e)
+        {
+            int selectedIndex = dataGridStaff.SelectedIndex;
+            if (selectedIndex == -1)
+            {
+                MessageBox.Show("Select an employee first.");
+                return;
+            }
+            if (MessageBox.Show("Are you sure you want to delete this employee?", "Question", MessageBoxButton.YesNo) == MessageBoxResult.No)
+            {
+                return;
+            }
+
+            int employee_id = staffs.Rows[selectedIndex].Field<int>("employee_id");
+
+            bool deleted = service.deleteEmployee(employee_id);
+            if (!deleted)
+            {
+                lblStatus.Content = "Failed to delete";
+                lblStatus.Foreground = Brushes.Red;
+                return;
+            }
+            lblStatus.Content = "Deleted";
+            lblStatus.Foreground = Brushes.Red;
+            syncStaff();
+        }
     }
 }
