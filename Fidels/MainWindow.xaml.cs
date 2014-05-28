@@ -459,7 +459,32 @@ namespace Fidels
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
+            int selectedIndex = dataGridStaff.SelectedIndex;
+            if (selectedIndex == -1)
+            {
+                MessageBox.Show("Select an employee first.");
+                return;
+            }
 
+            if (txbName.Text.Trim().Length == 0)
+                MessageBox.Show("Please enter name.");
+            else
+            {
+                if (txbHours.Text.Trim().Length == 0)
+                    txbHours.Text = "0";
+                if (txbHourlyWage.Text.Trim().Length == 0)
+                    txbHourlyWage.Text = "0";
+                string name = txbName.Text;
+                TimeSpan hours = TimeSpan.Parse(txbHours.Text);
+                decimal hourlyWage = Decimal.Parse(txbHourlyWage.Text);
+
+                staffs.Rows[selectedIndex]["name"] = name;
+                staffs.Rows[selectedIndex]["worked_hours"] = hours;
+                staffs.Rows[selectedIndex]["hourly_wage"] = hourlyWage;
+                service.updateStaff(staffs);
+
+                syncStaff();
+            }
         }
 
         private void Button_Click_2(object sender, RoutedEventArgs e)

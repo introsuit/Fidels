@@ -179,14 +179,14 @@ namespace Fidels
             adapter.SelectCommand = command;
 
             command = new SqlCommand(
-               "UPDATE employee_hours SET employee_id = @employee_id, worked_hours = @worked_hours, date = @date " + "WHERE employee_hours_id = @employee_hours_id", connection);
+               "UPDATE t1 SET t1.worked_hours = @worked_hours, t1.date = @date, t2.name = @name " + "FROM employee_hours AS t1 INNER JOIN employee AS t2 ON t1.employee_id = t2.employee_id WHERE t1.employee_hours_id = @employee_hours_id", connection);
 
             //command.Parameters.AddWithValue("worked_hours", new TimeSpan());
 
             // Add the parameters for the UpdateCommand.
-            command.Parameters.Add("@employee_id", SqlDbType.Int, 2, "employee_id");
             command.Parameters.Add("@worked_hours", SqlDbType.Time, 2, "worked_hours");
             command.Parameters.Add("@date", SqlDbType.Date, 2, "date");
+            command.Parameters.Add("@name", SqlDbType.NVarChar, 50, "name");
 
             SqlParameter parameter = command.Parameters.Add(
                 "@employee_hours_id", SqlDbType.Int, 5, "employee_hours_id");
