@@ -16,7 +16,6 @@ namespace Fidels
         public int to;
     }
 
-
     class Service
     {
         private static Service service;
@@ -175,7 +174,7 @@ namespace Fidels
             SqlDataAdapter adapter = new SqlDataAdapter();
 
             // Create the SelectCommand.
-            SqlCommand command = new SqlCommand("SELECT * FROM employee_hours JOIN employee ON employee_hours.employee_id = employee.employee_id WHERE active = 1 AND date >= @first AND date <= @last", connection);
+            SqlCommand command = new SqlCommand("SELECT * FROM employee_hours JOIN employee ON employee_hours.employee_id = employee.employee_id WHERE date >= @first AND date <= @last", connection);
             command.Parameters.AddWithValue("first", firstDayOfWeek);
             command.Parameters.AddWithValue("last", firstDayOfWeek.AddDays(6));
             adapter.SelectCommand = command;
@@ -442,14 +441,6 @@ namespace Fidels
 
         public List<string> getCompanyNames()
         {
-            //SqlDataAdapter adapter = new SqlDataAdapter();
-            //SqlCommand command = new SqlCommand("SELECT * FROM company", connection);
-            //adapter.SelectCommand = command;
-            //DataTable dtFakturaCompanyList = new DataTable();
-            //adapter.Fill(dtFakturaCompanyList);
-            //Debug.WriteLine(dtFakturaCompanyList.Rows.Count);
-            //return dtFakturaCompanyList;
-
             List<string> list = new List<string>();
             connection.Open();
             SqlCommand sqlCmd = new SqlCommand("SELECT * FROM company", connection);
@@ -521,7 +512,7 @@ namespace Fidels
             return str;
         }
 
-        public void createEmployee(string name, TimeSpan time, decimal hourlyWage)
+        public bool createEmployee(string name, TimeSpan time, decimal hourlyWage)
         {
             connection.Open();
             SqlCommand command = new SqlCommand("INSERT INTO employee VALUES (@name, @hourly_wage, 1);SELECT CAST(scope_identity() AS int)", connection);
@@ -532,8 +523,10 @@ namespace Fidels
             command.Parameters.AddWithValue("employee_id", employeeId);
             command.Parameters.AddWithValue("worked_hours", time);
             command.Parameters.AddWithValue("date", DateTime.Now);
-            command.ExecuteNonQuery();
+            int result = command.ExecuteNonQuery();
             connection.Close();
+
+            return result > 0;
         }
 
         private int getTotalStock(DataRow dataRow)
@@ -590,5 +583,19 @@ namespace Fidels
             return totalWagesCost;
         }
 
+        //considers empty string as number
+        public bool isNumber(string str)
+        {
+            bool number = true;
+            if (str.Trim() == "") return true;
+            for (int i = 0; i < str.Length; i++)
+            {
+                if (!char.IsNumber(str[i]))
+                {
+                    return false;
+                }
+            }
+            return number;
+        }
     }
 }

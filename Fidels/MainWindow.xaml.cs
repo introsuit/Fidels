@@ -431,6 +431,7 @@ namespace Fidels
         {
             if (dataGridStaff.SelectedItem != null)
             {
+                lblStatusStaff.Content = "";
                 DataRowView dataRowView = ((DataRowView)dataGridStaff.SelectedItem);
                 int selectedIndex = dataGridStaff.SelectedIndex;
                 string name = staffs.Rows[dataGridStaff.SelectedIndex].Field<string>("name");
@@ -456,7 +457,15 @@ namespace Fidels
                 string name = txbName.Text;
                 TimeSpan hours = TimeSpan.Parse(txbHours.Text);
                 decimal hourlyWage = Decimal.Parse(txbHourlyWage.Text);
-                service.createEmployee(name, hours, hourlyWage);
+                bool created = service.createEmployee(name, hours, hourlyWage);
+                if (!created)
+                {
+                    lblStatusStaff.Content = "Failed to cceate";
+                    lblStatusStaff.Foreground = Brushes.Green;
+                    return;
+                }
+                lblStatusStaff.Content = "Created";
+                lblStatusStaff.Foreground = Brushes.Green;
                 syncStaff();
             }
         }
@@ -481,7 +490,15 @@ namespace Fidels
                 string name = txbName.Text;
                 TimeSpan hours = TimeSpan.Parse(txbHours.Text);
                 decimal hourlyWage = Decimal.Parse(txbHourlyWage.Text);
-                service.updateEmployee(name, hourlyWage, hours, staffs.Rows[dataGridStaff.SelectedIndex].Field<int>("employee_id"), (int)dataGridStaff.SelectedValue);
+                bool updated = service.updateEmployee(name, hourlyWage, hours, staffs.Rows[dataGridStaff.SelectedIndex].Field<int>("employee_id"), (int)dataGridStaff.SelectedValue);
+                if (!updated)
+                {
+                    lblStatusStaff.Content = "Failed to update";
+                    lblStatusStaff.Foreground = Brushes.Green;
+                    return;
+                }
+                lblStatusStaff.Content = "Updated";
+                lblStatusStaff.Foreground = Brushes.Green;
 
                 syncStaff();
             }
@@ -505,12 +522,12 @@ namespace Fidels
             bool deleted = service.deleteEmployee(employee_id);
             if (!deleted)
             {
-                lblStatus.Content = "Failed to delete";
-                lblStatus.Foreground = Brushes.Red;
+                lblStatusStaff.Content = "Failed to delete";
+                lblStatusStaff.Foreground = Brushes.Red;
                 return;
             }
-            lblStatus.Content = "Deleted";
-            lblStatus.Foreground = Brushes.Red;
+            lblStatusStaff.Content = "Deleted";
+            lblStatusStaff.Foreground = Brushes.Red;
             syncStaff();
         }
 
