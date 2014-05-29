@@ -582,20 +582,5 @@ namespace Fidels
             }
             return totalWagesCost;
         }
-
-        //considers empty string as number
-        public bool isNumber(string str)
-        {
-            bool number = true;
-            if (str.Trim() == "") return true;
-            for (int i = 0; i < str.Length; i++)
-            {
-                if (!char.IsNumber(str[i]))
-                {
-                    return false;
-                }
-            }
-            return number;
-        }
     }
 }

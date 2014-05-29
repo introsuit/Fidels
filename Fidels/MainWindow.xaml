@@ -172,7 +172,12 @@
                     <DataGrid IsReadOnly="True" Name="dataGridStaff" SelectionMode="Single" CanUserAddRows="False" AutoGenerateColumns="False" Height="373" HorizontalAlignment="Left" Margin="10,10,10,0" VerticalAlignment="Top" SelectionChanged="dataGridStaff_SelectionChanged">
                         <DataGrid.Columns>
                             <DataGridTextColumn  MaxWidth="190" Header="Name" Binding="{Binding name}"/>
-                            <DataGridTextColumn Header="Hours" Binding="{Binding worked_hours}">
+                            <DataGridTextColumn Header="Hours">
+                                <DataGridTextColumn.Binding>
+                                    <Binding Path="worked_hours"
+                 StringFormat="{}{0:hh'h 'mm'm'}"
+                 TargetNullValue=" --- "/>
+                                </DataGridTextColumn.Binding>
                                 <DataGridTextColumn.ElementStyle>
                                     <Style TargetType="TextBlock">
                                         <Setter Property="HorizontalAlignment" Value="Right" />
@@ -196,10 +201,12 @@
                     <Label Content="Hours" HorizontalAlignment="Left" Margin="287,153,0,0" VerticalAlignment="Top"/>
                     <Label Content="Hourly wage" HorizontalAlignment="Left" Margin="252,182,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.416,0.385"/>
                     <TextBox x:Name="txbName" HorizontalAlignment="Left" Height="23" Margin="334,125,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-                    <TextBox x:Name="txbHours" HorizontalAlignment="Left" Height="23" Margin="334,153,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
                     <TextBox x:Name="txbHourlyWage" HorizontalAlignment="Left" Height="23" Margin="334,182,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
                     <Button Content="Update" HorizontalAlignment="Left" Margin="364,210,0,0" VerticalAlignment="Top" Click="Button_Click_1" />
                     <Label Content="" Height="28" HorizontalAlignment="Left" Margin="252,355,0,0" Name="lblStatusStaff" VerticalAlignment="Top" Foreground="Green" />
+                    <TextBox Height="23" HorizontalAlignment="Left" Margin="335,153,0,0" Name="txbHrs" VerticalAlignment="Top" Width="35" />
+                    <TextBox Height="23" HorizontalAlignment="Left" Margin="421,153,0,0" Name="txbMins" VerticalAlignment="Top" Width="33" />
+                    <Label Content="Min" Height="28" HorizontalAlignment="Left" Margin="388,153,0,0" Name="label2" VerticalAlignment="Top" />
                 </Grid>
             </TabItem>
             <TabItem Header="Budget" Name="Budget" >
