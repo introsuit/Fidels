@@ -21,9 +21,7 @@ using System.Collections;
 
 namespace Fidels
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
+
     public partial class MainWindow : Window
     {
         private Service service = Service.getInstance();
@@ -37,35 +35,23 @@ namespace Fidels
         {
             InitializeComponent();
             DateTime now = DateTime.Now;
+            for (int i = 2014; i <= now.Year; i++)
+                cmbYear.Items.Add(i);
             for (int i = 0; i < cmbYear.Items.Count; i++)
-            {
-                if (Int32.Parse(((ComboBoxItem)cmbYear.Items[i]).Content.ToString()) == now.Year)
-                {
+                if (Int32.Parse(cmbYear.Items[i].ToString()) == now.Year)
                     cmbYear.SelectedIndex = i;
-                }
-            }
             for (int i = 0; i < cmbMonth.Items.Count; i++)
-            {
                 if (Int32.Parse(((ComboBoxItem)cmbMonth.Items[i]).Tag.ToString()) == now.Month)
-                {
                     cmbMonth.SelectedIndex = i;
-                }
-            }
-            updateCmbWeeks(); //updates weeks list and that in turn will also syncTables 
-
+            updateCmbWeeks();
             for (int i = 0; i < cmbWeek.Items.Count; i++)
-            {
                 if (Int32.Parse(cmbWeek.Items[i].ToString()) == service.getWeek(now))
-                {
                     cmbWeek.SelectedIndex = i;
-                }
-            }
             combobox1.ItemsSource = service.getCompanyNames();
-
             updateFakturaGrid();
             syncStocks();
             syncStaff();
-            int year = Int32.Parse(((ComboBoxItem)cmbYear.SelectedItem).Content.ToString());
+            int year = Int32.Parse(cmbYear.SelectedValue.ToString());
             int month = Int32.Parse(((ComboBoxItem)cmbMonth.SelectedItem).Tag.ToString());
             int weekNo = Int32.Parse(cmbWeek.SelectedValue.ToString());
             updateBudget(year, month, weekNo);
@@ -85,7 +71,7 @@ namespace Fidels
 
         public void updateFakturaGrid()
         {
-            int year = Int32.Parse(((ComboBoxItem)cmbYear.SelectedItem).Content.ToString());
+            int year = Int32.Parse(cmbYear.SelectedValue.ToString());
             int month = Int32.Parse(((ComboBoxItem)cmbMonth.SelectedItem).Tag.ToString());
             int weekNo = Int32.Parse(cmbWeek.SelectedValue.ToString());
             
@@ -160,7 +146,7 @@ namespace Fidels
         {
             try
             {
-                int year = Int32.Parse(((ComboBoxItem)cmbYear.SelectedItem).Content.ToString());
+                int year = Int32.Parse(cmbYear.SelectedValue.ToString());
                 int weekNo = Int32.Parse(cmbWeek.SelectedValue.ToString());
 
                 staffs = service.getEmployeesHours(year, weekNo);
@@ -179,7 +165,7 @@ namespace Fidels
         {
             try
             {
-                int year = Int32.Parse(((ComboBoxItem)cmbYear.SelectedItem).Content.ToString());
+                int year = Int32.Parse(cmbYear.SelectedValue.ToString());
                 int month = Int32.Parse(((ComboBoxItem)cmbMonth.SelectedItem).Tag.ToString());
                 int weekNo = Int32.Parse(cmbWeek.SelectedValue.ToString());
 
@@ -207,7 +193,7 @@ namespace Fidels
             Debug.WriteLine("Syncinc fakturas");
             try
             {
-                int year = Int32.Parse(((ComboBoxItem)cmbYear.SelectedItem).Content.ToString());
+                int year = Int32.Parse(cmbYear.SelectedValue.ToString());
                 int month = Int32.Parse(((ComboBoxItem)cmbMonth.SelectedItem).Tag.ToString());
                 int weekNo = Int32.Parse(cmbWeek.SelectedValue.ToString());
                 ICollectionView view = CollectionViewSource.GetDefaultView(dataGrid3.ItemsSource);
@@ -222,7 +208,7 @@ namespace Fidels
         private void updateCmbWeeks()
         {
             cmbWeek.Items.Clear();
-            int year = Int32.Parse(((ComboBoxItem)cmbYear.SelectedItem).Content.ToString());
+            int year = Int32.Parse(cmbYear.SelectedValue.ToString());
             int month = Int32.Parse(((ComboBoxItem)cmbMonth.SelectedItem).Tag.ToString());
             WeeksRange weekR = service.getWeeksRange(year, month);
             for (int i = weekR.from; i <= weekR.to; i++)
@@ -239,7 +225,7 @@ namespace Fidels
                 dataGrid2.SelectedIndex = -1;
                 syncStocks();
                 updateFakturaGrid();
-                int year = Int32.Parse(((ComboBoxItem)cmbYear.SelectedItem).Content.ToString());
+                int year = Int32.Parse(cmbYear.SelectedValue.ToString());
                 int month = Int32.Parse(((ComboBoxItem)cmbMonth.SelectedItem).Tag.ToString());
                 int weekNo = Int32.Parse(cmbWeek.SelectedValue.ToString());
                 updateBudget(year, month, weekNo);
@@ -259,7 +245,7 @@ namespace Fidels
                 syncStaff();
                 allowSync = true;
                 updateFakturaGrid();
-                int year = Int32.Parse(((ComboBoxItem)cmbYear.SelectedItem).Content.ToString());
+                int year = Int32.Parse(cmbYear.SelectedValue.ToString());
                 int month = Int32.Parse(((ComboBoxItem)cmbMonth.SelectedItem).Tag.ToString());
                 int weekNo = Int32.Parse(cmbWeek.SelectedValue.ToString());
                 updateBudget(year, month, weekNo);
@@ -273,7 +259,7 @@ namespace Fidels
                 dataGrid2.SelectedIndex = -1;
                 syncStocks();
                 updateFakturaGrid();
-                int year = Int32.Parse(((ComboBoxItem)cmbYear.SelectedItem).Content.ToString());
+                int year = Int32.Parse(cmbYear.SelectedValue.ToString());
                 int month = Int32.Parse(((ComboBoxItem)cmbMonth.SelectedItem).Tag.ToString());
                 int weekNo = Int32.Parse(cmbWeek.SelectedValue.ToString());
                 updateBudget(year, month, weekNo);
