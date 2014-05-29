@@ -539,6 +539,16 @@ namespace Fidels
             return totalStock;
         }
 
+        public decimal getPercentage(decimal p1, decimal p2) {
+            decimal i = -1;
+            if (p1 != 0)
+            {
+                i = p2 / (p1 / 100);
+                return i;
+            }
+            else return -1;
+        }
+
         // for budget calculations
         public void getStockTotals(int year, int month, int week, out decimal totalSupposeTurnOver, out decimal totalWeekStockValue)
         {
