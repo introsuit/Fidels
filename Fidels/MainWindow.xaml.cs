@@ -57,16 +57,39 @@ namespace Fidels
             updateBudget(year, month, weekNo);
         }
 
-        public void updateBudget(int year, int month, int week) {
+        public void updateBudget(int year, int month, int week)
+        {
             decimal totalTurnOver = 0;
             decimal totalStockValue = 0;
             service.getStockTotals(year, month, week, out totalTurnOver, out totalStockValue);
-            lblTotalValueStock.Content = totalStockValue.ToString();
+            lblTotalValueStock.Content = totalStockValue;
             lblTurnOver.Content = totalTurnOver.ToString();
-            lblTotalWages.Content=service.getTotalWagesCost(year, week);
+            lblTotalWages.Content = service.getTotalWagesCost(year, week);
             lblTotalFaktura.Content = service.getTotalWeeklyFakturaAmount(year, month, week);
+
             lblSupposedPercentWage.Content = service.getSupposedWagePercent().ToString()+"%";
             lblSupposedPercentFaktura.Content = service.getSupposedFakturaPercent().ToString()+"%";
+            decimal fakturaPercent = service.getPercentage(totalTurnOver, service.getTotalWeeklyFakturaAmount(year, month, week));
+            decimal wagePercent  = service.getPercentage(totalTurnOver, service.getTotalWagesCost(year, week));
+            if (fakturaPercent != -1)
+                lblPercentFaktura.Content = fakturaPercent.ToString()+"%";
+            else lblPercentFaktura.Content = "N/A";
+            if (wagePercent != -1)
+                lblPercentWage.Content = wagePercent + "%";
+            else lblPercentWage.Content = "N/A";
+            if (fakturaPercent != -1)
+                lbldscrFakt.Content = service.getSupposedFakturaPercent() - Convert.ToInt32(fakturaPercent);
+            else lbldscrFakt.Content = "N/A";
+            if (wagePercent != -1)
+                lbldscrWage.Content = service.getSupposedWagePercent() - wagePercent;
+            else lbldscrWage.Content = "N/A";
+            if ((service.getSupposedWagePercent() - wagePercent)<0)
+                lbldscrWage.Foreground = Brushes.Red;
+            else lbldscrWage.Foreground = Brushes.Black;
+            if ((service.getSupposedFakturaPercent() - Convert.ToInt32(fakturaPercent) < 0))
+                lbldscrWage.Foreground = Brushes.Red;
+            else lbldscrWage.Foreground = Brushes.Black;
+
         }
 
         public void updateFakturaGrid()
@@ -74,7 +97,7 @@ namespace Fidels
             int year = Int32.Parse(cmbYear.SelectedValue.ToString());
             int month = Int32.Parse(((ComboBoxItem)cmbMonth.SelectedItem).Tag.ToString());
             int weekNo = Int32.Parse(cmbWeek.SelectedValue.ToString());
-            
+
             dataGrid3.ItemsSource = service.getFakturas(year, month, weekNo).AsDataView();
             dataGrid3.SelectedValuePath = "faktura_id";
             ICollectionView view = CollectionViewSource.GetDefaultView(dataGrid3.ItemsSource);
@@ -417,34 +440,88 @@ namespace Fidels
         {
             if (dataGridStaff.SelectedItem != null)
             {
+                lblStatusStaff.Content = "";
                 DataRowView dataRowView = ((DataRowView)dataGridStaff.SelectedItem);
                 int selectedIndex = dataGridStaff.SelectedIndex;
                 string name = staffs.Rows[dataGridStaff.SelectedIndex].Field<string>("name");
                 TimeSpan workedHours = staffs.Rows[dataGridStaff.SelectedIndex].Field<TimeSpan>("worked_hours");
                 decimal hourlyWage = staffs.Rows[dataGridStaff.SelectedIndex].Field<decimal>("hourly_wage");
                 txbName.Text = name;
-                txbHours.Text = workedHours.ToString("c");
+                //txbHours.Text = workedHours.ToString("c");
+                txbHrs.Text = workedHours.Hours + "";
+                txbMins.Text = workedHours.Minutes + "";
                 txbHourlyWage.Text = hourlyWage.ToString("0.##");
                 lblTotalCost.Content = (Decimal.Divide(hourlyWage, 3600) * (decimal)workedHours.TotalSeconds).ToString("0.##") + " kr";
             }
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
+        {         
+                string name = "";
+                int hours = 0, minutes = 0;
+                decimal hourlyWage = 0;
+                bool success = checkStaffTextBoxes(ref name, ref hours, ref minutes, ref hourlyWage);
+                if (!success)
+                    return;
+
+                TimeSpan workedHours = new TimeSpan(hours, minutes, 0);
+                hourlyWage = Decimal.Parse(txbHourlyWage.Text);
+                bool created = service.createEmployee(name, workedHours, hourlyWage);
+                if (!created)
+                {
+                    lblStatusStaff.Content = "Failed to create";
+                    lblStatusStaff.Foreground = Brushes.Green;
+                    return;
+                }
+                lblStatusStaff.Content = "Created";
+                lblStatusStaff.Foreground = Brushes.Green;
+                syncStaff();         
+        }
+
+        private bool checkStaffTextBoxes(ref string name, ref int hours, ref int minutes, ref decimal hourlyWage)
         {
             if (txbName.Text.Trim().Length == 0)
-                MessageBox.Show("Please enter name.");
-            else
             {
-                if (txbHours.Text.Trim().Length == 0)
-                    txbHours.Text = "0";
-                if (txbHourlyWage.Text.Trim().Length == 0)
-                    txbHourlyWage.Text = "0";
-                string name = txbName.Text;
-                TimeSpan hours = TimeSpan.Parse(txbHours.Text);
-                decimal hourlyWage = Decimal.Parse(txbHourlyWage.Text);
-                service.createEmployee(name, hours, hourlyWage);
-                syncStaff();
+                MessageBox.Show("Please enter name.");
+                return false;
             }
+            if (txbHrs.Text.Trim().Length == 0)
+                txbHrs.Text = "0";
+            if (txbMins.Text.Trim().Length == 0)
+                txbMins.Text = "0";
+            if (txbHourlyWage.Text.Trim().Length == 0)
+                txbHourlyWage.Text = "0";
+
+            if (!Decimal.TryParse(txbHourlyWage.Text, out hourlyWage))
+            {
+                MessageBox.Show("Please enter a valid decimal hourly wage");
+                return false;
+            }
+
+            name = txbName.Text;
+
+            if (!Int32.TryParse(txbHrs.Text.Trim(), out hours))
+            {
+                MessageBox.Show("Please enter a valid worked hours");
+                return false;
+            }
+            if (hours < 0 || hours > 23)
+            {
+                MessageBox.Show("Hours cannot be less than 0 and more than 23");
+                return false;
+            }
+
+            if (!Int32.TryParse(txbMins.Text.Trim(), out minutes))
+            {
+                MessageBox.Show("Please enter a valid worked minutes");
+                return false;
+            }
+            if (minutes < 0 || minutes > 59)
+            {
+                MessageBox.Show("Minutes cannot be less than 0 and more than 59");
+                return false;
+            }
+            return true;
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
@@ -456,21 +533,27 @@ namespace Fidels
                 return;
             }
 
-            if (txbName.Text.Trim().Length == 0)
-                MessageBox.Show("Please enter name.");
-            else
-            {
-                if (txbHours.Text.Trim().Length == 0)
-                    txbHours.Text = "0";
-                if (txbHourlyWage.Text.Trim().Length == 0)
-                    txbHourlyWage.Text = "0";
-                string name = txbName.Text;
-                TimeSpan hours = TimeSpan.Parse(txbHours.Text);
-                decimal hourlyWage = Decimal.Parse(txbHourlyWage.Text);
-                service.updateEmployee(name, hourlyWage, hours, staffs.Rows[dataGridStaff.SelectedIndex].Field<int>("employee_id"), (int)dataGridStaff.SelectedValue);
+            string name = "";
+            int hours = 0, minutes = 0;
+            decimal hourlyWage = 0;
+            bool success = checkStaffTextBoxes(ref name, ref hours, ref minutes, ref hourlyWage);
+            if (!success)
+                return;
 
-                syncStaff();
+            TimeSpan workedHours = new TimeSpan(hours, minutes, 0);
+
+            bool updated = service.updateEmployee(name, hourlyWage, workedHours, staffs.Rows[dataGridStaff.SelectedIndex].Field<int>("employee_id"), (int)dataGridStaff.SelectedValue);
+            if (!updated)
+            {
+                lblStatusStaff.Content = "Failed to update";
+                lblStatusStaff.Foreground = Brushes.Green;
+                return;
             }
+            lblStatusStaff.Content = "Updated";
+            lblStatusStaff.Foreground = Brushes.Green;
+
+            syncStaff();
+
         }
 
         private void Button_Click_2(object sender, RoutedEventArgs e)
@@ -491,12 +574,12 @@ namespace Fidels
             bool deleted = service.deleteEmployee(employee_id);
             if (!deleted)
             {
-                lblStatus.Content = "Failed to delete";
-                lblStatus.Foreground = Brushes.Red;
+                lblStatusStaff.Content = "Failed to delete";
+                lblStatusStaff.Foreground = Brushes.Red;
                 return;
             }
-            lblStatus.Content = "Deleted";
-            lblStatus.Foreground = Brushes.Red;
+            lblStatusStaff.Content = "Deleted";
+            lblStatusStaff.Foreground = Brushes.Red;
             syncStaff();
         }
 
