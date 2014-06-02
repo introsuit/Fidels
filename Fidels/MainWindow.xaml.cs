@@ -115,7 +115,16 @@ namespace Fidels
                 delivery = dtPrev.Rows[i].Field<int>("delivery");
 
                 int sum = office_stock + speed_rail + stock_bar + display + delivery;
-                bottlesSoldDct.Add(product_id, sum);
+                
+                //add and also check if by some mistake same product was already there and update
+                if (bottlesSoldDct.ContainsKey(product_id))
+                {
+                    bottlesSoldDct[product_id] = sum;
+                }
+                else
+                {
+                    bottlesSoldDct.Add(product_id, sum);
+                }
             }      
         }
 
