@@ -61,9 +61,19 @@ namespace Fidels
                     cmbWeek.SelectedIndex = i;
                 }
             }
+            combobox1.DataContext = service.getCompanyNames();
+
+            updateFakturaGrid();
             syncStocks();
             syncStaff();
         }
+
+        public void updateFakturaGrid()
+        {
+            dataGrid3.ItemsSource = service.getFakturas().AsDataView();
+            dataGrid3.SelectedValuePath = "faktura_id";
+        }
+
 
         private struct StockValues
         {
@@ -278,9 +288,9 @@ namespace Fidels
 
         private void btnPrint_Click(object sender, RoutedEventArgs e)
         {
-            Debug.WriteLine(Service.orderPrint(stocks));
+            Debug.WriteLine(service.orderPrint(stocks));
             PrintOrders window2 = new PrintOrders();
-            window2.FillTxtblck(Service.orderPrint(stocks));
+            window2.FillTxtblck(service.orderPrint(stocks));
             window2.Show();
         }
 
@@ -342,7 +352,6 @@ namespace Fidels
                 MessageBox.Show("Select a product first.");
                 return;
             }
-
             if (MessageBox.Show("Are you sure you want to delete this product?", "Question", MessageBoxButton.YesNo) == MessageBoxResult.No)
             {
                 return;
@@ -388,6 +397,18 @@ namespace Fidels
                 }
                 staffNeedUpdate = false;
             }
+        }
+
+        private void deleteBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (dataGrid3.SelectedIndex != -1)
+                service.deleteFaktura(Convert.ToInt32(dataGrid3.SelectedValue.ToString()));
+            updateFakturaGrid();
+        }
+
+        private void addBtn_Click(object sender, RoutedEventArgs e)
+        {
+                     service.AddFaktura(Convert.ToInt32(combobox1.SelectedValue.ToString()), txtbx_serial.ToString(), Convert.ToDecimal(txtbx_amount.ToString()));
         }
     }
 }

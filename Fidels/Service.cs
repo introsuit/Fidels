@@ -167,8 +167,8 @@ namespace Fidels
 
             // Create the SelectCommand.
             SqlCommand command = new SqlCommand("SELECT * FROM employee_hours JOIN employee ON employee_hours.employee_id = employee.employee_id WHERE date >= @first AND date <= @last", connection);
-            command.Parameters.AddWithValue("first", firstDayOfWeek);
-            command.Parameters.AddWithValue("last", firstDayOfWeek.AddDays(6));
+            //command.Parameters.AddWithValue("first", firstDayOfWeek);
+            //command.Parameters.AddWithValue("last", firstDayOfWeek.AddDays(6));
             adapter.SelectCommand = command;
 
             command = new SqlCommand(
@@ -396,6 +396,48 @@ namespace Fidels
             return adapter;
         }
 
+        public DataTable getFakturas() {
+            SqlDataAdapter adapter = new SqlDataAdapter();
+            SqlCommand command = new SqlCommand("SELECT * FROM faktura", connection);
+            adapter.SelectCommand = command;
+            DataTable dtFakturaList = new DataTable();
+            adapter.Fill(dtFakturaList);
+            Debug.WriteLine(dtFakturaList.Rows.Count);
+            return dtFakturaList;
+        }
+
+        public DataTable getCompanyNames()
+        {
+            SqlDataAdapter adapter = new SqlDataAdapter();
+            SqlCommand command = new SqlCommand("SELECT * FROM company", connection);
+            adapter.SelectCommand = command;
+            DataTable dtFakturaCompanyList = new DataTable();
+            adapter.Fill(dtFakturaCompanyList);
+            Debug.WriteLine(dtFakturaCompanyList.Rows.Count);
+            return dtFakturaCompanyList;
+        }
+
+        public void AddFaktura(int company_id, string serial_no, decimal price) {
+            DateTime now = DateTime.Now;
+            SqlCommand command = new SqlCommand("INSERT INTO faktura VALUES (@company_id, @serial_no, @date, @price)", connection);
+            command.Parameters.Add(new SqlParameter("company_id", company_id));
+            command.Parameters.Add(new SqlParameter("serial_no", serial_no));
+            command.Parameters.Add(new SqlParameter("date", now));
+            command.Parameters.Add(new SqlParameter("price", price));
+            connection.Open();
+            command.ExecuteNonQuery();
+            connection.Close();
+        }
+
+        public void deleteFaktura(int faktura_id) {
+            SqlCommand command = new SqlCommand("DELETE FROM faktura WHERE faktura_id=@faktura_id", connection);
+            command.Parameters.Add(new SqlParameter("faktura_id", faktura_id));
+            connection.Open();
+            command.ExecuteNonQuery();
+            connection.Close();
+
+        }
+
         public void updateStocks(DataTable dataTable)
         {
             SqlDataAdapter adapter = getStocksAdapter(connection, 0, 0);
@@ -408,7 +450,8 @@ namespace Fidels
             adapter.Update(dataTable);
         }
 
-        public static String orderPrint(DataTable data)
+
+        public String orderPrint(DataTable data)
         {
             string str = "";
             int i = -1;
