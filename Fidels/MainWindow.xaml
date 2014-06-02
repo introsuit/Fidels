@@ -157,10 +157,10 @@
             </TabItem>
             <TabItem Header="Staff" Name="Staff" >
                 <Grid VerticalAlignment="Stretch" Margin="0,0,0,0" Width="500" Height="500">
-                    <DataGrid Name="lol" SelectionMode="Single" CanUserAddRows="False" AutoGenerateColumns="False" Height="373" HorizontalAlignment="Left" Margin="10,10,10,0" VerticalAlignment="Top">
+                    <DataGrid Name="lol" SelectionMode="Single" CanUserAddRows="False" AutoGenerateColumns="False" Height="373" HorizontalAlignment="Left" Margin="10,10,10,0" VerticalAlignment="Top" CellEditEnding="lol_CellEditEnding" CurrentCellChanged="lol_CurrentCellChanged">
                         <DataGrid.Columns>
-                            <DataGridTextColumn  MaxWidth="190" Header="Name"/>
-                            <DataGridTextColumn Header="Hours">
+                            <DataGridTextColumn  MaxWidth="190" Header="Name" Binding="{Binding name}"/>
+                            <DataGridTextColumn Header="Hours" Binding="{Binding worked_hours}">
                                 <DataGridTextColumn.ElementStyle>
                                     <Style TargetType="TextBlock">
                                         <Setter Property="HorizontalAlignment" Value="Right" />

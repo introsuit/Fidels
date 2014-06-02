@@ -28,8 +28,10 @@ namespace Fidels
     {
         private Service service = Service.getInstance();
         private DataTable stocks;
+        private DataTable staffs;
         private bool allowSync = true;
         private bool stocksNeedUpdate = false;
+        private bool staffNeedUpdate = false;
         private Dictionary<int, int> bottlesSoldDct = new Dictionary<int, int>();
 
         public MainWindow()
@@ -60,6 +62,7 @@ namespace Fidels
                 }
             }
             syncStocks();
+            syncStaff();
         }
 
         private struct StockValues
@@ -119,6 +122,25 @@ namespace Fidels
                 {
                     bottlesSoldDct.Add(product_id, sum);
                 }
+            }
+        }
+
+        private void syncStaff()
+        {
+            try
+            {
+                int year = Int32.Parse(((ComboBoxItem)cmbYear.SelectedItem).Content.ToString());
+                int weekNo = Int32.Parse(cmbWeek.SelectedValue.ToString());
+
+                staffs = service.getEmployeesHours(year, weekNo);
+                staffs.AcceptChanges();
+
+                lol.ItemsSource = staffs.AsDataView();
+                lol.SelectedValuePath = "employee_hours_id";
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error while geting staff table:\n\n" + ex.Message + "\n\n" + ex.StackTrace);
             }
         }
 
@@ -185,6 +207,7 @@ namespace Fidels
             {
                 dataGrid2.SelectedIndex = -1;
                 syncStocks();
+                syncStaff();
             }
         }
 
@@ -197,6 +220,7 @@ namespace Fidels
 
                 updateCmbWeeks();
                 syncStocks();
+                syncStaff();
                 allowSync = true;
             }
         }
@@ -338,6 +362,32 @@ namespace Fidels
             lblStatus.Content = "Deleted";
             lblStatus.Foreground = Brushes.Red;
             syncStocks();
+        }
+
+        private void lol_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
+        {
+            staffNeedUpdate = true;
+        }
+
+        private void lol_CurrentCellChanged(object sender, EventArgs e)
+        {
+            if (staffNeedUpdate)
+            {
+                try
+                {
+                    service.updateStaff(staffs);
+                    syncStaff();
+                    lblStatus.Content = "Updated";
+                    lblStatus.Foreground = Brushes.Green;
+                }
+                catch (Exception ex)
+                {
+                    lblStatus.Content = "Failed";
+                    lblStatus.Foreground = Brushes.Red;
+                    MessageBox.Show("Failed to update staff\n\n" + ex.Message + "\n\n" + ex.StackTrace);
+                }
+                staffNeedUpdate = false;
+            }
         }
     }
 }
