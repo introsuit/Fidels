@@ -167,8 +167,8 @@ namespace Fidels
 
             // Create the SelectCommand.
             SqlCommand command = new SqlCommand("SELECT * FROM employee_hours JOIN employee ON employee_hours.employee_id = employee.employee_id WHERE date >= @first AND date <= @last", connection);
-            //command.Parameters.AddWithValue("first", firstDayOfWeek);
-            //command.Parameters.AddWithValue("last", firstDayOfWeek.AddDays(6));
+            command.Parameters.AddWithValue("first", firstDayOfWeek);
+            command.Parameters.AddWithValue("last", firstDayOfWeek.AddDays(6));
             adapter.SelectCommand = command;
 
             command = new SqlCommand(
