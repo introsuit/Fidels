@@ -63,7 +63,7 @@ namespace Fidels
         }
 
         public DataTable getStocks(int year, int month, int weekNo)
-        {
+        {           
             DataTable dataTable = filterDataTable(year, month, weekNo);
 
             if (dataTable.Rows.Count == 0 && getWeeksRange(year, month).from == weekNo)
@@ -160,6 +160,39 @@ namespace Fidels
             return adapter;
         }
 
+        private SqlDataAdapter getEmployeesHoursAdapter(SqlConnection connection, int year, int week)
+        {
+            SqlDataAdapter adapter = new SqlDataAdapter();
+
+            // Create the SelectCommand.
+            SqlCommand command = new SqlCommand("SELECT * FROM employee_hours JOIN employee ON employee_hours.employee_id = employee.employee_id WHERE date >= @first AND date <= @last", connection);
+            command.Parameters.AddWithValue("first", firstDayOfWeek);
+            command.Parameters.AddWithValue("last", firstDayOfWeek.AddDays(6));
+            adapter.SelectCommand = command;
+
+            command = new SqlCommand(
+               "UPDATE employee_hours SET unit_price = @unit_price, speed_rail = @speed_rail, stock_bar = @stock_bar, " + "display = @display, office_stock = @office_stock, min_stock = @min_stock, date = @date, delivery = @delivery " +
+               "WHERE stock_id = @stock_id", connection);
+
+            // Add the parameters for the UpdateCommand.
+            command.Parameters.Add("@unit_price", SqlDbType.Decimal, 2, "unit_price");
+            command.Parameters.Add("@speed_rail", SqlDbType.Int, 2, "speed_rail");
+            command.Parameters.Add("@stock_bar", SqlDbType.Int, 2, "stock_bar");
+            command.Parameters.Add("@display", SqlDbType.Int, 2, "display");
+            command.Parameters.Add("@office_stock", SqlDbType.Int, 2, "office_stock");
+            command.Parameters.Add("@min_stock", SqlDbType.Int, 2, "min_stock");
+            command.Parameters.Add("@date", SqlDbType.Date, 2, "date");
+            command.Parameters.Add("@delivery", SqlDbType.Int, 2, "delivery");
+
+            SqlParameter parameter = command.Parameters.Add(
+                "@stock_id", SqlDbType.Int, 5, "stock_id");
+            parameter.SourceVersion = DataRowVersion.Original;
+
+            adapter.UpdateCommand = command;
+
+            return adapter;
+        }
+
         private SqlDataAdapter getStocksAdapter(SqlConnection connection, int year, int month)
         {
             SqlDataAdapter adapter = new SqlDataAdapter();
@@ -209,6 +242,17 @@ namespace Fidels
 
         public DataTable getEmployeesHours(int year, int weekNo)
         {
+            DataTable dataTable = selectEmployeeHours(year, weekNo);
+
+            if (dataTable.Rows.Count == 0 && getWeek(DateTime.Now) == weekNo)
+            {
+                insertEmployeeHours(year, weekNo);
+            }
+            return selectEmployeeHours(year, weekNo);
+        }
+
+        private DataTable selectEmployeeHours(int year, int weekNo)
+        {
             DateTime firstDayOfWeek = firstDateOfWeek(year, weekNo, CultureInfo.CurrentCulture);
             firstDayOfWeek = firstDayOfWeek.AddDays(-7); //-1 week
 
@@ -219,6 +263,33 @@ namespace Fidels
             adapter.SelectCommand = command;
 
             return getDataTable(adapter);
+        }
+
+        private DataTable insertEmployeeHours(int year, int weekNo)
+        {
+            connection.Open();
+            SqlCommand command = new SqlCommand("SELECT employee_id FROM employee", connection);
+            SqlDataReader sqlReader = command.ExecuteReader();
+            List<int> employees = new List<int>();
+            while (sqlReader.Read())
+            {
+                int employee_id = Convert.ToInt32(sqlReader["employee_id"]);
+                employees.Add(employee_id);
+            }
+
+            DateTime now = DateTime.Now;
+
+            foreach (int employee_id in employees)
+            {
+                command = new SqlCommand("INSERT INTO employee_hours VALUES (@employee_id, @worked_hours, @date)", connection);
+                command.Parameters.AddWithValue("employee_id", employee_id);
+                command.Parameters.AddWithValue("worked_hours", null);
+                command.Parameters.AddWithValue("date", now);
+                command.ExecuteNonQuery();
+            }
+            connection.Close();
+
+            return null;
         }
 
         //enter current week. will return how many bottles

@@ -157,7 +157,7 @@
             </TabItem>
             <TabItem Header="Staff" Name="Staff" >
                 <Grid VerticalAlignment="Stretch" Margin="0,0,0,0" Width="500" Height="500">
-                    <DataGrid SelectionMode="Single" CanUserAddRows="False" AutoGenerateColumns="False" Height="373" HorizontalAlignment="Left" Margin="10,10,10,0" VerticalAlignment="Top">
+                    <DataGrid Name="lol" SelectionMode="Single" CanUserAddRows="False" AutoGenerateColumns="False" Height="373" HorizontalAlignment="Left" Margin="10,10,10,0" VerticalAlignment="Top">
                         <DataGrid.Columns>
                             <DataGridTextColumn  MaxWidth="190" Header="Name"/>
                             <DataGridTextColumn Header="Hours">
