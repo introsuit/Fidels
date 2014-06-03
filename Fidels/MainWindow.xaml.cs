@@ -50,14 +50,15 @@ namespace Fidels
             updateFakturaGrid();
             syncStocks();
             syncStaff();
-            int year = Int32.Parse(cmbYear.SelectedValue.ToString());
-            int month = Int32.Parse(((ComboBoxItem)cmbMonth.SelectedItem).Tag.ToString());
-            int weekNo = Int32.Parse(cmbWeek.SelectedValue.ToString());
-            updateBudget(year, month, weekNo);
+            updateBudget();
         }
 
-        public void updateBudget(int year, int month, int week)
+        public void updateBudget()
         {
+            int year = Int32.Parse(cmbYear.SelectedValue.ToString());
+            int month = Int32.Parse(((ComboBoxItem)cmbMonth.SelectedItem).Tag.ToString());
+            int week = Int32.Parse(cmbWeek.SelectedValue.ToString());
+
             decimal totalTurnOver = 0;
             decimal totalStockValue = 0;
             service.getStockTotals(year, month, week, out totalTurnOver, out totalStockValue);
@@ -235,10 +236,7 @@ namespace Fidels
                 dataGrid2.SelectedIndex = -1;
                 syncStocks();
                 updateFakturaGrid();
-                int year = Int32.Parse(cmbYear.SelectedValue.ToString());
-                int month = Int32.Parse(((ComboBoxItem)cmbMonth.SelectedItem).Tag.ToString());
-                int weekNo = Int32.Parse(cmbWeek.SelectedValue.ToString());
-                updateBudget(year, month, weekNo);
+                updateBudget();
                 syncStaff();
             }
         }
@@ -253,11 +251,8 @@ namespace Fidels
                 syncStocks();
                 syncStaff();
                 allowSync = true;
-                updateFakturaGrid();
-                int year = Int32.Parse(cmbYear.SelectedValue.ToString());
-                int month = Int32.Parse(((ComboBoxItem)cmbMonth.SelectedItem).Tag.ToString());
-                int weekNo = Int32.Parse(cmbWeek.SelectedValue.ToString());
-                updateBudget(year, month, weekNo);
+                updateFakturaGrid();            
+                updateBudget();
             }
         }
 
@@ -268,10 +263,7 @@ namespace Fidels
                 dataGrid2.SelectedIndex = -1;
                 syncStocks();
                 updateFakturaGrid();
-                int year = Int32.Parse(cmbYear.SelectedValue.ToString());
-                int month = Int32.Parse(((ComboBoxItem)cmbMonth.SelectedItem).Tag.ToString());
-                int weekNo = Int32.Parse(cmbWeek.SelectedValue.ToString());
-                updateBudget(year, month, weekNo);
+                updateBudget();
             }
         }
 
@@ -569,6 +561,12 @@ namespace Fidels
         private void txtbx_amount_TextChanged(object sender, TextChangedEventArgs e)
         {
             validTextBox((TextBox)sender);
+        }
+        private void tabControl1_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if(Budget.IsSelected){
+                updateBudget();
+            }
         }
     }
 }
