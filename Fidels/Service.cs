@@ -207,6 +207,20 @@ namespace Fidels
             return firstWeekDay.AddDays(weekOfYear * 7);
         }
 
+        public DataTable getEmployeesHours(int year, int weekNo)
+        {
+            DateTime firstDayOfWeek = firstDateOfWeek(year, weekNo, CultureInfo.CurrentCulture);
+            firstDayOfWeek = firstDayOfWeek.AddDays(-7); //-1 week
+
+            SqlDataAdapter adapter = new SqlDataAdapter();
+            SqlCommand command = new SqlCommand("SELECT * FROM employee_hours JOIN employee ON employee_hours.employee_id = employee.employee_id WHERE date >= @first AND date <= @last", connection);
+            command.Parameters.AddWithValue("first", firstDayOfWeek);
+            command.Parameters.AddWithValue("last", firstDayOfWeek.AddDays(6));
+            adapter.SelectCommand = command;
+
+            return getDataTable(adapter);
+        }
+
         //enter current week. will return how many bottles
         //sold from previous week
         public DataTable bottlesSold(int year, int weekNo)

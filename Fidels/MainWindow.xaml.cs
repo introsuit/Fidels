@@ -236,7 +236,7 @@ namespace Fidels
                 {
                     bttlSold = bottlesSoldDct[product_id] - sValues.totalStock;
                 }
-                catch (KeyNotFoundException ex)
+                catch (KeyNotFoundException)
                 {
                     lblBottlesSold.Content = "No previous week data found...";
                     lblBottlesSold.Foreground = Brushes.Red;
