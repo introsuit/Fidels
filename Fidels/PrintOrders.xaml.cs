@@ -13,9 +13,6 @@ using System.Windows.Shapes;
 
 namespace Fidels
 {
-    /// <summary>
-    /// Interaction logic for PrintOrders.xaml
-    /// </summary>
     public partial class PrintOrders : Window
     {
         public PrintOrders()

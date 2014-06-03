@@ -21,7 +21,6 @@ using System.Collections;
 
 namespace Fidels
 {
-
     public partial class MainWindow : Window
     {
         private Service service = Service.getInstance();
@@ -66,13 +65,12 @@ namespace Fidels
             lblTurnOver.Content = totalTurnOver.ToString();
             lblTotalWages.Content = service.getTotalWagesCost(year, week);
             lblTotalFaktura.Content = service.getTotalWeeklyFakturaAmount(year, month, week);
-
-            lblSupposedPercentWage.Content = service.getSupposedWagePercent().ToString()+"%";
-            lblSupposedPercentFaktura.Content = service.getSupposedFakturaPercent().ToString()+"%";
+            lblSupposedPercentWage.Content = service.getSupposedWagePercent().ToString() + "%";
+            lblSupposedPercentFaktura.Content = service.getSupposedFakturaPercent().ToString() + "%";
             decimal fakturaPercent = service.getPercentage(totalTurnOver, service.getTotalWeeklyFakturaAmount(year, month, week));
-            decimal wagePercent  = service.getPercentage(totalTurnOver, service.getTotalWagesCost(year, week));
+            decimal wagePercent = service.getPercentage(totalTurnOver, service.getTotalWagesCost(year, week));
             if (fakturaPercent != -1)
-                lblPercentFaktura.Content = fakturaPercent.ToString()+"%";
+                lblPercentFaktura.Content = fakturaPercent.ToString() + "%";
             else lblPercentFaktura.Content = "N/A";
             if (wagePercent != -1)
                 lblPercentWage.Content = wagePercent + "%";
@@ -83,7 +81,7 @@ namespace Fidels
             if (wagePercent != -1)
                 lbldscrWage.Content = service.getSupposedWagePercent() - wagePercent;
             else lbldscrWage.Content = "N/A";
-            if ((service.getSupposedWagePercent() - wagePercent)<0)
+            if ((service.getSupposedWagePercent() - wagePercent) < 0)
                 lbldscrWage.Foreground = Brushes.Red;
             else lbldscrWage.Foreground = Brushes.Black;
             if ((service.getSupposedFakturaPercent() - Convert.ToInt32(fakturaPercent) < 0))
@@ -97,7 +95,6 @@ namespace Fidels
             int year = Int32.Parse(cmbYear.SelectedValue.ToString());
             int month = Int32.Parse(((ComboBoxItem)cmbMonth.SelectedItem).Tag.ToString());
             int weekNo = Int32.Parse(cmbWeek.SelectedValue.ToString());
-
             dataGrid3.ItemsSource = service.getFakturas(year, month, weekNo).AsDataView();
             dataGrid3.SelectedValuePath = "faktura_id";
             ICollectionView view = CollectionViewSource.GetDefaultView(dataGrid3.ItemsSource);
@@ -155,13 +152,9 @@ namespace Fidels
                 int sum = office_stock + speed_rail + stock_bar + display + delivery;
                 //add and also check if by some mistake same product was already there and update
                 if (bottlesSoldDct.ContainsKey(product_id))
-                {
                     bottlesSoldDct[product_id] = sum;
-                }
                 else
-                {
                     bottlesSoldDct.Add(product_id, sum);
-                }
             }
         }
 
@@ -171,10 +164,8 @@ namespace Fidels
             {
                 int year = Int32.Parse(cmbYear.SelectedValue.ToString());
                 int weekNo = Int32.Parse(cmbWeek.SelectedValue.ToString());
-
                 staffs = service.getEmployeesHours(year, weekNo);
                 staffs.AcceptChanges();
-
                 dataGridStaff.ItemsSource = staffs.AsDataView();
                 dataGridStaff.SelectedValuePath = "employee_hours_id";
             }
@@ -191,7 +182,6 @@ namespace Fidels
                 int year = Int32.Parse(cmbYear.SelectedValue.ToString());
                 int month = Int32.Parse(((ComboBoxItem)cmbMonth.SelectedItem).Tag.ToString());
                 int weekNo = Int32.Parse(cmbWeek.SelectedValue.ToString());
-
                 stocks = service.getStocks(year, month, weekNo);
                 stocks.Columns.Add("rowBackground", typeof(Brush));
                 stocks.Columns.Add("modelIndex", typeof(int));
@@ -202,7 +192,6 @@ namespace Fidels
                 dataGrid2.SelectedValuePath = "stock_id";
                 ICollectionView view = CollectionViewSource.GetDefaultView(dataGrid2.ItemsSource);
                 view.GroupDescriptions.Add(new PropertyGroupDescription("product_name"));
-
                 getBottlesSold(year, weekNo);
             }
             catch (Exception ex)
@@ -235,9 +224,7 @@ namespace Fidels
             int month = Int32.Parse(((ComboBoxItem)cmbMonth.SelectedItem).Tag.ToString());
             WeeksRange weekR = service.getWeeksRange(year, month);
             for (int i = weekR.from; i <= weekR.to; i++)
-            {
                 cmbWeek.Items.Add(i);
-            }
             cmbWeek.SelectedIndex = 0;
         }
 
@@ -262,7 +249,6 @@ namespace Fidels
             {
                 dataGrid2.SelectedIndex = -1;
                 allowSync = false; //to avoid double sync when cmbWeekSelected event is called
-
                 updateCmbWeeks();
                 syncStocks();
                 syncStaff();
@@ -373,14 +359,10 @@ namespace Fidels
         {
             DataGridRow row = e.Row;
             DataRowView dataRowView = ((DataRowView)row.Item);
-
             int selectedIndex = (int)(dataRowView["modelIndex"]);
             StockValues sValues = getStockValues(selectedIndex);
-
             if (sValues.amountToBuy > 0)
-            {
                 row.Background = Brushes.Red;
-            }
         }
 
         private void button1_Click_1(object sender, RoutedEventArgs e)
@@ -388,9 +370,7 @@ namespace Fidels
             CreateProduct window = new CreateProduct();
             window.ShowDialog();
             if (window.DialogResult.HasValue && window.DialogResult.Value)
-            {
                 syncStocks();
-            }
         }
 
         private void button2_Click(object sender, RoutedEventArgs e)
@@ -405,11 +385,9 @@ namespace Fidels
             {
                 return;
             }
-
             DataRowView dataRowView = ((DataRowView)selItem);
             int selectedIndex = (int)(dataRowView["modelIndex"]);
             int product_id = stocks.Rows[selectedIndex].Field<int>("product_id");
-
             bool deleted = service.deleteProduct(product_id);
             if (!deleted)
             {
@@ -447,7 +425,6 @@ namespace Fidels
                 TimeSpan workedHours = staffs.Rows[dataGridStaff.SelectedIndex].Field<TimeSpan>("worked_hours");
                 decimal hourlyWage = staffs.Rows[dataGridStaff.SelectedIndex].Field<decimal>("hourly_wage");
                 txbName.Text = name;
-                //txbHours.Text = workedHours.ToString("c");
                 txbHrs.Text = workedHours.Hours + "";
                 txbMins.Text = workedHours.Minutes + "";
                 txbHourlyWage.Text = hourlyWage.ToString("0.##");
@@ -456,26 +433,25 @@ namespace Fidels
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
-        {         
-                string name = "";
-                int hours = 0, minutes = 0;
-                decimal hourlyWage = 0;
-                bool success = checkStaffTextBoxes(ref name, ref hours, ref minutes, ref hourlyWage);
-                if (!success)
-                    return;
-
-                TimeSpan workedHours = new TimeSpan(hours, minutes, 0);
-                hourlyWage = Decimal.Parse(txbHourlyWage.Text);
-                bool created = service.createEmployee(name, workedHours, hourlyWage);
-                if (!created)
-                {
-                    lblStatusStaff.Content = "Failed to create";
-                    lblStatusStaff.Foreground = Brushes.Green;
-                    return;
-                }
-                lblStatusStaff.Content = "Created";
+        {
+            string name = "";
+            int hours = 0, minutes = 0;
+            decimal hourlyWage = 0;
+            bool success = checkStaffTextBoxes(ref name, ref hours, ref minutes, ref hourlyWage);
+            if (!success)
+                return;
+            TimeSpan workedHours = new TimeSpan(hours, minutes, 0);
+            hourlyWage = Decimal.Parse(txbHourlyWage.Text);
+            bool created = service.createEmployee(name, workedHours, hourlyWage);
+            if (!created)
+            {
+                lblStatusStaff.Content = "Failed to create";
                 lblStatusStaff.Foreground = Brushes.Green;
-                syncStaff();         
+                return;
+            }
+            lblStatusStaff.Content = "Created";
+            lblStatusStaff.Foreground = Brushes.Green;
+            syncStaff();
         }
 
         private bool checkStaffTextBoxes(ref string name, ref int hours, ref int minutes, ref decimal hourlyWage)
@@ -491,15 +467,12 @@ namespace Fidels
                 txbMins.Text = "0";
             if (txbHourlyWage.Text.Trim().Length == 0)
                 txbHourlyWage.Text = "0";
-
             if (!Decimal.TryParse(txbHourlyWage.Text, out hourlyWage))
             {
                 MessageBox.Show("Please enter a valid decimal hourly wage");
                 return false;
             }
-
             name = txbName.Text;
-
             if (!Int32.TryParse(txbHrs.Text.Trim(), out hours))
             {
                 MessageBox.Show("Please enter a valid worked hours");
@@ -510,7 +483,6 @@ namespace Fidels
                 MessageBox.Show("Hours cannot be less than 0 and more than 23");
                 return false;
             }
-
             if (!Int32.TryParse(txbMins.Text.Trim(), out minutes))
             {
                 MessageBox.Show("Please enter a valid worked minutes");
@@ -532,16 +504,13 @@ namespace Fidels
                 MessageBox.Show("Select an employee first.");
                 return;
             }
-
             string name = "";
             int hours = 0, minutes = 0;
             decimal hourlyWage = 0;
             bool success = checkStaffTextBoxes(ref name, ref hours, ref minutes, ref hourlyWage);
             if (!success)
                 return;
-
             TimeSpan workedHours = new TimeSpan(hours, minutes, 0);
-
             bool updated = service.updateEmployee(name, hourlyWage, workedHours, staffs.Rows[dataGridStaff.SelectedIndex].Field<int>("employee_id"), (int)dataGridStaff.SelectedValue);
             if (!updated)
             {
@@ -551,7 +520,6 @@ namespace Fidels
             }
             lblStatusStaff.Content = "Updated";
             lblStatusStaff.Foreground = Brushes.Green;
-
             syncStaff();
 
         }
@@ -568,9 +536,7 @@ namespace Fidels
             {
                 return;
             }
-
             int employee_id = staffs.Rows[selectedIndex].Field<int>("employee_id");
-
             bool deleted = service.deleteEmployee(employee_id);
             if (!deleted)
             {
@@ -604,7 +570,5 @@ namespace Fidels
         {
             validTextBox((TextBox)sender);
         }
-
-
     }
 }

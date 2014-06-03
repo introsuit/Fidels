@@ -22,7 +22,7 @@ namespace Fidels
         {
 
         }
-
+        // Connection string to the database
         string conStr = @"Data Source=localhost\SQLExpress; database=Fidels; Integrated Security=true;";
         SqlConnection con = null;
 
