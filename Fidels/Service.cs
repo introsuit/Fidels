@@ -121,24 +121,31 @@ namespace Fidels
             return newTable;
         }
 
-        public DataTable getFakturas(int year, int month, int weekNo)
+        public DataTable getFakturas(int year,int month, int weekNo)
         {
-            SqlDataAdapter fakturasAdapter = getFakturasAdapter(dao.getConnection(), year, month);
-            DataTable dt = getDataTable(fakturasAdapter);
-            DataTable newTable = dt.Copy();
 
-            for (int i = 0; i < dt.Rows.Count; i++)
-            {
-                DateTime dateTime = dt.Rows[i].Field<DateTime>("date");
+           
 
-                int actWeek = getWeek(dateTime);
-                if (actWeek != weekNo)
-                {
-                    newTable.Rows[i].Delete();
-                }
-            }
-            newTable.AcceptChanges();
-            return newTable;
+            //SqlDataAdapter fakturasAdapter = getFakturasAdapter(dao.getConnection(), year, month);
+            //DataTable dt = getDataTable(fakturasAdapter);
+            //DataTable newTable = dt.Copy();
+
+            //for (int i = 0; i < dt.Rows.Count; i++)
+            //{
+            //    DateTime dateTime = dt.Rows[i].Field<DateTime>("date");
+
+            //    int actWeek = getWeek(dateTime);
+            //    if (actWeek != weekNo)
+            //    {
+            //        newTable.Rows[i].Delete();
+            //    }
+            //}
+            //newTable.AcceptChanges();
+            //return newTable;
+
+            SqlDataAdapter fakturasAdapter = getFakturasAdapter(dao.getConnection(), year, weekNo);
+            DataTable dataTable = getDataTable(fakturasAdapter);
+            return dataTable;
         }
 
         private DataTable getDataTable(SqlDataAdapter adapter)
@@ -399,17 +406,15 @@ namespace Fidels
             connection.Close();
         }
 
-        private SqlDataAdapter getFakturasAdapter(SqlConnection connection, int year, int month)
+        private SqlDataAdapter getFakturasAdapter(SqlConnection connection, int year, int weekNo)
         {
             SqlDataAdapter adapter = new SqlDataAdapter();
-
+            DateTime firstDayOfWeek = firstDateOfWeek(year, weekNo, CultureInfo.CurrentCulture);
             // Create the SelectCommand.
-            SqlCommand command = new SqlCommand("SELECT * FROM faktura JOIN company ON faktura.company_id = company.company_id WHERE month(date) = @month AND year(date) = @year", connection);
-
-            command.Parameters.Add(new SqlParameter("month", month));
-            command.Parameters.Add(new SqlParameter("year", year));
+            SqlCommand command = new SqlCommand("SELECT * FROM faktura JOIN company ON faktura.company_id = company.company_id WHERE date >= @first AND date <= @last", connection);
+            command.Parameters.AddWithValue("first", firstDayOfWeek);
+            command.Parameters.AddWithValue("last", firstDayOfWeek.AddDays(6));
             adapter.SelectCommand = command;
-
             return adapter;
         }
 
@@ -423,15 +428,27 @@ namespace Fidels
             return dtFakturaList;
         }
 
-        public DataTable getCompanyNames()
+        public List<string> getCompanyNames()
         {
-            SqlDataAdapter adapter = new SqlDataAdapter();
-            SqlCommand command = new SqlCommand("SELECT * FROM company", connection);
-            adapter.SelectCommand = command;
-            DataTable dtFakturaCompanyList = new DataTable();
-            adapter.Fill(dtFakturaCompanyList);
-            Debug.WriteLine(dtFakturaCompanyList.Rows.Count);
-            return dtFakturaCompanyList;
+            //SqlDataAdapter adapter = new SqlDataAdapter();
+            //SqlCommand command = new SqlCommand("SELECT * FROM company", connection);
+            //adapter.SelectCommand = command;
+            //DataTable dtFakturaCompanyList = new DataTable();
+            //adapter.Fill(dtFakturaCompanyList);
+            //Debug.WriteLine(dtFakturaCompanyList.Rows.Count);
+            //return dtFakturaCompanyList;
+
+            List<string> list = new List<string>();
+            connection.Open();
+            SqlCommand sqlCmd = new SqlCommand("SELECT * FROM company", connection);
+            SqlDataReader sqlReader = sqlCmd.ExecuteReader();
+            while (sqlReader.Read())
+            {
+                list.Add(sqlReader["name"].ToString());
+            }
+            sqlReader.Close();
+            connection.Close();
+            return list;
         }
 
         public void AddFaktura(int company_id, string serial_no, decimal price) {

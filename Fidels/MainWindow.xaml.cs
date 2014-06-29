@@ -59,7 +59,7 @@ namespace Fidels
                     cmbWeek.SelectedIndex = i;
                 }
             }
-            combobox1.DataContext = service.getCompanyNames();
+            combobox1.ItemsSource = service.getCompanyNames();
 
             updateFakturaGrid();
             syncStocks();
@@ -67,7 +67,10 @@ namespace Fidels
 
         public void updateFakturaGrid()
         {
-            dataGrid3.ItemsSource = service.getFakturas().AsDataView();
+            int year = Int32.Parse(((ComboBoxItem)cmbYear.SelectedItem).Content.ToString());
+            int month = Int32.Parse(((ComboBoxItem)cmbMonth.SelectedItem).Tag.ToString());
+            int weekNo = Int32.Parse(cmbWeek.SelectedValue.ToString());
+            dataGrid3.ItemsSource = service.getFakturas(year, month, weekNo).AsDataView();
             dataGrid3.SelectedValuePath = "faktura_id";
         }
 
@@ -195,6 +198,7 @@ namespace Fidels
             {
                 dataGrid2.SelectedIndex = -1;
                 syncStocks();
+                updateFakturaGrid();
             }
         }
 
@@ -208,6 +212,7 @@ namespace Fidels
                 updateCmbWeeks();
                 syncStocks();
                 allowSync = true;
+                updateFakturaGrid();
             }
         }
 
@@ -217,6 +222,7 @@ namespace Fidels
             {
                 dataGrid2.SelectedIndex = -1;
                 syncStocks();
+                updateFakturaGrid();
             }
         }
 
@@ -358,7 +364,9 @@ namespace Fidels
 
         private void addBtn_Click(object sender, RoutedEventArgs e)
         {
-                     service.AddFaktura(Convert.ToInt32(combobox1.SelectedValue.ToString()), txtbx_serial.ToString(), Convert.ToDecimal(txtbx_amount.ToString()));
+             if (combobox1.SelectedIndex != -1)
+                     service.AddFaktura(combobox1.SelectedIndex+1, txtbx_serial.Text, Convert.ToDecimal(txtbx_amount.Text));
+             updateFakturaGrid();
         }
 
 
