@@ -38,6 +38,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -60,6 +61,7 @@
       <DependentUpon>CreateProduct.xaml</DependentUpon>
     </Compile>
     <Compile Include="Dao.cs" />
+    <Compile Include="frm1.cs" />
     <Compile Include="PrintOrders.xaml.cs">
       <DependentUpon>PrintOrders.xaml</DependentUpon>
     </Compile>

@@ -16,11 +16,32 @@ namespace Fidels
         public int to;
     }
 
+
     class Service
     {
         private static Service service;
         private Dao dao = Dao.getInstance();
         private SqlConnection connection = null;
+        private int supposedWagePercent = 20;
+        private int supposedFakturaPercent = 5;
+
+        public int getSupposedWagePercent() {
+            return supposedWagePercent;
+        }
+
+        public int getSupposedFakturaPercent() {
+            return supposedFakturaPercent;
+        }
+
+        public void setSupposedWagePercent(int i)
+        {
+            supposedWagePercent = i;
+        }
+
+        public void setSupposedFakturaPercent(int i)
+        {
+            supposedFakturaPercent = i;
+        }
 
         public static Service getInstance()
         {
@@ -123,25 +144,6 @@ namespace Fidels
 
         public DataTable getFakturas(int year, int month, int weekNo)
         {
-
-
-
-            //SqlDataAdapter fakturasAdapter = getFakturasAdapter(dao.getConnection(), year, month);
-            //DataTable dt = getDataTable(fakturasAdapter);
-            //DataTable newTable = dt.Copy();
-
-            //for (int i = 0; i < dt.Rows.Count; i++)
-            //{
-            //    DateTime dateTime = dt.Rows[i].Field<DateTime>("date");
-
-            //    int actWeek = getWeek(dateTime);
-            //    if (actWeek != weekNo)
-            //    {
-            //        newTable.Rows[i].Delete();
-            //    }
-            //}
-            //newTable.AcceptChanges();
-            //return newTable;
 
             SqlDataAdapter fakturasAdapter = getFakturasAdapter(dao.getConnection(), year, weekNo);
             DataTable dataTable = getDataTable(fakturasAdapter);
@@ -484,6 +486,16 @@ namespace Fidels
 
         }
 
+        public int totalWeeklyFakturaAmount(int year, int month, int weekNo)
+        {
+            int i = 0;
+            DataTable dt = getFakturas(year, month, weekNo);
+            foreach (DataRow row in dt.Rows) {
+                i = i + Convert.ToInt32(row["price"]);
+            }
+            return i;
+        }
+            
         public void updateStocks(DataTable dataTable)
         {
             SqlDataAdapter adapter = getStocksAdapter(connection, 0, 0);

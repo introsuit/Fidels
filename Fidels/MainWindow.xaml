@@ -149,7 +149,7 @@
                                         </ItemsPanelTemplate>
                                     </GroupStyle.Panel>
                                 </GroupStyle>
-                              </DataGrid.GroupStyle>
+                            </DataGrid.GroupStyle>
                             <DataGrid.Columns>
                                 <DataGridTextColumn Header="Date" Binding="{Binding date}"/>
                                 <DataGridTextColumn Header="Serial No" Binding="{Binding serial_no}"/>
@@ -158,8 +158,7 @@
                         </DataGrid>
                         <TextBox x:Name="txtbx_serial" TextWrapping="Wrap" Margin="553,70,129,151"/>
                         <TextBox x:Name="txtbx_amount" TextWrapping="Wrap" Margin="552,99,130,122"/>
-                        <Label Content="Total amount:" HorizontalAlignment="Left" Margin="200,40,0,0" VerticalAlignment="Top"/>
-                        <Label x:Name="lbltotal_amount" Content="" HorizontalAlignment="Left" Margin="200,80,0,0" VerticalAlignment="Top"/>
+                        <Label x:Name="lbltotal_amount" Content="" HorizontalAlignment="Left" Margin="280,80,0,0" VerticalAlignment="Top"/>
                         <Label Content="Company:" HorizontalAlignment="Left" Margin="478,40,0,0" VerticalAlignment="Top"/>
                         <Label Content="Serial number:&#xD;&#xA;" HorizontalAlignment="Left" Margin="455,66,0,0" VerticalAlignment="Top"/>
                         <Label Content="Amount (DKK):" HorizontalAlignment="Left" Margin="453,90,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.598,0.015"/>
@@ -203,6 +202,30 @@
                 </Grid>
             </TabItem>
             <TabItem Header="Budget" Name="Budget" >
+                <Grid>
+                    <Label Content="Total supposed turnover:" HorizontalAlignment="Left" Margin="44,87,0,0" Grid.Row="1" VerticalAlignment="Top" Height="33" Width="156"/>
+                    <Label x:Name="lblTurnOver" Content=" " HorizontalAlignment="Left" Margin="250,87,0,0" VerticalAlignment="Top" Height="33" Width="62"/>
+                    <Label Content="Total money spent (faktura):" HorizontalAlignment="Left" Margin="44,125,0,0" Grid.Row="1" VerticalAlignment="Top" Width="166"/>
+                    <Label x:Name="lblWage" Content="Total money spent (wages):" HorizontalAlignment="Left" Margin="44,166,0,0" Grid.Row="1" VerticalAlignment="Top" Width="166"/>
+                    <Label Content="Total value in stock:" HorizontalAlignment="Left" Margin="44,428,0,0" Grid.Row="1" VerticalAlignment="Top"/>
+                    <Label x:Name="lblTotalValueStock" Content="15000 DKK" HorizontalAlignment="Left" Margin="163,428,0,0" VerticalAlignment="Top"/>
+                    <Label Content="DKK" HorizontalAlignment="Left" Margin="267,61,0,0" Grid.Row="1" VerticalAlignment="Top"/>
+                    <Label Content="Percentage" HorizontalAlignment="Left" Margin="348,61,0,0" Grid.Row="1" VerticalAlignment="Top"/>
+                    <Label Content="Supposed percantage" HorizontalAlignment="Left" Margin="459,61,0,0" Grid.Row="1" VerticalAlignment="Top"/>
+                    <Label Content="Discrepancy" HorizontalAlignment="Left" Margin="617,61,0,0" Grid.Row="1" VerticalAlignment="Top"/>
+                    <Label x:Name="lblTotalFaktura" Content=" " HorizontalAlignment="Left" Margin="250,125,0,0" VerticalAlignment="Top" Height="33" Width="62"/>
+                    <Label x:Name="lblTotalWages" Content=" " HorizontalAlignment="Left" Margin="250,163,0,0" VerticalAlignment="Top" Height="33" Width="62"/>
+                    <Label Content="100%" HorizontalAlignment="Left" Margin="355,87,0,0" VerticalAlignment="Top" Height="33" Width="62"/>
+                    <Label x:Name="lblPercentFaktura" Content="" HorizontalAlignment="Left" Margin="355,125,0,0" VerticalAlignment="Top" Height="33" Width="62"/>
+                    <Label x:Name="lblPercentWage" Content=" " HorizontalAlignment="Left" Margin="355,159,0,0" VerticalAlignment="Top" Height="33" Width="62"/>
+
+                    <Label Content="10%" HorizontalAlignment="Left" Margin="488,125,0,0" VerticalAlignment="Top" Height="33" Width="62"/>
+                    <Label Content="20%" HorizontalAlignment="Left" Margin="488,159,0,0" VerticalAlignment="Top" Height="33" Width="62"/>
+
+                    <Label x:Name="lbldscrFakt" Content="" HorizontalAlignment="Left" Margin="617,125,0,0" VerticalAlignment="Top" Height="33" Width="62"/>
+                    <Label x:Name="lbldscrWage" Content="" HorizontalAlignment="Left" Margin="617,159,0,0" VerticalAlignment="Top" Height="33" Width="62"/>
+                </Grid>
+
             </TabItem>
         </TabControl>
         <ComboBox Height="23" HorizontalAlignment="Left" Margin="28,39,0,0" Name="cmbYear" VerticalAlignment="Top" Width="120" SelectionChanged="cmbYear_SelectionChanged">
