@@ -158,6 +158,8 @@
                         </DataGrid>
                         <TextBox x:Name="txtbx_serial" TextWrapping="Wrap" Margin="553,70,129,151"/>
                         <TextBox x:Name="txtbx_amount" TextWrapping="Wrap" Margin="552,99,130,122"/>
+                        <Label Content="Total amount:" HorizontalAlignment="Left" Margin="200,40,0,0" VerticalAlignment="Top"/>
+                        <Label x:Name="lbltotal_amount" Content="" HorizontalAlignment="Left" Margin="200,80,0,0" VerticalAlignment="Top"/>
                         <Label Content="Company:" HorizontalAlignment="Left" Margin="478,40,0,0" VerticalAlignment="Top"/>
                         <Label Content="Serial number:&#xD;&#xA;" HorizontalAlignment="Left" Margin="455,66,0,0" VerticalAlignment="Top"/>
                         <Label Content="Amount (DKK):" HorizontalAlignment="Left" Margin="453,90,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.598,0.015"/>
