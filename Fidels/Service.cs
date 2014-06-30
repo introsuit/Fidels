@@ -486,7 +486,7 @@ namespace Fidels
 
         }
 
-        public int totalWeeklyFakturaAmount(int year, int month, int weekNo)
+        public int getTotalWeeklyFakturaAmount(int year, int month, int weekNo)
         {
             int i = 0;
             DataTable dt = getFakturas(year, month, weekNo);
@@ -547,7 +547,7 @@ namespace Fidels
         }
 
         // for budget calculations
-        private void getStockTotals(int year, int month, int week, out decimal totalSupposeTurnOver, out decimal totalWeekStockValue)
+        public void getStockTotals(int year, int month, int week, out decimal totalSupposeTurnOver, out decimal totalWeekStockValue)
         {
             DataTable thisWeekDataTable = filterDataTable(year, month, week);
             DataTable previousWeekDataTable = service.bottlesSold(year, week);
@@ -589,5 +589,6 @@ namespace Fidels
             }
             return totalWagesCost;
         }
+
     }
 }

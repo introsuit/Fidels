@@ -219,8 +219,8 @@
                     <Label x:Name="lblPercentFaktura" Content="" HorizontalAlignment="Left" Margin="355,125,0,0" VerticalAlignment="Top" Height="33" Width="62"/>
                     <Label x:Name="lblPercentWage" Content=" " HorizontalAlignment="Left" Margin="355,159,0,0" VerticalAlignment="Top" Height="33" Width="62"/>
 
-                    <Label Content="10%" HorizontalAlignment="Left" Margin="488,125,0,0" VerticalAlignment="Top" Height="33" Width="62"/>
-                    <Label Content="20%" HorizontalAlignment="Left" Margin="488,159,0,0" VerticalAlignment="Top" Height="33" Width="62"/>
+                    <Label x:Name="lblSupposedPercentFaktura"  Content="10%" HorizontalAlignment="Left" Margin="488,125,0,0" VerticalAlignment="Top" Height="33" Width="62"/>
+                    <Label x:Name="lblSupposedPercentWage" Content="20%" HorizontalAlignment="Left" Margin="488,159,0,0" VerticalAlignment="Top" Height="33" Width="62"/>
 
                     <Label x:Name="lbldscrFakt" Content="" HorizontalAlignment="Left" Margin="617,125,0,0" VerticalAlignment="Top" Height="33" Width="62"/>
                     <Label x:Name="lbldscrWage" Content="" HorizontalAlignment="Left" Margin="617,159,0,0" VerticalAlignment="Top" Height="33" Width="62"/>
