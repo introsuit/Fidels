@@ -30,9 +30,6 @@
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="88*" />
         </Grid.ColumnDefinitions>
-        <Button Grid.Row="1" Content="Create" Height="23" HorizontalAlignment="Left" Margin="28,437,0,0" Name="button1" VerticalAlignment="Top" Width="75" Click="button1_Click_1" />
-        <Button Grid.Row="1" Content="Remove" Height="23" HorizontalAlignment="Left" Margin="108,437,0,0" Name="button2" VerticalAlignment="Top" Width="75" RenderTransformOrigin="0.413,-0.957" Click="button2_Click"/>
-        <Button x:Name="btnPrint" Content="Print order" HorizontalAlignment="Left" Margin="855,437,0,0" Grid.Row="1" VerticalAlignment="Top" Width="75" Click="btnPrint_Click"/>
         <ComboBox Height="23" HorizontalAlignment="Left" Margin="188,39,0,0" Name="cmbMonth" VerticalAlignment="Top" Width="120" SelectionChanged="cmbMonth_SelectionChanged">
             <ComboBoxItem Tag="1">January</ComboBoxItem>
             <ComboBoxItem Tag="2">February</ComboBoxItem>
@@ -54,7 +51,10 @@
         <TabControl Grid.Row="1" Height="Auto" Margin="10,10,10,10" Name="tabControl1" VerticalAlignment="Top" Width="920">
             <TabItem Header="Stock" Name="Stock">
                 <Grid VerticalAlignment="Stretch" Margin="0,0,0,0">
-                    <DataGrid SelectionMode="Single" CanUserAddRows="False" AutoGenerateColumns="False" Height="373" HorizontalAlignment="Left" Margin="10,10,10,0" Name="dataGrid2" VerticalAlignment="Top" SelectionChanged="dataGrid2_SelectionChanged" PreparingCellForEdit="dataGrid2_PreparingCellForEdit" CellEditEnding="dataGrid2_CellEditEnding" CurrentCellChanged="dataGrid2_CurrentCellChanged" LoadingRow="dataGrid2_LoadingRow">
+                    <Button Content="Create" Height="23" HorizontalAlignment="Left" Margin="10,339,0,0" Name="button1" VerticalAlignment="Top" Width="75" Click="button1_Click_1" />
+                    <Button Content="Remove" Height="23" HorizontalAlignment="Left" Margin="90,339,0,0" Name="button2" VerticalAlignment="Top" Width="75" RenderTransformOrigin="0.413,-0.957" Click="button2_Click"/>
+                    <Button x:Name="btnPrint" Content="Print order" HorizontalAlignment="Left" Margin="825,339,0,0" VerticalAlignment="Top" Width="75" Click="btnPrint_Click"/>
+                    <DataGrid SelectionMode="Single" CanUserAddRows="False" AutoGenerateColumns="False" Height="324" HorizontalAlignment="Left" Margin="10,10,0,0" Name="dataGrid2" VerticalAlignment="Top" SelectionChanged="dataGrid2_SelectionChanged" PreparingCellForEdit="dataGrid2_PreparingCellForEdit" CellEditEnding="dataGrid2_CellEditEnding" CurrentCellChanged="dataGrid2_CurrentCellChanged" LoadingRow="dataGrid2_LoadingRow">
                         <DataGrid.RowStyle>
                             <Style TargetType="{x:Type DataGridRow}">
                                 <Setter Property="Background" Value="{Binding rowBackground}"/>
@@ -126,11 +126,13 @@
                     <Label Height="28" HorizontalAlignment="Left" Margin="605,47,0,0" Name="lblTotalStock" VerticalAlignment="Top" />
                     <Label Content="Stock Value" Height="28" HorizontalAlignment="Left" Margin="605,80,0,0" Name="label6" VerticalAlignment="Top" />
                     <Label Height="28" HorizontalAlignment="Left" Margin="605,113,0,0" Name="lblStockValue" VerticalAlignment="Top" />
-                    <Label Content="Bottles Sold" Height="28" HorizontalAlignment="Left" Margin="604,146,0,0" Name="label8" VerticalAlignment="Top" />
+                    <Label Content="Previous week bottles Sold" Height="28" HorizontalAlignment="Left" Margin="604,146,0,0" Name="label8" VerticalAlignment="Top" />
                     <Label Height="28" HorizontalAlignment="Left" Margin="605,179,0,0" Name="lblBottlesSold" VerticalAlignment="Top" />
                     <Label Content="Amount to buy" Height="28" HorizontalAlignment="Left" Margin="776,10,0,0" Name="label10" VerticalAlignment="Top" FontWeight="Bold" FontSize="16" />
                     <Label Height="28" HorizontalAlignment="Left" Margin="800,43,0,0" Name="lblAmountTobuy" VerticalAlignment="Top" FontWeight="Bold" FontSize="16" />
                     <Label Content="" Height="28" HorizontalAlignment="Left" Margin="529,362,0,0" Name="lblStatus" VerticalAlignment="Top" Foreground="Green" />
+                    <Label Content="Suppose turnover" HorizontalAlignment="Left" Margin="776,146,0,0" VerticalAlignment="Top"/>
+                    <Label x:Name="lblSupposeTurnover" HorizontalAlignment="Left" Margin="800,181,0,0" VerticalAlignment="Top"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Factura" Name="Factura" >
@@ -153,22 +155,21 @@
                                 <DataGridTextColumn Header="Serial No" Binding="{Binding serial_no}"/>
                                 <DataGridTextColumn Header="Price" Binding="{Binding price}"/>
                             </DataGrid.Columns>
-                             </DataGrid>
-                            <TextBox x:Name="txtbx_serial" TextWrapping="Wrap" Margin="553,70,129,151"/>
-                            <TextBox x:Name="txtbx_amount" TextWrapping="Wrap" Margin="552,99,130,122" TextChanged="txtbx_amount_TextChanged"/>
-                            <Label Content="Company:" HorizontalAlignment="Left" Margin="478,40,0,0" VerticalAlignment="Top"/>
-                            <Label Content="Serial number:&#xD;&#xA;" HorizontalAlignment="Left" Margin="455,66,0,0" VerticalAlignment="Top"/>
-                            <Label Content="Amount (DKK):" HorizontalAlignment="Left" Margin="453,90,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.598,0.015"/>
-                            <ComboBox x:Name="combobox1" HorizontalAlignment="Left" VerticalAlignment="Top" Width="120" Margin="553,40,0,0"/>
+                        </DataGrid>
+                        <TextBox x:Name="txtbx_serial" TextWrapping="Wrap" Margin="553,70,129,151"/>
+                        <TextBox x:Name="txtbx_amount" TextWrapping="Wrap" Margin="552,99,130,122"/>
+                        <Label Content="Company:" HorizontalAlignment="Left" Margin="478,40,0,0" VerticalAlignment="Top"/>
+                        <Label Content="Serial number:&#xD;&#xA;" HorizontalAlignment="Left" Margin="455,66,0,0" VerticalAlignment="Top"/>
+                        <Label Content="Amount (DKK):" HorizontalAlignment="Left" Margin="453,90,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.598,0.015"/>
+                        <ComboBox x:Name="combobox1" HorizontalAlignment="Left" VerticalAlignment="Top" Width="120" Margin="553,40,0,0"/>
 
-
-                       
                     </Grid>
                 </ScrollViewer>
             </TabItem>
             <TabItem Header="Staff" Name="Staff" >
-                <Grid VerticalAlignment="Stretch" Margin="0,0,0,0" Width="500" Height="500">
-                    <DataGrid Name="lol" SelectionMode="Single" CanUserAddRows="False" AutoGenerateColumns="False" Height="373" HorizontalAlignment="Left" Margin="10,10,10,0" VerticalAlignment="Top">
+                <Grid VerticalAlignment="Stretch" Margin="0,0,0,0">
+                    <DataGrid IsReadOnly="True" Name="dataGridStaff" SelectionMode="Single" CanUserAddRows="False" AutoGenerateColumns="False" Height="373" HorizontalAlignment="Left" Margin="10,10,10,0" VerticalAlignment="Top" SelectionChanged="dataGridStaff_SelectionChanged">
+
                         <DataGrid.Columns>
                             <DataGridTextColumn  MaxWidth="190" Header="Name"/>
                             <DataGridTextColumn Header="Hours">
@@ -177,9 +178,27 @@
                                         <Setter Property="HorizontalAlignment" Value="Right" />
                                     </Style>
                                 </DataGridTextColumn.ElementStyle>
-                            </DataGridTextColumn>  
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="Hourly wage" Binding="{Binding hourly_wage}">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Right" />
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
                         </DataGrid.Columns>
                     </DataGrid>
+                    <Label Content="Total cost" Height="28" HorizontalAlignment="Left" Margin="245,10,0,0" VerticalAlignment="Top" FontWeight="Bold" FontSize="16" />
+                    <Label x:Name="lblTotalCost" Height="28" HorizontalAlignment="Left" Margin="269,43,0,0" VerticalAlignment="Top" FontWeight="Bold" FontSize="16" />
+                    <Button Content="Add" HorizontalAlignment="Left" Margin="331,210,0,0" VerticalAlignment="Top" Click="Button_Click"/>
+                    <Button Content="Delete" HorizontalAlignment="Left" Margin="414,210,0,0" VerticalAlignment="Top" Click="Button_Click_2" />
+                    <Label Content="Name" HorizontalAlignment="Left" Margin="287,125,0,0" VerticalAlignment="Top" RenderTransformOrigin="1.5,0.692"/>
+                    <Label Content="Hours" HorizontalAlignment="Left" Margin="287,153,0,0" VerticalAlignment="Top"/>
+                    <Label Content="Hourly wage" HorizontalAlignment="Left" Margin="252,182,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.416,0.385"/>
+                    <TextBox x:Name="txbName" HorizontalAlignment="Left" Height="23" Margin="334,125,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+                    <TextBox x:Name="txbHours" HorizontalAlignment="Left" Height="23" Margin="334,153,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+                    <TextBox x:Name="txbHourlyWage" HorizontalAlignment="Left" Height="23" Margin="334,182,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+                    <Button Content="Update" HorizontalAlignment="Left" Margin="364,210,0,0" VerticalAlignment="Top" Click="Button_Click_1" />
                 </Grid>
             </TabItem>
             <TabItem Header="Budget" Name="Budget" >

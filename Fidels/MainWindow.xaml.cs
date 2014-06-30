@@ -151,8 +151,8 @@ namespace Fidels
                 staffs = service.getEmployeesHours(year, weekNo);
                 staffs.AcceptChanges();
 
-                lol.ItemsSource = staffs.AsDataView();
-                lol.SelectedValuePath = "employee_hours_id";
+                dataGridStaff.ItemsSource = staffs.AsDataView();
+                dataGridStaff.SelectedValuePath = "employee_hours_id";
             }
             catch (Exception ex)
             {
@@ -275,18 +275,22 @@ namespace Fidels
                 }
                 int product_id = stocks.Rows[selectedIndex].Field<int>("product_id");
                 int bttlSold = 0;
+                decimal supposeTurnover = 0;
                 try
                 {
                     bttlSold = bottlesSoldDct[product_id] - sValues.totalStock;
+                    supposeTurnover = ((decimal.Divide(bttlSold, 5) * 4 * 16) + (decimal.Divide(bttlSold, 5) * 8)) * stocks.Rows[selectedIndex].Field<decimal>("unit_price");
                 }
                 catch (KeyNotFoundException)
                 {
                     lblBottlesSold.Content = "No previous week data found...";
+                    lblSupposeTurnover.Content = "";
                     lblBottlesSold.Foreground = Brushes.Red;
                     return;
                 }
                 lblBottlesSold.Content = bttlSold;
                 lblBottlesSold.Foreground = Brushes.Black;
+                lblSupposeTurnover.Content = supposeTurnover;
             }
         }
 
@@ -382,32 +386,6 @@ namespace Fidels
             syncStocks();
         }
 
-        private void lol_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
-        {
-            staffNeedUpdate = true;
-        }
-
-        private void lol_CurrentCellChanged(object sender, EventArgs e)
-        {
-            if (staffNeedUpdate)
-            {
-                try
-                {
-                    service.updateStaff(staffs);
-                    syncStaff();
-                    lblStatus.Content = "Updated";
-                    lblStatus.Foreground = Brushes.Green;
-                }
-                catch (Exception ex)
-                {
-                    lblStatus.Content = "Failed";
-                    lblStatus.Foreground = Brushes.Red;
-                    MessageBox.Show("Failed to update staff\n\n" + ex.Message + "\n\n" + ex.StackTrace);
-                }
-                staffNeedUpdate = false;
-            }
-        }
-
         private void deleteBtn_Click(object sender, RoutedEventArgs e)
         {
             if (dataGrid3.SelectedIndex != -1)
@@ -417,9 +395,96 @@ namespace Fidels
 
         private void addBtn_Click(object sender, RoutedEventArgs e)
         {
-             if (combobox1.SelectedIndex != -1)
-                     service.AddFaktura(combobox1.SelectedIndex+1, txtbx_serial.Text, Convert.ToDecimal(txtbx_amount.Text));
-             updateFakturaGrid();
+            if (combobox1.SelectedIndex != -1)
+                service.AddFaktura(combobox1.SelectedIndex + 1, txtbx_serial.Text, Convert.ToDecimal(txtbx_amount.Text));
+            updateFakturaGrid();
+        }
+
+        private void dataGridStaff_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (dataGridStaff.SelectedItem != null)
+            {
+                DataRowView dataRowView = ((DataRowView)dataGridStaff.SelectedItem);
+                int selectedIndex = dataGridStaff.SelectedIndex;
+                string name = staffs.Rows[dataGridStaff.SelectedIndex].Field<string>("name");
+                TimeSpan workedHours = staffs.Rows[dataGridStaff.SelectedIndex].Field<TimeSpan>("worked_hours");
+                decimal hourlyWage = staffs.Rows[dataGridStaff.SelectedIndex].Field<decimal>("hourly_wage");
+                txbName.Text = name;
+                txbHours.Text = workedHours.ToString("c");
+                txbHourlyWage.Text = hourlyWage.ToString("0.##");
+                lblTotalCost.Content = (Decimal.Divide(hourlyWage, 3600) * (decimal)workedHours.TotalSeconds).ToString("0.##") + " kr";
+            }
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            if (txbName.Text.Trim().Length == 0)
+                MessageBox.Show("Please enter name.");
+            else
+            {
+                if (txbHours.Text.Trim().Length == 0)
+                    txbHours.Text = "0";
+                if (txbHourlyWage.Text.Trim().Length == 0)
+                    txbHourlyWage.Text = "0";
+                string name = txbName.Text;
+                TimeSpan hours = TimeSpan.Parse(txbHours.Text);
+                decimal hourlyWage = Decimal.Parse(txbHourlyWage.Text);
+                service.createEmployee(name, hours, hourlyWage);
+                syncStaff();
+            }
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            int selectedIndex = dataGridStaff.SelectedIndex;
+            if (selectedIndex == -1)
+            {
+                MessageBox.Show("Select an employee first.");
+                return;
+            }
+
+            if (txbName.Text.Trim().Length == 0)
+                MessageBox.Show("Please enter name.");
+            else
+            {
+                if (txbHours.Text.Trim().Length == 0)
+                    txbHours.Text = "0";
+                if (txbHourlyWage.Text.Trim().Length == 0)
+                    txbHourlyWage.Text = "0";
+                string name = txbName.Text;
+                TimeSpan hours = TimeSpan.Parse(txbHours.Text);
+                decimal hourlyWage = Decimal.Parse(txbHourlyWage.Text);
+                service.updateEmployee(name, hourlyWage, hours, staffs.Rows[dataGridStaff.SelectedIndex].Field<int>("employee_id"), (int)dataGridStaff.SelectedValue);
+
+                syncStaff();
+            }
+        }
+
+        private void Button_Click_2(object sender, RoutedEventArgs e)
+        {
+            int selectedIndex = dataGridStaff.SelectedIndex;
+            if (selectedIndex == -1)
+            {
+                MessageBox.Show("Select an employee first.");
+                return;
+            }
+            if (MessageBox.Show("Are you sure you want to delete this employee?", "Question", MessageBoxButton.YesNo) == MessageBoxResult.No)
+            {
+                return;
+            }
+
+            int employee_id = staffs.Rows[selectedIndex].Field<int>("employee_id");
+
+            bool deleted = service.deleteEmployee(employee_id);
+            if (!deleted)
+            {
+                lblStatus.Content = "Failed to delete";
+                lblStatus.Foreground = Brushes.Red;
+                return;
+            }
+            lblStatus.Content = "Deleted";
+            lblStatus.Foreground = Brushes.Red;
+            syncStaff();
         }
 
 

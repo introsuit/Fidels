@@ -121,10 +121,10 @@ namespace Fidels
             return newTable;
         }
 
-        public DataTable getFakturas(int year,int month, int weekNo)
+        public DataTable getFakturas(int year, int month, int weekNo)
         {
 
-           
+
 
             //SqlDataAdapter fakturasAdapter = getFakturasAdapter(dao.getConnection(), year, month);
             //DataTable dt = getDataTable(fakturasAdapter);
@@ -169,30 +169,32 @@ namespace Fidels
 
         private SqlDataAdapter getEmployeesHoursAdapter(int year, int weekNo)
         {
-            DateTime firstDayOfWeek = firstDateOfWeek(year, weekNo, CultureInfo.CurrentCulture);           
+            DateTime firstDayOfWeek = firstDateOfWeek(year, weekNo, CultureInfo.CurrentCulture);
             SqlDataAdapter adapter = new SqlDataAdapter();
 
             // Create the SelectCommand.
-            SqlCommand command = new SqlCommand("SELECT * FROM employee_hours JOIN employee ON employee_hours.employee_id = employee.employee_id WHERE date >= @first AND date <= @last", connection);
+            SqlCommand command = new SqlCommand("SELECT * FROM employee_hours JOIN employee ON employee_hours.employee_id = employee.employee_id WHERE active = 1 AND date >= @first AND date <= @last", connection);
             command.Parameters.AddWithValue("first", firstDayOfWeek);
             command.Parameters.AddWithValue("last", firstDayOfWeek.AddDays(6));
             adapter.SelectCommand = command;
-
-            command = new SqlCommand(
-               "UPDATE employee_hours SET employee_id = @employee_id, worked_hours = @worked_hours, date = @date, " + "WHERE employee_hours_id = @employee_hours_id", connection);
-
-            // Add the parameters for the UpdateCommand.
-            command.Parameters.Add("@employee_id", SqlDbType.Int, 2, "employee_id");
-            command.Parameters.Add("@worked_hours", SqlDbType.Time, 2, "worked_hours");
-            command.Parameters.Add("@date", SqlDbType.Date, 2, "date");
-
-            SqlParameter parameter = command.Parameters.Add(
-                "@employee_hours_id", SqlDbType.Int, 5, "employee_hours_id");
-            parameter.SourceVersion = DataRowVersion.Original;
-
-            adapter.UpdateCommand = command;
-
             return adapter;
+        }
+
+        public bool updateEmployee(string name, decimal hourlyWage, TimeSpan time, int employeeId, int employeeHoursId)
+        {
+            int result = 0;
+            connection.Open();
+            SqlCommand command = new SqlCommand("UPDATE employee SET name = @name, hourly_wage = @hourly_wage WHERE employee_id = @employee_id", connection);
+            command.Parameters.AddWithValue("name", name);
+            command.Parameters.AddWithValue("hourly_wage", hourlyWage);
+            command.Parameters.AddWithValue("employee_id", employeeId);
+            result +=command.ExecuteNonQuery();
+            command = new SqlCommand("UPDATE employee_hours SET worked_hours = @worked_hours WHERE employee_hours_id = @employee_hours_id", connection);
+            command.Parameters.AddWithValue("worked_hours", time);
+            command.Parameters.AddWithValue("employee_hours_id", employeeHoursId);
+            result += command.ExecuteNonQuery();
+            connection.Close();
+            return result > 0;
         }
 
         private SqlDataAdapter getStocksAdapter(SqlConnection connection, int year, int month)
@@ -245,7 +247,7 @@ namespace Fidels
         public DataTable getEmployeesHours(int year, int weekNo)
         {
             SqlDataAdapter emplAdapter = getEmployeesHoursAdapter(year, weekNo);
-            DataTable dataTable = getDataTable(emplAdapter);         
+            DataTable dataTable = getDataTable(emplAdapter);
 
             if (dataTable.Rows.Count == 0 && getWeek(DateTime.Now) == weekNo)
             {
@@ -274,7 +276,7 @@ namespace Fidels
             {
                 command = new SqlCommand("INSERT INTO employee_hours VALUES (@employee_id, @worked_hours, @date)", connection);
                 command.Parameters.AddWithValue("employee_id", employee_id);
-                
+
                 command.Parameters.AddWithValue("worked_hours", new TimeSpan());
                 command.Parameters.AddWithValue("date", now);
                 command.ExecuteNonQuery();
@@ -314,6 +316,30 @@ namespace Fidels
 
             command = new SqlCommand("DELETE FROM stock WHERE product_id = @product_id AND (date >= @first AND date <= @last)", connection);
             command.Parameters.AddWithValue("product_id", product_id);
+            command.Parameters.AddWithValue("first", firstDayOfWeek);
+            command.Parameters.AddWithValue("last", firstDayOfWeek.AddDays(6));
+            result += command.ExecuteNonQuery();
+
+            connection.Close();
+            return result > 0;
+        }
+
+        public bool deleteEmployee(int employee_id)
+        {
+            connection.Open();
+            int result = 0;
+
+            //deleting from defaults
+            SqlCommand command = new SqlCommand("UPDATE employee SET active = 0 WHERE employee_id = @employee_id", connection);
+            command.Parameters.AddWithValue("employee_id", employee_id);
+            command.ExecuteNonQuery();
+
+            //deleting from today
+            DateTime now = DateTime.Now;
+            DateTime firstDayOfWeek = firstDateOfWeek(now.Year, getWeek(now), CultureInfo.CurrentCulture);
+
+            command = new SqlCommand("DELETE FROM employee_hours WHERE employee_id = @employee_id AND (date >= @first AND date <= @last)", connection);
+            command.Parameters.AddWithValue("employee_id", employee_id);
             command.Parameters.AddWithValue("first", firstDayOfWeek);
             command.Parameters.AddWithValue("last", firstDayOfWeek.AddDays(6));
             result += command.ExecuteNonQuery();
@@ -401,7 +427,8 @@ namespace Fidels
             return adapter;
         }
 
-        public DataTable getFakturas() {
+        public DataTable getFakturas()
+        {
             SqlDataAdapter adapter = new SqlDataAdapter();
             SqlCommand command = new SqlCommand("SELECT * FROM faktura", connection);
             adapter.SelectCommand = command;
@@ -434,7 +461,8 @@ namespace Fidels
             return list;
         }
 
-        public void AddFaktura(int company_id, string serial_no, decimal price) {
+        public void AddFaktura(int company_id, string serial_no, decimal price)
+        {
             DateTime now = DateTime.Now;
             SqlCommand command = new SqlCommand("INSERT INTO faktura VALUES (@company_id, @serial_no, @date, @price)", connection);
             command.Parameters.Add(new SqlParameter("company_id", company_id));
@@ -446,7 +474,8 @@ namespace Fidels
             connection.Close();
         }
 
-        public void deleteFaktura(int faktura_id) {
+        public void deleteFaktura(int faktura_id)
+        {
             SqlCommand command = new SqlCommand("DELETE FROM faktura WHERE faktura_id=@faktura_id", connection);
             command.Parameters.Add(new SqlParameter("faktura_id", faktura_id));
             connection.Open();
@@ -460,13 +489,6 @@ namespace Fidels
             SqlDataAdapter adapter = getStocksAdapter(connection, 0, 0);
             adapter.Update(dataTable);
         }
-
-        public void updateStaff(DataTable dataTable)
-        {
-            SqlDataAdapter adapter = getEmployeesHoursAdapter(0, 0);
-            adapter.Update(dataTable);
-        }
-
 
         public String orderPrint(DataTable data)
         {
@@ -487,6 +509,21 @@ namespace Fidels
                 }
             }
             return str;
+        }
+
+        public void createEmployee(string name, TimeSpan time, decimal hourlyWage)
+        {
+            connection.Open();
+            SqlCommand command = new SqlCommand("INSERT INTO employee VALUES (@name, @hourly_wage, 1);SELECT CAST(scope_identity() AS int)", connection);
+            command.Parameters.AddWithValue("name", name);
+            command.Parameters.AddWithValue("hourly_wage", hourlyWage);
+            int employeeId = (int)command.ExecuteScalar();
+            command = new SqlCommand("INSERT INTO employee_hours VALUES (@employee_id, @worked_hours, @date)", connection);
+            command.Parameters.AddWithValue("employee_id", employeeId);
+            command.Parameters.AddWithValue("worked_hours", time);
+            command.Parameters.AddWithValue("date", DateTime.Now);
+            command.ExecuteNonQuery();
+            connection.Close();
         }
     }
 }
