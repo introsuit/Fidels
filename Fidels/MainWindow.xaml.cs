@@ -65,6 +65,13 @@ namespace Fidels
             updateFakturaGrid();
             syncStocks();
             syncStaff();
+            int year = Int32.Parse(((ComboBoxItem)cmbYear.SelectedItem).Content.ToString());
+            int weekNo = Int32.Parse(cmbWeek.SelectedValue.ToString());
+            updateBudget(year, weekNo);
+        }
+
+        public void updateBudget(int year, int week) {
+            //todo            
         }
 
         public void updateFakturaGrid()
