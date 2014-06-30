@@ -73,8 +73,11 @@ namespace Fidels
             int year = Int32.Parse(((ComboBoxItem)cmbYear.SelectedItem).Content.ToString());
             int month = Int32.Parse(((ComboBoxItem)cmbMonth.SelectedItem).Tag.ToString());
             int weekNo = Int32.Parse(cmbWeek.SelectedValue.ToString());
+            
             dataGrid3.ItemsSource = service.getFakturas(year, month, weekNo).AsDataView();
             dataGrid3.SelectedValuePath = "faktura_id";
+            ICollectionView view = CollectionViewSource.GetDefaultView(dataGrid3.ItemsSource);
+            view.GroupDescriptions.Add(new PropertyGroupDescription("name"));
         }
 
 
@@ -418,5 +421,29 @@ namespace Fidels
                      service.AddFaktura(combobox1.SelectedIndex+1, txtbx_serial.Text, Convert.ToDecimal(txtbx_amount.Text));
              updateFakturaGrid();
         }
+
+
+
+        private void validTextBox(TextBox textBox)
+        {
+            string tString = textBox.Text;
+            if (tString.Trim() == "") return;
+            for (int i = 0; i < tString.Length; i++)
+            {
+                if (!char.IsNumber(tString[i]))
+                {
+                    MessageBox.Show("Please enter a valid number");
+                    textBox.Text = "";
+                    return;
+                }
+            }
+        }
+
+        private void txtbx_amount_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            validTextBox((TextBox)sender);
+        }
+
+
     }
 }
