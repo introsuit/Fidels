@@ -95,6 +95,12 @@ namespace Fidels
             if (wagePercent != -1)
                 lbldscrWage.Content = service.getSupposedWagePercent() - wagePercent;
             else lbldscrWage.Content = "N/A";
+            if ((service.getSupposedWagePercent() - wagePercent)<0)
+                lbldscrWage.Foreground = Brushes.Red;
+            else lbldscrWage.Foreground = Brushes.Black;
+            if ((service.getSupposedFakturaPercent() - Convert.ToInt32(fakturaPercent) < 0))
+                lbldscrWage.Foreground = Brushes.Red;
+            else lbldscrWage.Foreground = Brushes.Black;
         }
 
         public void updateFakturaGrid()
