@@ -75,12 +75,26 @@ namespace Fidels
             decimal totalTurnOver = 0;
             decimal totalStockValue = 0;
             service.getStockTotals(year, month, week, out totalTurnOver, out totalStockValue);
-            lblTotalValueStock.Content = totalStockValue.ToString();
+            lblTotalValueStock.Content = totalStockValue;
             lblTurnOver.Content = totalTurnOver.ToString();
             lblTotalWages.Content=service.getTotalWagesCost(year, week);
             lblTotalFaktura.Content = service.getTotalWeeklyFakturaAmount(year, month, week);
             lblSupposedPercentWage.Content = service.getSupposedWagePercent().ToString()+"%";
             lblSupposedPercentFaktura.Content = service.getSupposedFakturaPercent().ToString()+"%";
+            decimal fakturaPercent = service.getPercentage(totalTurnOver, service.getTotalWeeklyFakturaAmount(year, month, week));
+            decimal wagePercent  = service.getPercentage(totalTurnOver, service.getTotalWagesCost(year, week));
+            if (fakturaPercent != -1)
+                lblPercentFaktura.Content = fakturaPercent.ToString()+"%";
+            else lblPercentFaktura.Content = "N/A";
+            if (wagePercent != -1)
+                lblPercentWage.Content = wagePercent + "%";
+            else lblPercentWage.Content = "N/A";
+            if (fakturaPercent != -1)
+                lbldscrFakt.Content = service.getSupposedFakturaPercent() - Convert.ToInt32(fakturaPercent);
+            else lbldscrFakt.Content = "N/A";
+            if (wagePercent != -1)
+                lbldscrWage.Content = service.getSupposedWagePercent() - wagePercent;
+            else lbldscrWage.Content = "N/A";
         }
 
         public void updateFakturaGrid()
