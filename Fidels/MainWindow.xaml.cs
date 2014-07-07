@@ -61,33 +61,39 @@ namespace Fidels
 
             decimal totalTurnOver = 0;
             decimal totalStockValue = 0;
+            decimal totalWagesCost = 0;
+            decimal totalWorkHours = 0;
             service.getStockTotals(year, month, week, out totalTurnOver, out totalStockValue);
             lblTotalValueStock.Content = totalStockValue;
-            lblTurnOver.Content = totalTurnOver.ToString();
-            lblTotalWages.Content = service.getTotalWagesCost(year, week);
-            lblTotalFaktura.Content = service.getTotalWeeklyFakturaAmount(year, month, week);
+            lblTurnOver.Content = totalTurnOver.ToString("0.##");
+            service.getTotalWagesCost(year, week, out totalWagesCost, out totalWorkHours);
+            lblTotalWages.Content = totalWagesCost.ToString("0.##");
+            lblTotalFaktura.Content = service.getTotalWeeklyFakturaAmount(year, month, week).ToString("0.##");
             lblSupposedPercentWage.Content = service.getSupposedWagePercent().ToString() + "%";
             lblSupposedPercentFaktura.Content = service.getSupposedFakturaPercent().ToString() + "%";
             decimal fakturaPercent = service.getPercentage(totalTurnOver, service.getTotalWeeklyFakturaAmount(year, month, week));
-            decimal wagePercent = service.getPercentage(totalTurnOver, service.getTotalWagesCost(year, week));
+            decimal wagePercent = 0;
+            if (totalWagesCost != 0)
+            wagePercent= service.getPercentage(totalTurnOver, totalWagesCost);
             if (fakturaPercent != -1)
-                lblPercentFaktura.Content = fakturaPercent.ToString() + "%";
+                lblPercentFaktura.Content = (fakturaPercent).ToString("0.##") + " %";
             else lblPercentFaktura.Content = "N/A";
             if (wagePercent != -1)
-                lblPercentWage.Content = wagePercent + "%";
+                lblPercentWage.Content = (wagePercent).ToString("0.##") + "%";
             else lblPercentWage.Content = "N/A";
             if (fakturaPercent != -1)
-                lbldscrFakt.Content = service.getSupposedFakturaPercent() - Convert.ToInt32(fakturaPercent);
+                lbldscrFakt.Content = (service.getSupposedFakturaPercent() - (fakturaPercent)).ToString("0.##") + "%";
             else lbldscrFakt.Content = "N/A";
             if (wagePercent != -1)
-                lbldscrWage.Content = service.getSupposedWagePercent() - wagePercent;
+                lbldscrWage.Content = (service.getSupposedWagePercent() - wagePercent).ToString("0.##") + "%";
             else lbldscrWage.Content = "N/A";
             if ((service.getSupposedWagePercent() - wagePercent) < 0)
                 lbldscrWage.Foreground = Brushes.Red;
-            else lbldscrWage.Foreground = Brushes.Black;
-            if ((service.getSupposedFakturaPercent() - Convert.ToInt32(fakturaPercent) < 0))
-                lbldscrWage.Foreground = Brushes.Red;
-            else lbldscrWage.Foreground = Brushes.Black;
+            else lbldscrWage.Foreground = Brushes.Green;
+            if ((service.getSupposedFakturaPercent() - fakturaPercent) < 0)
+                lbldscrFakt.Foreground = Brushes.Red;
+            else lbldscrFakt.Foreground = Brushes.Green;
+            totalHoursWorkedWeekend.Content = (totalWorkHours/60/60).ToString("0.##");
 
         }
 
@@ -579,5 +585,21 @@ namespace Fidels
             }
         }
 
+        private void txtbx_amount_TextChanged_1(object sender, TextChangedEventArgs e)
+        {
+            string tString = txtbx_amount.Text;
+            if (tString.Trim() == "") return;
+            for (int i = 0; i < tString.Length; i++)
+            {
+                if (!char.IsNumber(tString[i]))
+                {
+                    MessageBox.Show("Please enter a valid number");
+                    txtbx_amount.Text = "";
+                    return;
+                }
+            }
+        }
+
+        
     }
 }

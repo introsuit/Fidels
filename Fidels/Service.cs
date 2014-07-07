@@ -500,7 +500,7 @@ namespace Fidels
             else return -1;
         }
 
-        // for budget calculations
+
         public void getStockTotals(int year, int month, int week, out decimal totalSupposeTurnOver, out decimal totalWeekStockValue)
         {
             DataTable thisWeekDataTable = filterDataTable(year, month, week);
@@ -531,18 +531,21 @@ namespace Fidels
         }
 
         // for budget calculations
-        public decimal getTotalWagesCost(int year, int week)
+        public void getTotalWagesCost(int year, int week, out decimal totalWagesCost, out decimal totalWorkHours)
         {
-            decimal totalWagesCost = 0;
+            totalWagesCost = 0;
+            totalWorkHours = 0;
             DataTable employees = getEmployeesHours(year, week);
             foreach (DataRow row in employees.Rows)
             {
                 TimeSpan workedHours = row.Field<TimeSpan>("worked_hours");
                 decimal hourlyWage = row.Field<decimal>("hourly_wage");
+                totalWorkHours += (decimal)workedHours.TotalSeconds;
                 totalWagesCost += Decimal.Divide(hourlyWage, 3600) * (decimal)workedHours.TotalSeconds;
             }
-            return totalWagesCost;
         }
+
+
 
 
         //considers empty string as number
