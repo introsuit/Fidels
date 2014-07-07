@@ -78,19 +78,19 @@ namespace Fidels
                         dataTable = filterDataTable(year, month, weekNo - 1);
                 else if (weekNo == 1)
                     dataTable = filterDataTable(year - 1, 12, 53);
-
                 if (dataTable.Rows.Count == 0)
                 {
                     SqlDataAdapter stocksAdapter = getDefaultStocksAdapter(dao.getConnection());
                     dataTable = getDataTable(stocksAdapter);
                 }
-                dataTable = changeDate(dataTable);
+                changeDate(dataTable);
+                dataTable = filterDataTable(year, month, weekNo);
             }
             return dataTable;
         }
 
         //changing products in database date to DateTime.Now
-        public DataTable changeDate(DataTable dataTable)
+        public void changeDate(DataTable dataTable)
         {
             DataTable newTable = dataTable.Copy();
             for (int i = 0; i < newTable.Rows.Count; i++)
@@ -99,11 +99,10 @@ namespace Fidels
                 newTable.Rows[i].SetField(col, DateTime.Now);
             }
             newTable.AcceptChanges();
-            createStocks(newTable); // inserts products datatable back to database with new date. (not working)
-            return newTable;
+            createStocks(newTable);
+            dataTable = newTable;
         }
 
-        //taking stocks datatable from database and sorting it on week to return products on selected week
         public DataTable filterDataTable(int year, int month, int week)
         {
             SqlDataAdapter stocksAdapter = getStocksAdapter(dao.getConnection(), year, month);

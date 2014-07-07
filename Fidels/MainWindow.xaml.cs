@@ -59,7 +59,6 @@ namespace Fidels
                     cmbWeek.SelectedIndex = i;
                 }
             }
-
             syncStocks();
         }
 
@@ -79,11 +78,9 @@ namespace Fidels
             int barStock = stocks.Rows[rowIndex].Field<int>("stock_bar");
             int minimumStock = stocks.Rows[rowIndex].Field<int>("min_stock");
             int delivery = stocks.Rows[rowIndex].Field<int>("delivery");
-
             int totalStock = officeStock + display + speedRail + barStock + delivery;
             decimal stockValue = totalStock * price;
             int ammountToBuy = minimumStock - totalStock;
-
             StockValues sValues = new StockValues();
             sValues.totalStock = totalStock;
             sValues.stockValue = stockValue;
@@ -103,8 +100,7 @@ namespace Fidels
         {
             DataTable dtPrev = service.bottlesSold(year, weekNo);
             bottlesSoldDct.Clear();
-            int product_id, office_stock = 0, speed_rail = 0, stock_bar= 0, display=0, delivery=0;
-            
+            int product_id, office_stock = 0, speed_rail = 0, stock_bar = 0, display = 0, delivery = 0;
             for (int i = 0; i < dtPrev.Rows.Count; i++)
             {
                 product_id = dtPrev.Rows[i].Field<int>("product_id");
@@ -113,9 +109,7 @@ namespace Fidels
                 stock_bar = dtPrev.Rows[i].Field<int>("stock_bar");
                 display = dtPrev.Rows[i].Field<int>("display");
                 delivery = dtPrev.Rows[i].Field<int>("delivery");
-
                 int sum = office_stock + speed_rail + stock_bar + display + delivery;
-                
                 //add and also check if by some mistake same product was already there and update
                 if (bottlesSoldDct.ContainsKey(product_id))
                 {
@@ -125,7 +119,7 @@ namespace Fidels
                 {
                     bottlesSoldDct.Add(product_id, sum);
                 }
-            }      
+            }
         }
 
         private void syncStocks()
@@ -141,12 +135,9 @@ namespace Fidels
                 stocks.Columns.Add("modelIndex", typeof(int));
                 stocks.Columns.Add("totalPrevious", typeof(int));
                 stocks.AcceptChanges();
-
                 updateModelIndexes();
-
                 dataGrid2.ItemsSource = stocks.AsDataView();
                 dataGrid2.SelectedValuePath = "stock_id";
-
                 ICollectionView view = CollectionViewSource.GetDefaultView(dataGrid2.ItemsSource);
                 view.GroupDescriptions.Add(new PropertyGroupDescription("product_name"));
 
@@ -166,7 +157,6 @@ namespace Fidels
                 int year = Int32.Parse(((ComboBoxItem)cmbYear.SelectedItem).Content.ToString());
                 int month = Int32.Parse(((ComboBoxItem)cmbMonth.SelectedItem).Tag.ToString());
                 int weekNo = Int32.Parse(cmbWeek.SelectedValue.ToString());
-
                 ICollectionView view = CollectionViewSource.GetDefaultView(dataGrid3.ItemsSource);
                 view.GroupDescriptions.Add(new PropertyGroupDescription("name"));
             }
@@ -179,10 +169,8 @@ namespace Fidels
         private void updateCmbWeeks()
         {
             cmbWeek.Items.Clear();
-
             int year = Int32.Parse(((ComboBoxItem)cmbYear.SelectedItem).Content.ToString());
             int month = Int32.Parse(((ComboBoxItem)cmbMonth.SelectedItem).Tag.ToString());
-
             WeeksRange weekR = service.getWeeksRange(year, month);
             for (int i = weekR.from; i <= weekR.to; i++)
             {
@@ -227,14 +215,11 @@ namespace Fidels
             if (dataGrid2.SelectedItem != null)
             {
                 lblStatus.Content = "";
-
                 DataRowView dataRowView = ((DataRowView)dataGrid2.SelectedItem);
                 int selectedIndex = (int)(dataRowView["modelIndex"]);
-
                 StockValues sValues = getStockValues(selectedIndex);
                 lblTotalStock.Content = sValues.totalStock;
                 lblStockValue.Content = sValues.stockValue;
-
                 if (sValues.amountToBuy <= 0)
                 {
                     lblAmountTobuy.Content = "none";
@@ -245,7 +230,6 @@ namespace Fidels
                     lblAmountTobuy.Content = sValues.amountToBuy;
                     lblAmountTobuy.Foreground = Brushes.Red;
                 }
-
                 int product_id = stocks.Rows[selectedIndex].Field<int>("product_id");
                 int bttlSold = 0;
                 try
@@ -323,7 +307,7 @@ namespace Fidels
             if (window.DialogResult.HasValue && window.DialogResult.Value)
             {
                 syncStocks();
-            }     
+            }
         }
 
         private void button2_Click(object sender, RoutedEventArgs e)
@@ -351,7 +335,6 @@ namespace Fidels
                 lblStatus.Foreground = Brushes.Red;
                 return;
             }
-
             lblStatus.Content = "Deleted";
             lblStatus.Foreground = Brushes.Red;
             syncStocks();
