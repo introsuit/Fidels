@@ -66,6 +66,9 @@
       <DependentUpon>PrintOrders.xaml</DependentUpon>
     </Compile>
     <Compile Include="Service.cs" />
+    <Compile Include="AddCompany.xaml.cs">
+      <DependentUpon>AddCompany.xaml</DependentUpon>
+    </Compile>
     <Page Include="CreateProduct.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -83,6 +86,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="PrintOrders.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AddCompany.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

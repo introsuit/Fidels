@@ -140,6 +140,7 @@
                     <Grid VerticalAlignment="Stretch" Margin="0,0,0,0">
                         <Button x:Name="addBtn" Margin="841,202,10,10" Content="Add" Click="addBtn_Click"/>
                         <Button x:Name="deleteBtn" Margin="773,202,78,10" Content="Delete" Click="deleteBtn_Click"/>
+                        <Button x:Name="newcompBtn" Margin="674,202,139,10" Content="New company" Click="newcompBtn_Click"/>
                         <DataGrid CanUserAddRows="False" AutoGenerateColumns="False" Height="200" HorizontalAlignment="Left" Margin="5,40,0,0" Name="dataGrid3" VerticalAlignment="Top" IsReadOnly="False">
                             <DataGrid.GroupStyle>
                                 <GroupStyle ContainerStyle="{StaticResource GroupHeaderStyle}">

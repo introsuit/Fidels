@@ -573,6 +573,13 @@ namespace Fidels
             validTextBox((TextBox)sender);
         }
 
+        private void newcompBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Window1 window = new Window1();
+            window.ShowDialog();
+            combobox1.ItemsSource = service.getCompanyNames();
+        }
+
 
     }
 }

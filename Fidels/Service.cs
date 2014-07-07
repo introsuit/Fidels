@@ -607,5 +607,13 @@ namespace Fidels
             }
             return number;
         }
+
+        public void addCompany(string company) {
+            connection.Open();
+            SqlCommand command = new SqlCommand("INSERT INTO company VALUES (@company)", connection);
+            command.Parameters.AddWithValue("company", company);
+            command.ExecuteNonQuery();
+            connection.Close();
+        }
     }
 }
