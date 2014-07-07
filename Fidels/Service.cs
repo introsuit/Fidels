@@ -59,19 +59,12 @@ namespace Fidels
             WeeksRange weeksR = new WeeksRange();
             DateTime dateTime = new DateTime(year, month, 1);
             weeksR.from = getWeek(dateTime);
-
             //special case
             if (month == 12)
-            {
                 dateTime = new DateTime(year, month, 31);
-            }
             else
-            {
                 dateTime = new DateTime(year, month + 1, 1).AddDays(-1);
-            }
-
             weeksR.to = getWeek(dateTime);
-
             return weeksR;
         }
 
@@ -85,10 +78,8 @@ namespace Fidels
         public DataTable getStocks(int year, int month, int weekNo)
         {
             DataTable dataTable = filterDataTable(year, month, weekNo);
-
             if (dataTable.Rows.Count == 0 && getWeeksRange(year, month).from == weekNo)
                 dataTable = filterDataTable(year, month - 1, weekNo);
-
             if (dataTable.Rows.Count == 0 && getWeek(DateTime.Now) == weekNo)
             {
                 if (weekNo > 1)
@@ -132,10 +123,8 @@ namespace Fidels
             {
                 DateTime dateTime = dataTable.Rows[i].Field<DateTime>("date");
                 int actWeek = getWeek(dateTime);
-                if (actWeek != week)
-                {
+                if (actWeek != week)    
                     newTable.Rows[i].Delete();
-                }
             }
             newTable.AcceptChanges();
             return newTable;
@@ -159,12 +148,9 @@ namespace Fidels
         private SqlDataAdapter getDefaultStocksAdapter(SqlConnection connection)
         {
             SqlDataAdapter adapter = new SqlDataAdapter();
-
             // Create the SelectCommand.
             SqlCommand command = new SqlCommand("SELECT * FROM stock JOIN product ON stock.product_id = product.product_id JOIN product_group ON product.product_group_id = product_group.product_group_id WHERE date = '2001-01-01'", connection);
-
             adapter.SelectCommand = command;
-
             return adapter;
         }
 
@@ -172,7 +158,6 @@ namespace Fidels
         {
             DateTime firstDayOfWeek = firstDateOfWeek(year, weekNo, CultureInfo.CurrentCulture);
             SqlDataAdapter adapter = new SqlDataAdapter();
-
             // Create the SelectCommand.
             SqlCommand command = new SqlCommand("SELECT * FROM employee_hours JOIN employee ON employee_hours.employee_id = employee.employee_id WHERE date >= @first AND date <= @last", connection);
             command.Parameters.AddWithValue("first", firstDayOfWeek);
@@ -201,18 +186,14 @@ namespace Fidels
         private SqlDataAdapter getStocksAdapter(SqlConnection connection, int year, int month)
         {
             SqlDataAdapter adapter = new SqlDataAdapter();
-
             // Create the SelectCommand.
             SqlCommand command = new SqlCommand("SELECT * FROM stock JOIN product ON stock.product_id = product.product_id JOIN product_group ON product.product_group_id = product_group.product_group_id WHERE month(date) = @month AND year(date) = @year", connection);
-
             command.Parameters.Add(new SqlParameter("month", month));
             command.Parameters.Add(new SqlParameter("year", year));
             adapter.SelectCommand = command;
-
             command = new SqlCommand(
                "UPDATE stock SET unit_price = @unit_price, speed_rail = @speed_rail, stock_bar = @stock_bar, " + "display = @display, office_stock = @office_stock, min_stock = @min_stock, date = @date, delivery = @delivery " +
                "WHERE stock_id = @stock_id", connection);
-
             // Add the parameters for the UpdateCommand.
             command.Parameters.Add("@unit_price", SqlDbType.Decimal, 2, "unit_price");
             command.Parameters.Add("@speed_rail", SqlDbType.Int, 2, "speed_rail");
@@ -222,13 +203,10 @@ namespace Fidels
             command.Parameters.Add("@min_stock", SqlDbType.Int, 2, "min_stock");
             command.Parameters.Add("@date", SqlDbType.Date, 2, "date");
             command.Parameters.Add("@delivery", SqlDbType.Int, 2, "delivery");
-
             SqlParameter parameter = command.Parameters.Add(
                 "@stock_id", SqlDbType.Int, 5, "stock_id");
             parameter.SourceVersion = DataRowVersion.Original;
-
             adapter.UpdateCommand = command;
-
             return adapter;
         }
 
@@ -239,9 +217,7 @@ namespace Fidels
             DateTime firstWeekDay = jan1.AddDays(daysOffset);
             int firstWeek = ci.Calendar.GetWeekOfYear(jan1, ci.DateTimeFormat.CalendarWeekRule, ci.DateTimeFormat.FirstDayOfWeek);
             if (firstWeek <= 1 || firstWeek > 50)
-            {
                 weekOfYear -= 1;
-            }
             return firstWeekDay.AddDays(weekOfYear * 7);
         }
 
@@ -249,12 +225,8 @@ namespace Fidels
         {
             SqlDataAdapter emplAdapter = getEmployeesHoursAdapter(year, weekNo);
             DataTable dataTable = getDataTable(emplAdapter);
-
             if (dataTable.Rows.Count == 0 && getWeek(DateTime.Now) == weekNo)
-            {
                 insertEmployeesHours(year, weekNo);
-            }
-
             return getDataTable(emplAdapter);
         }
 
@@ -270,14 +242,12 @@ namespace Fidels
                 employees.Add(employee_id);
             }
             connection.Close();
-
             connection.Open();
             DateTime now = DateTime.Now;
             foreach (int employee_id in employees)
             {
                 command = new SqlCommand("INSERT INTO employee_hours VALUES (@employee_id, @worked_hours, @date)", connection);
                 command.Parameters.AddWithValue("employee_id", employee_id);
-
                 command.Parameters.AddWithValue("worked_hours", new TimeSpan());
                 command.Parameters.AddWithValue("date", now);
                 command.ExecuteNonQuery();
@@ -297,7 +267,6 @@ namespace Fidels
             command.Parameters.AddWithValue("first", firstDayOfWeek);
             command.Parameters.AddWithValue("last", firstDayOfWeek.AddDays(6));
             adapter.SelectCommand = command;
-
             return getDataTable(adapter);
         }
 
@@ -305,22 +274,18 @@ namespace Fidels
         {
             connection.Open();
             int result = 0;
-
             //deleting from defaults
             SqlCommand command = new SqlCommand("DELETE FROM stock WHERE product_id = @product_id AND date = '2001-01-01'", connection);
             command.Parameters.AddWithValue("product_id", product_id);
             result += command.ExecuteNonQuery();
-
             //deleting from today
             DateTime now = DateTime.Now;
             DateTime firstDayOfWeek = firstDateOfWeek(now.Year, getWeek(now), CultureInfo.CurrentCulture);
-
             command = new SqlCommand("DELETE FROM stock WHERE product_id = @product_id AND (date >= @first AND date <= @last)", connection);
             command.Parameters.AddWithValue("product_id", product_id);
             command.Parameters.AddWithValue("first", firstDayOfWeek);
             command.Parameters.AddWithValue("last", firstDayOfWeek.AddDays(6));
             result += command.ExecuteNonQuery();
-
             connection.Close();
             return result > 0;
         }
@@ -329,22 +294,18 @@ namespace Fidels
         {
             connection.Open();
             int result = 0;
-
             //deleting from defaults
             SqlCommand command = new SqlCommand("UPDATE employee SET active = 0 WHERE employee_id = @employee_id", connection);
             command.Parameters.AddWithValue("employee_id", employee_id);
             command.ExecuteNonQuery();
-
             //deleting from today
             DateTime now = DateTime.Now;
             DateTime firstDayOfWeek = firstDateOfWeek(now.Year, getWeek(now), CultureInfo.CurrentCulture);
-
             command = new SqlCommand("DELETE FROM employee_hours WHERE employee_id = @employee_id AND (date >= @first AND date <= @last)", connection);
             command.Parameters.AddWithValue("employee_id", employee_id);
             command.Parameters.AddWithValue("first", firstDayOfWeek);
             command.Parameters.AddWithValue("last", firstDayOfWeek.AddDays(6));
             result += command.ExecuteNonQuery();
-
             connection.Close();
             return result > 0;
         }
@@ -376,9 +337,7 @@ namespace Fidels
             SqlCommand sqlCmd = new SqlCommand("SELECT * FROM product_group", connection);
             SqlDataReader sqlReader = sqlCmd.ExecuteReader();
             while (sqlReader.Read())
-            {
                 list.Add(sqlReader["product_name"].ToString());
-            }
             sqlReader.Close();
             connection.Close();
             return list;
@@ -446,9 +405,7 @@ namespace Fidels
             SqlCommand sqlCmd = new SqlCommand("SELECT * FROM company", connection);
             SqlDataReader sqlReader = sqlCmd.ExecuteReader();
             while (sqlReader.Read())
-            {
                 list.Add(sqlReader["name"].ToString());
-            }
             sqlReader.Close();
             connection.Close();
             return list;
@@ -481,9 +438,8 @@ namespace Fidels
         {
             int i = 0;
             DataTable dt = getFakturas(year, month, weekNo);
-            foreach (DataRow row in dt.Rows) {
+            foreach (DataRow row in dt.Rows)
                 i = i + Convert.ToInt32(row["price"]);
-            }
             return i;
         }
             
@@ -502,12 +458,8 @@ namespace Fidels
                     row.Field<int>("stock_bar") +
                     row.Field<int>("display") +
                     row.Field<int>("office_stock"));
-
                 if (total < row.Field<int>("min_stock"))
-                {
                     str = str + "Name: " + row.Field<string>("name") + "  | Amount to buy: " + (row.Field<int>("min_stock") - total).ToString() + "\r\n";
-
-                }
             }
             return str;
         }
@@ -525,7 +477,6 @@ namespace Fidels
             command.Parameters.AddWithValue("date", DateTime.Now);
             int result = command.ExecuteNonQuery();
             connection.Close();
-
             return result > 0;
         }
 
@@ -593,6 +544,7 @@ namespace Fidels
             return totalWagesCost;
         }
 
+
         //considers empty string as number
         public bool isNumber(string str)
         {
@@ -615,5 +567,6 @@ namespace Fidels
             command.ExecuteNonQuery();
             connection.Close();
         }
+
     }
 }

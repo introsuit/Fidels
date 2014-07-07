@@ -21,9 +21,6 @@ using System.Collections;
 
 namespace Fidels
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
         private Service service = Service.getInstance();
@@ -37,54 +34,44 @@ namespace Fidels
         {
             InitializeComponent();
             DateTime now = DateTime.Now;
+            for (int i = 2014; i <= now.Year; i++)
+                cmbYear.Items.Add(i);
             for (int i = 0; i < cmbYear.Items.Count; i++)
-            {
-                if (Int32.Parse(((ComboBoxItem)cmbYear.Items[i]).Content.ToString()) == now.Year)
-                {
+                if (Int32.Parse(cmbYear.Items[i].ToString()) == now.Year)
                     cmbYear.SelectedIndex = i;
-                }
-            }
             for (int i = 0; i < cmbMonth.Items.Count; i++)
-            {
                 if (Int32.Parse(((ComboBoxItem)cmbMonth.Items[i]).Tag.ToString()) == now.Month)
-                {
                     cmbMonth.SelectedIndex = i;
-                }
-            }
-            updateCmbWeeks(); //updates weeks list and that in turn will also syncTables 
-
+            updateCmbWeeks();
             for (int i = 0; i < cmbWeek.Items.Count; i++)
-            {
                 if (Int32.Parse(cmbWeek.Items[i].ToString()) == service.getWeek(now))
-                {
                     cmbWeek.SelectedIndex = i;
-                }
-            }
             combobox1.ItemsSource = service.getCompanyNames();
-
             updateFakturaGrid();
             syncStocks();
             syncStaff();
-            int year = Int32.Parse(((ComboBoxItem)cmbYear.SelectedItem).Content.ToString());
-            int month = Int32.Parse(((ComboBoxItem)cmbMonth.SelectedItem).Tag.ToString());
-            int weekNo = Int32.Parse(cmbWeek.SelectedValue.ToString());
-            updateBudget(year, month, weekNo);
+            updateBudget();
         }
 
-        public void updateBudget(int year, int month, int week) {
+        public void updateBudget()
+        {
+            int year = Int32.Parse(cmbYear.SelectedValue.ToString());
+            int month = Int32.Parse(((ComboBoxItem)cmbMonth.SelectedItem).Tag.ToString());
+            int week = Int32.Parse(cmbWeek.SelectedValue.ToString());
+
             decimal totalTurnOver = 0;
             decimal totalStockValue = 0;
             service.getStockTotals(year, month, week, out totalTurnOver, out totalStockValue);
             lblTotalValueStock.Content = totalStockValue;
             lblTurnOver.Content = totalTurnOver.ToString();
-            lblTotalWages.Content=service.getTotalWagesCost(year, week);
+            lblTotalWages.Content = service.getTotalWagesCost(year, week);
             lblTotalFaktura.Content = service.getTotalWeeklyFakturaAmount(year, month, week);
-            lblSupposedPercentWage.Content = service.getSupposedWagePercent().ToString()+"%";
-            lblSupposedPercentFaktura.Content = service.getSupposedFakturaPercent().ToString()+"%";
+            lblSupposedPercentWage.Content = service.getSupposedWagePercent().ToString() + "%";
+            lblSupposedPercentFaktura.Content = service.getSupposedFakturaPercent().ToString() + "%";
             decimal fakturaPercent = service.getPercentage(totalTurnOver, service.getTotalWeeklyFakturaAmount(year, month, week));
-            decimal wagePercent  = service.getPercentage(totalTurnOver, service.getTotalWagesCost(year, week));
+            decimal wagePercent = service.getPercentage(totalTurnOver, service.getTotalWagesCost(year, week));
             if (fakturaPercent != -1)
-                lblPercentFaktura.Content = fakturaPercent.ToString()+"%";
+                lblPercentFaktura.Content = fakturaPercent.ToString() + "%";
             else lblPercentFaktura.Content = "N/A";
             if (wagePercent != -1)
                 lblPercentWage.Content = wagePercent + "%";
@@ -95,20 +82,20 @@ namespace Fidels
             if (wagePercent != -1)
                 lbldscrWage.Content = service.getSupposedWagePercent() - wagePercent;
             else lbldscrWage.Content = "N/A";
-            if ((service.getSupposedWagePercent() - wagePercent)<0)
+            if ((service.getSupposedWagePercent() - wagePercent) < 0)
                 lbldscrWage.Foreground = Brushes.Red;
             else lbldscrWage.Foreground = Brushes.Black;
             if ((service.getSupposedFakturaPercent() - Convert.ToInt32(fakturaPercent) < 0))
                 lbldscrWage.Foreground = Brushes.Red;
             else lbldscrWage.Foreground = Brushes.Black;
+
         }
 
         public void updateFakturaGrid()
         {
-            int year = Int32.Parse(((ComboBoxItem)cmbYear.SelectedItem).Content.ToString());
+            int year = Int32.Parse(cmbYear.SelectedValue.ToString());
             int month = Int32.Parse(((ComboBoxItem)cmbMonth.SelectedItem).Tag.ToString());
             int weekNo = Int32.Parse(cmbWeek.SelectedValue.ToString());
-            
             dataGrid3.ItemsSource = service.getFakturas(year, month, weekNo).AsDataView();
             dataGrid3.SelectedValuePath = "faktura_id";
             ICollectionView view = CollectionViewSource.GetDefaultView(dataGrid3.ItemsSource);
@@ -166,13 +153,9 @@ namespace Fidels
                 int sum = office_stock + speed_rail + stock_bar + display + delivery;
                 //add and also check if by some mistake same product was already there and update
                 if (bottlesSoldDct.ContainsKey(product_id))
-                {
                     bottlesSoldDct[product_id] = sum;
-                }
                 else
-                {
                     bottlesSoldDct.Add(product_id, sum);
-                }
             }
         }
 
@@ -180,12 +163,10 @@ namespace Fidels
         {
             try
             {
-                int year = Int32.Parse(((ComboBoxItem)cmbYear.SelectedItem).Content.ToString());
+                int year = Int32.Parse(cmbYear.SelectedValue.ToString());
                 int weekNo = Int32.Parse(cmbWeek.SelectedValue.ToString());
-
                 staffs = service.getEmployeesHours(year, weekNo);
                 staffs.AcceptChanges();
-
                 dataGridStaff.ItemsSource = staffs.AsDataView();
                 dataGridStaff.SelectedValuePath = "employee_hours_id";
             }
@@ -199,10 +180,9 @@ namespace Fidels
         {
             try
             {
-                int year = Int32.Parse(((ComboBoxItem)cmbYear.SelectedItem).Content.ToString());
+                int year = Int32.Parse(cmbYear.SelectedValue.ToString());
                 int month = Int32.Parse(((ComboBoxItem)cmbMonth.SelectedItem).Tag.ToString());
                 int weekNo = Int32.Parse(cmbWeek.SelectedValue.ToString());
-
                 stocks = service.getStocks(year, month, weekNo);
                 stocks.Columns.Add("rowBackground", typeof(Brush));
                 stocks.Columns.Add("modelIndex", typeof(int));
@@ -213,7 +193,6 @@ namespace Fidels
                 dataGrid2.SelectedValuePath = "stock_id";
                 ICollectionView view = CollectionViewSource.GetDefaultView(dataGrid2.ItemsSource);
                 view.GroupDescriptions.Add(new PropertyGroupDescription("product_name"));
-
                 getBottlesSold(year, weekNo);
             }
             catch (Exception ex)
@@ -227,7 +206,7 @@ namespace Fidels
             Debug.WriteLine("Syncinc fakturas");
             try
             {
-                int year = Int32.Parse(((ComboBoxItem)cmbYear.SelectedItem).Content.ToString());
+                int year = Int32.Parse(cmbYear.SelectedValue.ToString());
                 int month = Int32.Parse(((ComboBoxItem)cmbMonth.SelectedItem).Tag.ToString());
                 int weekNo = Int32.Parse(cmbWeek.SelectedValue.ToString());
                 ICollectionView view = CollectionViewSource.GetDefaultView(dataGrid3.ItemsSource);
@@ -242,13 +221,11 @@ namespace Fidels
         private void updateCmbWeeks()
         {
             cmbWeek.Items.Clear();
-            int year = Int32.Parse(((ComboBoxItem)cmbYear.SelectedItem).Content.ToString());
+            int year = Int32.Parse(cmbYear.SelectedValue.ToString());
             int month = Int32.Parse(((ComboBoxItem)cmbMonth.SelectedItem).Tag.ToString());
             WeeksRange weekR = service.getWeeksRange(year, month);
             for (int i = weekR.from; i <= weekR.to; i++)
-            {
                 cmbWeek.Items.Add(i);
-            }
             cmbWeek.SelectedIndex = 0;
         }
 
@@ -259,10 +236,7 @@ namespace Fidels
                 dataGrid2.SelectedIndex = -1;
                 syncStocks();
                 updateFakturaGrid();
-                int year = Int32.Parse(((ComboBoxItem)cmbYear.SelectedItem).Content.ToString());
-                int month = Int32.Parse(((ComboBoxItem)cmbMonth.SelectedItem).Tag.ToString());
-                int weekNo = Int32.Parse(cmbWeek.SelectedValue.ToString());
-                updateBudget(year, month, weekNo);
+                updateBudget();
                 syncStaff();
             }
         }
@@ -273,16 +247,12 @@ namespace Fidels
             {
                 dataGrid2.SelectedIndex = -1;
                 allowSync = false; //to avoid double sync when cmbWeekSelected event is called
-
                 updateCmbWeeks();
                 syncStocks();
                 syncStaff();
                 allowSync = true;
-                updateFakturaGrid();
-                int year = Int32.Parse(((ComboBoxItem)cmbYear.SelectedItem).Content.ToString());
-                int month = Int32.Parse(((ComboBoxItem)cmbMonth.SelectedItem).Tag.ToString());
-                int weekNo = Int32.Parse(cmbWeek.SelectedValue.ToString());
-                updateBudget(year, month, weekNo);
+                updateFakturaGrid();            
+                updateBudget();
             }
         }
 
@@ -293,10 +263,7 @@ namespace Fidels
                 dataGrid2.SelectedIndex = -1;
                 syncStocks();
                 updateFakturaGrid();
-                int year = Int32.Parse(((ComboBoxItem)cmbYear.SelectedItem).Content.ToString());
-                int month = Int32.Parse(((ComboBoxItem)cmbMonth.SelectedItem).Tag.ToString());
-                int weekNo = Int32.Parse(cmbWeek.SelectedValue.ToString());
-                updateBudget(year, month, weekNo);
+                updateBudget();
             }
         }
 
@@ -384,14 +351,10 @@ namespace Fidels
         {
             DataGridRow row = e.Row;
             DataRowView dataRowView = ((DataRowView)row.Item);
-
             int selectedIndex = (int)(dataRowView["modelIndex"]);
             StockValues sValues = getStockValues(selectedIndex);
-
             if (sValues.amountToBuy > 0)
-            {
                 row.Background = Brushes.Red;
-            }
         }
 
         private void button1_Click_1(object sender, RoutedEventArgs e)
@@ -399,9 +362,7 @@ namespace Fidels
             CreateProduct window = new CreateProduct();
             window.ShowDialog();
             if (window.DialogResult.HasValue && window.DialogResult.Value)
-            {
                 syncStocks();
-            }
         }
 
         private void button2_Click(object sender, RoutedEventArgs e)
@@ -416,11 +377,9 @@ namespace Fidels
             {
                 return;
             }
-
             DataRowView dataRowView = ((DataRowView)selItem);
             int selectedIndex = (int)(dataRowView["modelIndex"]);
             int product_id = stocks.Rows[selectedIndex].Field<int>("product_id");
-
             bool deleted = service.deleteProduct(product_id);
             if (!deleted)
             {
@@ -458,7 +417,8 @@ namespace Fidels
                 TimeSpan workedHours = staffs.Rows[dataGridStaff.SelectedIndex].Field<TimeSpan>("worked_hours");
                 decimal hourlyWage = staffs.Rows[dataGridStaff.SelectedIndex].Field<decimal>("hourly_wage");
                 txbName.Text = name;
-                txbHours.Text = workedHours.ToString("c");
+                txbHrs.Text = workedHours.Hours + "";
+                txbMins.Text = workedHours.Minutes + "";
                 txbHourlyWage.Text = hourlyWage.ToString("0.##");
                 lblTotalCost.Content = (Decimal.Divide(hourlyWage, 3600) * (decimal)workedHours.TotalSeconds).ToString("0.##") + " kr";
             }
@@ -466,28 +426,66 @@ namespace Fidels
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            if (txbName.Text.Trim().Length == 0)
-                MessageBox.Show("Please enter name.");
-            else
+            string name = "";
+            int hours = 0, minutes = 0;
+            decimal hourlyWage = 0;
+            bool success = checkStaffTextBoxes(ref name, ref hours, ref minutes, ref hourlyWage);
+            if (!success)
+                return;
+            TimeSpan workedHours = new TimeSpan(hours, minutes, 0);
+            hourlyWage = Decimal.Parse(txbHourlyWage.Text);
+            bool created = service.createEmployee(name, workedHours, hourlyWage);
+            if (!created)
             {
-                if (txbHours.Text.Trim().Length == 0)
-                    txbHours.Text = "0";
-                if (txbHourlyWage.Text.Trim().Length == 0)
-                    txbHourlyWage.Text = "0";
-                string name = txbName.Text;
-                TimeSpan hours = TimeSpan.Parse(txbHours.Text);
-                decimal hourlyWage = Decimal.Parse(txbHourlyWage.Text);
-                bool created = service.createEmployee(name, hours, hourlyWage);
-                if (!created)
-                {
-                    lblStatusStaff.Content = "Failed to cceate";
-                    lblStatusStaff.Foreground = Brushes.Green;
-                    return;
-                }
-                lblStatusStaff.Content = "Created";
+                lblStatusStaff.Content = "Failed to create";
                 lblStatusStaff.Foreground = Brushes.Green;
-                syncStaff();
+                return;
             }
+            lblStatusStaff.Content = "Created";
+            lblStatusStaff.Foreground = Brushes.Green;
+            syncStaff();
+        }
+
+        private bool checkStaffTextBoxes(ref string name, ref int hours, ref int minutes, ref decimal hourlyWage)
+        {
+            if (txbName.Text.Trim().Length == 0)
+            {
+                MessageBox.Show("Please enter name.");
+                return false;
+            }
+            if (txbHrs.Text.Trim().Length == 0)
+                txbHrs.Text = "0";
+            if (txbMins.Text.Trim().Length == 0)
+                txbMins.Text = "0";
+            if (txbHourlyWage.Text.Trim().Length == 0)
+                txbHourlyWage.Text = "0";
+            if (!Decimal.TryParse(txbHourlyWage.Text, out hourlyWage))
+            {
+                MessageBox.Show("Please enter a valid decimal hourly wage");
+                return false;
+            }
+            name = txbName.Text;
+            if (!Int32.TryParse(txbHrs.Text.Trim(), out hours))
+            {
+                MessageBox.Show("Please enter a valid worked hours");
+                return false;
+            }
+            if (hours < 0 || hours > 23)
+            {
+                MessageBox.Show("Hours cannot be less than 0 and more than 23");
+                return false;
+            }
+            if (!Int32.TryParse(txbMins.Text.Trim(), out minutes))
+            {
+                MessageBox.Show("Please enter a valid worked minutes");
+                return false;
+            }
+            if (minutes < 0 || minutes > 59)
+            {
+                MessageBox.Show("Minutes cannot be less than 0 and more than 59");
+                return false;
+            }
+            return true;
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
@@ -498,30 +496,24 @@ namespace Fidels
                 MessageBox.Show("Select an employee first.");
                 return;
             }
-
-            if (txbName.Text.Trim().Length == 0)
-                MessageBox.Show("Please enter name.");
-            else
+            string name = "";
+            int hours = 0, minutes = 0;
+            decimal hourlyWage = 0;
+            bool success = checkStaffTextBoxes(ref name, ref hours, ref minutes, ref hourlyWage);
+            if (!success)
+                return;
+            TimeSpan workedHours = new TimeSpan(hours, minutes, 0);
+            bool updated = service.updateEmployee(name, hourlyWage, workedHours, staffs.Rows[dataGridStaff.SelectedIndex].Field<int>("employee_id"), (int)dataGridStaff.SelectedValue);
+            if (!updated)
             {
-                if (txbHours.Text.Trim().Length == 0)
-                    txbHours.Text = "0";
-                if (txbHourlyWage.Text.Trim().Length == 0)
-                    txbHourlyWage.Text = "0";
-                string name = txbName.Text;
-                TimeSpan hours = TimeSpan.Parse(txbHours.Text);
-                decimal hourlyWage = Decimal.Parse(txbHourlyWage.Text);
-                bool updated = service.updateEmployee(name, hourlyWage, hours, staffs.Rows[dataGridStaff.SelectedIndex].Field<int>("employee_id"), (int)dataGridStaff.SelectedValue);
-                if (!updated)
-                {
-                    lblStatusStaff.Content = "Failed to update";
-                    lblStatusStaff.Foreground = Brushes.Green;
-                    return;
-                }
-                lblStatusStaff.Content = "Updated";
+                lblStatusStaff.Content = "Failed to update";
                 lblStatusStaff.Foreground = Brushes.Green;
-
-                syncStaff();
+                return;
             }
+            lblStatusStaff.Content = "Updated";
+            lblStatusStaff.Foreground = Brushes.Green;
+            syncStaff();
+
         }
 
         private void Button_Click_2(object sender, RoutedEventArgs e)
@@ -536,9 +528,7 @@ namespace Fidels
             {
                 return;
             }
-
             int employee_id = staffs.Rows[selectedIndex].Field<int>("employee_id");
-
             bool deleted = service.deleteEmployee(employee_id);
             if (!deleted)
             {
@@ -580,6 +570,14 @@ namespace Fidels
             combobox1.ItemsSource = service.getCompanyNames();
         }
 
+
+
+        private void tabControl1_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if(Budget.IsSelected){
+                updateBudget();
+            }
+        }
 
     }
 }

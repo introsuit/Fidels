@@ -1,7 +1,7 @@
 ﻿<Window x:Class="Fidels.PrintOrders"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="PrintOrders" Height="549.589" Width="510.127">
+        Title="Print Orders" Height="549.589" Width="510.127">
     <Grid>
         <TextBlock HorizontalAlignment="Left" Height="5" Margin="77,230,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Width="3"/>
         <RichTextBox x:Name="richText" HorizontalAlignment="Left" Height="460" Margin="10,10,0,0" VerticalAlignment="Top" Width="482">
@@ -20,6 +20,5 @@
                 </TransformGroup>
             </Button.RenderTransform>
         </Button>
-
     </Grid>
 </Window>
